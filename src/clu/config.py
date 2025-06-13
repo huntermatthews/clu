@@ -1,12 +1,11 @@
 '''Doc Incomplete.
 '''
 
-G_CONFIG = {
+_CONFIG = {
     'db_host': 'localhost',
 }
 
 def get_config():
-    global G_CONFIG
-    return G_CONFIG
+    global _CONFIG
+    return _CONFIG
 
-## END OF LINE ##

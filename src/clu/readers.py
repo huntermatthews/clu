@@ -67,6 +67,6 @@ def simple_parser(text, seperator="."):
 
     return data
 
-    ## END OF LINE ##
+
 
 
