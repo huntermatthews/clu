@@ -1,15 +1,19 @@
 from pathlib import Path
 import subprocess
 import shlex
-#import str
+
+# import str
+
 
 def debug(*args, **kwargs):
     if g_config.debug:
         return builtins.print(*args, **kwargs)
 
+
 def verbose(*args, **kwargs):
     if g_config.verbose:
         return builtins.print(*args, **kwargs)
+
 
 # BUG: should not print anything...
 # a simple file is ONE line that contains ONE value
@@ -37,13 +41,16 @@ def read_simple_program(cmdline):
         return None
     return result.stdout
 
+
 def _subprocess_run(cmdline):
     # TODO: Should this simply be merged into read_simple_program() ?
-    result = subprocess.run(shlex.split(cmdline),
-                            check=False,
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            encoding='UTF-8')
+    result = subprocess.run(
+        shlex.split(cmdline),
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        encoding="UTF-8",
+    )
     return result
 
 
@@ -66,7 +73,3 @@ def simple_parser(text, seperator="."):
         data[key.strip()] = value.strip()
 
     return data
-
-
-
-
