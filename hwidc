@@ -1,0 +1,157 @@
+#! /usr/bin/env bash
+
+# All the files we should look for and attempt to collect
+FILES=(
+/etc/os-release
+/proc/cpuinfo
+/proc/meminfo
+/proc/mounts
+/sys/devices/virtual/dmi/id/bios_date
+/sys/devices/virtual/dmi/id/board_serial
+/sys/devices/virtual/dmi/id/uevent
+/sys/devices/virtual/dmi/id/product_serial
+/sys/devices/virtual/dmi/id/product_name
+/sys/devices/virtual/dmi/id/chassis_vendor
+/sys/devices/virtual/dmi/id/chassis_asset_tag
+/sys/devices/virtual/dmi/id/sys_vendor
+/sys/devices/virtual/dmi/id/bios_version
+/sys/devices/virtual/dmi/id/product_version
+/sys/devices/virtual/dmi/id/board_vendor
+/sys/devices/virtual/dmi/id/chassis_version
+/sys/devices/virtual/dmi/id/product_sku
+/sys/devices/virtual/dmi/id/chassis_type
+/sys/devices/virtual/dmi/id/chassis_serial
+/sys/devices/virtual/dmi/id/product_family
+/sys/devices/virtual/dmi/id/product_uuid
+/sys/devices/virtual/dmi/id/bios_vendor
+/sys/devices/virtual/dmi/id/board_asset_tag
+/sys/devices/virtual/dmi/id/board_version
+/sys/devices/virtual/dmi/id/modalias
+/sys/devices/virtual/dmi/id/board_name
+)
+
+# if the program requires command line args, you need quotes.
+PROGRAMS=(
+"dmidecode -t memory"
+lsblk
+"lsmem --summary --bytes"
+lscpu
+lspci
+"ip addr"
+"udevadm info -e | grep MEMORY"
+"uname -snrmp"
+)
+
+# abort on nonzero exit status, unbound variables, or errors inside pipes
+set -eu -o pipefail
+
+
+cleanup_workdir() {
+    rm -rf "$WORK_DIR"
+}
+
+
+setup_workdir() {
+    # the temp directory used, within $DIR
+    WORK_DIR=$(mktemp -d "/tmp/${HOSTNAME}.XXXXXX") || exit 1
+
+    # check if tmp dir was created
+    if [[ ! "$WORK_DIR" || ! -d "$WORK_DIR" ]]; then
+      echo "ERROR: Could not create temp dir"
+      exit 1
+    fi
+
+    # register the cleanup function to be called on the EXIT signal
+    trap cleanup_workdir EXIT
+
+}
+
+
+create_archive() {
+    # archive all the system stuff we've been asked to save.
+    tar czf "/tmp/${HOSTNAME}.tgz" -C "$WORK_DIR" .
+
+    # make scp capture easier
+    chmod ugo+r "/tmp/${HOSTNAME}.tgz"
+}
+
+
+collect_files() {
+    for file in ${FILES[@]} ; do
+        if [[ -f "${file}" ]]; then
+            dir=$(dirname "${file}")
+            mkdir -p "${WORK_DIR}/${dir}"
+            cp -aH "${file}" "${WORK_DIR}/${file}"
+        fi
+    done
+}
+
+
+collect_programs() {
+    mkdir -p "$WORK_DIR"/_programs
+
+    # Find all programs in the list.
+    declare -a prog
+    for index in "${!PROGRAMS[@]}" ; do
+
+        prog=(${PROGRAMS[$index]})
+        cmd=${prog[0]}
+        path=$(command -v $cmd || true)   # that '|| true' took me over an hour to find. :(
+        # array slicing!
+        args="${prog[@]:1}"
+
+        if [[ -x $path ]]; then
+            ${cmd} ${args} > ${WORK_DIR}/_programs/${cmd}
+        else
+            echo "${cmd} not found" > "${WORK_DIR}/_programs/${cmd}"
+        fi
+    done
+
+}
+
+
+collect_uname() {
+    # TODO: this needs to be all? chars and capture errors to ONE file.
+    for opt in a b i K m n o p r s U v ;
+    do
+        echo "uname -${opt} $(uname -${opt} 2>&1)" >> "$WORK_DIR"/_programs/uname-opts
+    done
+
+}
+
+collect_metadata() {
+    mkdir -p "$WORK_DIR"/_meta
+    echo "$HOSTNAME" > "$WORK_DIR"/_meta/hostname
+    echo "$PATH" > "$WORK_DIR"/_meta/path
+    date -Iseconds > "$WORK_DIR"/_meta/date
+}
+
+
+# main function
+# BUG: this, if any, script should be posix strict compliant.
+
+# bash 3 (macos) doesn't cut it anymore
+if [[ "${BASH_VERSINFO:-0}" -lt 4 ]] ; then
+    echo "ERROR: bash is too old - upgrade or install newer bash" >&2
+    exit 1
+fi
+
+# create temporary working dir and error out if fail
+setup_workdir
+
+# Save all the system stuff we've been asked to save
+collect_metadata
+collect_files
+collect_programs
+collect_uname
+
+# Save the final output
+create_archive
+
+# Final cleanup
+cleanup_workdir
+
+## TODO:
+# convert from bash to (posix) sh
+# file, programs, DIRS and if a program  returns !0, record that as a _rc file
+# need to figure out multiple calls to same program problem (uname + uname -snrmp; ip will likely have 2-3)
