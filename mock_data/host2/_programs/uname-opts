@@ -1,0 +1,15 @@
+uname -a Linux <hostname2> 6.4.0-150600.23.47-default #1 SMP PREEMPT_DYNAMIC Thu Apr  3 03:44:04 UTC 2025 (2854fd7) x86_64 x86_64 x86_64 GNU/Linux
+uname -b uname: invalid option -- 'b'
+Try 'uname --help' for more information.
+uname -i x86_64
+uname -K uname: invalid option -- 'K'
+Try 'uname --help' for more information.
+uname -m x86_64
+uname -n <hostname2>
+uname -o GNU/Linux
+uname -p x86_64
+uname -r 6.4.0-150600.23.47-default
+uname -s Linux
+uname -U uname: invalid option -- 'U'
+Try 'uname --help' for more information.
+uname -v #1 SMP PREEMPT_DYNAMIC Thu Apr  3 03:44:04 UTC 2025 (2854fd7)

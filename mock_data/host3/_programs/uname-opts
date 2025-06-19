@@ -1,0 +1,15 @@
+uname -a Linux <host3> 5.14.0-503.35.1.el9_5.x86_64 #1 SMP PREEMPT_DYNAMIC Mon Mar 24 11:15:27 EDT 2025 x86_64 x86_64 x86_64 GNU/Linux
+uname -b uname: invalid option -- 'b'
+Try 'uname --help' for more information.
+uname -i x86_64
+uname -K uname: invalid option -- 'K'
+Try 'uname --help' for more information.
+uname -m x86_64
+uname -n <host3>
+uname -o GNU/Linux
+uname -p x86_64
+uname -r 5.14.0-503.35.1.el9_5.x86_64
+uname -s Linux
+uname -U uname: invalid option -- 'U'
+Try 'uname --help' for more information.
+uname -v #1 SMP PREEMPT_DYNAMIC Mon Mar 24 11:15:27 EDT 2025

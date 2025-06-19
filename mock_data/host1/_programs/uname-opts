@@ -1,0 +1,15 @@
+uname -a Linux itbshell01.nhgri.nih.gov 5.14.0-578.el9.x86_64 #1 SMP PREEMPT_DYNAMIC Mon Apr 7 19:22:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+uname -b uname: invalid option -- 'b'
+Try 'uname --help' for more information.
+uname -i x86_64
+uname -K uname: invalid option -- 'K'
+Try 'uname --help' for more information.
+uname -m x86_64
+uname -n itbshell01.nhgri.nih.gov
+uname -o GNU/Linux
+uname -p x86_64
+uname -r 5.14.0-578.el9.x86_64
+uname -s Linux
+uname -U uname: invalid option -- 'U'
+Try 'uname --help' for more information.
+uname -v #1 SMP PREEMPT_DYNAMIC Mon Apr 7 19:22:46 UTC 2025

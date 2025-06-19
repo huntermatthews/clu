@@ -1,75 +1,54 @@
-from pathlib import Path
+"""Doc Incomplete."""
+
+import os
 import subprocess
-import shlex
-
-# import str
 
 
-def debug(*args, **kwargs):
-    if g_config.debug:
-        return builtins.print(*args, **kwargs)
+from clu import facts, config
+from clu.debug import trace, debug, debug_var, debug_var_list, trace_var_list, panic
 
 
-def verbose(*args, **kwargs):
-    if g_config.verbose:
-        return builtins.print(*args, **kwargs)
-
-
-# BUG: should not print anything...
-# a simple file is ONE line that contains ONE value
-def read_simple_file(filename):
-    data = None
-    pname = Path(filename)
-    try:
-        with pname.open() as f:
-            data = f.read().strip()
-    except IOError as ex:
-        print(ex.errno, "XX", ex.strerror, "XX", ex.filename)
-    return data
-
-
-def read_simple_program(cmdline):
-    # This cheesy wrapper should only be used on "small" things - you've been warned.
-    # BUG: obviously we should verify the program is there (exist)
-    # BUG: we can excute it (perms)
-    try:
-        result = _subprocess_run(cmdline)
-    except FileNotFoundError as ex:
-        # BUG: log this
+def read_file(fname):
+    trace("read_file begin")
+    if config.mock:
+        fname = os.path.join(config.mock, fname)
+        debug_var("fname", fname)
+    if not os.path.isfile(fname):
+        debug(f"File not found: {fname}")
         return None
-    if result.returncode != 0:
+    debug(f"Reading file: {fname}")
+    with open(fname, "r") as f:
+        return f.read()
+
+
+def read_program(p_name, *p_args):
+    trace("read_program begin")
+    arg_string = " ".join(p_args)
+    debug_var("p_name", p_name)
+    debug_var("p_args", p_args)
+    debug_var("arg_string", arg_string)
+    if config.mock:
+        fname = os.path.join(config.mock, "_programs", p_name)
+        if os.path.isfile(fname):
+            with open(fname, "r") as f:
+                return f.read()
+        else:
+            debug(f"Mock program file not found: {fname}")
+            return None
+    else:
+        try:
+            result = subprocess.run(
+                [p_name] + list(p_args), capture_output=True, text=True, check=True
+            )
+            return result.stdout, result.returncode
+        except Exception as e:
+            debug(f"Error running program {p_name}: {e}")
+
+
+def read_program2(*args):
+
+    try:
+        result = subprocess.run(args, capture_output=True, text=True, check=True)
+        return result.stdout
+    except Exception:
         return None
-    return result.stdout
-
-
-def _subprocess_run(cmdline):
-    # TODO: Should this simply be merged into read_simple_program() ?
-    result = subprocess.run(
-        shlex.split(cmdline),
-        check=False,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        encoding="UTF-8",
-    )
-    return result
-
-
-def simple_parser(text, seperator="."):
-    # Just what it says on the tin - do a VERY rough parsing of multiple lines
-    # thing on the left of the Seperator, key
-    # thing on the right of the seperator, value
-    # multiple seperators? ignored -only first  one counts
-    # no key? NO PROBLEM - ignore the whole line!
-    # redundant keys? NO PROBLEM - last value wins!
-    # its .... simple
-    data = {}
-
-    for line in text.splitlines():
-        if not line.strip():
-            continue
-        if seperator not in line:
-            continue
-        key, value = line.split(seperator, 1)
-        data[key.strip()] = value.strip()
-
-    return data

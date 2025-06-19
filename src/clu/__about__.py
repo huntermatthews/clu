@@ -1,22 +1,6 @@
-# __about__.py
-# General idea from https://github.com/pypi/warehouse/warehouse/__about__.py
+"""This file contains metadata about the package."""
 
 from importlib import metadata
-
-
-__all__ = [
-    "__author__",
-    # "__build_date__",
-    "__copyright__",
-    "__email__",
-    "__license__",
-    # "__minimum_python__",
-    # "__requirements__",
-    # "__summary__",
-    "__title__",
-    "__url__",
-    "__version__",
-]
 
 ##
 ## Static fields
@@ -62,4 +46,3 @@ __license__ = "Apache-2.0"
 # # Make some assumptions about the metadata for the requires-python field.
 # assert dist_info.metadata["Requires-Python"].startswith(">=")
 # __minimum_python__ = dist_info.metadata["Requires-Python"][2:]
-
