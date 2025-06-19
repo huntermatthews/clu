@@ -7,7 +7,9 @@ import sys
 
 from clu import facts
 from clu.debug import trace, debug, debug_var, debug_var_list, panic
-from clu.old_readers import read_program
+from clu.readers import read_program
+
+# from clu.parse_linux import parse_os_release
 
 
 def requires_os_test():
@@ -17,7 +19,7 @@ def requires_os_test():
 
 def parse_os_test():
     trace("parse_os_test begin")
-    # parse_ip_addr_show()
+    print("parse_os_release() here I am")
 
 
 def requires_os_unsupported():
@@ -30,6 +32,11 @@ def parse_os_unsupported():
     panic("Unsupported OS")
 
 
+def requires_uname():
+    trace("requires_uname begin")
+    return "prog:uname"
+
+
 def parse_uname():
     trace("parse_uname begin")
     keys = [
@@ -40,6 +47,8 @@ def parse_uname():
         "phy.arch.family",
     ]
     data = read_program("uname", "-snrmp")
+    debug_var("data", data)
+    debug("data type", type(data))
     if data is None:
         panic("parse_uname: uname command failed")
         return

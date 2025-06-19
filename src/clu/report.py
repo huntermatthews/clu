@@ -3,7 +3,7 @@
 from clu import facts, config
 from clu.outputs import output_dots, output_shell
 from clu.parse_darwin import parse_os_darwin
-from clu.parse_linux import os_test_parse, os_unsupported_parse
+from clu.parse_linux import parse_os_linux
 from clu.parse_generic import parse_os_test, parse_os_unsupported, parse_uname
 
 

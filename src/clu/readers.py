@@ -4,14 +4,15 @@ import os
 import subprocess
 
 
-from clu import facts, config
+from clu import facts
+import clu
 from clu.debug import trace, debug, debug_var, debug_var_list, trace_var_list, panic
 
 
 def read_file(fname):
     trace("read_file begin")
-    if config.mock:
-        fname = os.path.join(config.mock, fname)
+    if clu.config.mock:
+        fname = os.path.join(clu.config.mock, fname)
         debug_var("fname", fname)
     if not os.path.isfile(fname):
         debug(f"File not found: {fname}")
@@ -27,8 +28,8 @@ def read_program(p_name, *p_args):
     debug_var("p_name", p_name)
     debug_var("p_args", p_args)
     debug_var("arg_string", arg_string)
-    if config.mock:
-        fname = os.path.join(config.mock, "_programs", p_name)
+    if clu.config.mock:
+        fname = os.path.join(clu.config.mock, "_programs", p_name)
         if os.path.isfile(fname):
             with open(fname, "r") as f:
                 return f.read()

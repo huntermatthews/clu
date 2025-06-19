@@ -4,7 +4,7 @@ import re
 
 from clu import facts
 from clu.debug import trace, debug, debug_var, debug_var_list, trace_var_list, panic
-from clu.old_readers import read_program, read_file
+from clu.readers import read_program, read_file
 from clu.conversions import bytes_to_si
 from clu.parse_generic import (
     requires_uname,
@@ -37,7 +37,7 @@ def parse_os_linux():
     trace("parse_os_linux begin")
     facts["os.name"] = "Linux"
 
-    parse_uname()
+    # parse_uname() done already
     parse_virt_what()
     parse_os_release()
     if facts.get("phy.platform") == "physical":

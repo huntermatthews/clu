@@ -4,14 +4,15 @@ import argparse
 import sys
 from pathlib import Path
 
-
+import clu
+from clu import __about__
 from clu.debug import debug, debug_state, debug_var, trace, panic
-
-from clu import __about__, config
+from clu.report import do_report
 
 
 def main():
-    global config
+    #    global clu.config
+    print(f"{clu.config=}")
 
     if sys.version_info < (3, 8):
         print("ERROR: Must use at least python 3.8")
@@ -63,26 +64,28 @@ def main():
 
     parser.add_argument("facts", nargs="*", help="Facts to collect")
 
-    config = parser.parse_args()
-    print(f"DEBUG: config = {config}")
-    print(f"DEBUG: facts = {config.facts}")
+    clu.config = parser.parse_args()
+    print(f"PDEBUG: clu.config = {clu.config}")
+    print(f"PDEBUG: facts = {clu.config.facts}")
 
-    if config.debug == 1:
+    if clu.config.debug == 1:
         debug_state("debug")
-    elif config.debug >= 2:
+    elif clu.config.debug >= 2:
         debug_state("trace")
     else:
         debug_state("off")
 
-    if config.mock:
+    if clu.config.mock:
         # BUG: This is WEAK - we should use a more robust way to find the mock data directory
-        config.mock = Path(__file__).parent.parent.parent / "mock_data" / config.mock
-        if not config.mock.is_dir():
-            panic(f"mock directory {config.mock_dir} does not exist")
-        debug_var("MOCK", config.mock)
+        clu.config.mock = (
+            Path(__file__).parent.parent.parent / "mock_data" / clu.config.mock
+        )
+        if not clu.config.mock.is_dir():
+            panic(f"mock directory {clu.config.mock_dir} does not exist")
+        debug_var("MOCK", clu.config.mock)
 
     trace("Starting clu utility...")
     debug("Debugging enabled, debug state:", debug_state())
-    debug_var("config", config)
-    print("code here")
+    debug_var("clu.config", clu.config)
+    do_report()
     sys.exit(0)
