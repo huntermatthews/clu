@@ -5,7 +5,7 @@ import re
 import sys
 
 
-from clu import facts
+from clu import facts, config
 from clu.debug import trace, debug, debug_var, debug_var_list, panic
 from clu.readers import read_program
 
@@ -39,6 +39,7 @@ def requires_uname():
 
 def parse_uname():
     trace("parse_uname begin")
+    print(f"{config=}")
     keys = [
         "os.kernel.name",
         "os.hostname",

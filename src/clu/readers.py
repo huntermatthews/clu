@@ -4,8 +4,7 @@ import os
 import subprocess
 
 
-from clu import facts
-import clu
+from clu import facts, config
 from clu.debug import trace, debug, debug_var, debug_var_list, trace_var_list, panic
 
 
@@ -53,3 +52,15 @@ def read_program2(*args):
         return result.stdout
     except Exception:
         return None
+
+
+def _subprocess_run(cmdline):
+    # TODO: Should this simply be merged into read_simple_program() ?
+    result = subprocess.run(
+        shlex.split(cmdline),
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        encoding="UTF-8",
+    )
+    return result
