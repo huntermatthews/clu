@@ -65,8 +65,6 @@ def main():
     parser.add_argument("facts", nargs="*", help="Facts to collect")
 
     parser.parse_args(namespace=config)
-    print(f"PDEBUG: config = {config}")
-    print(f"PDEBUG: facts = {config.facts}")
 
     if config.debug == 1:
         debug_state("debug")
@@ -84,6 +82,6 @@ def main():
 
     trace("Starting clu utility...")
     debug("Debugging enabled, debug state:", debug_state())
-    debug_var("config", config)
+    debug(f"{config=}")
     do_report()
     sys.exit(0)
