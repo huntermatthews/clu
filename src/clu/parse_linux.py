@@ -123,7 +123,7 @@ def requires_udevadm_ram():
 
 def parse_udevadm_ram():
     trace("parse_udevadm_ram begin")
-    data, rc = read_program("udevadm", "info", "-e")
+    data, rc = read_program("udevadm info -e")
     if data is None or rc != 0:
         return
 
@@ -303,7 +303,7 @@ def requires_ip_addr():
 
 def parse_ip_addr():
     trace("parse_ip_addr begin")
-    data, rc = read_program("ip", "addr")
+    data, rc = read_program("ip addr")
     if data is None or rc != 0:
         return
     debug_var_list("data", data.splitlines() if data else [])
