@@ -80,3 +80,6 @@ def trace_var_list(var_name, var_list):
         )
         for i, val in enumerate(var_list, 1):
             print(f"     trace: index: {i}, Value: {val}", file=sys.stderr)
+
+# def caller_function():
+#     return (inspect.stack()[1].function, inspect.stack()[1].filename)
