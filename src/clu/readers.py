@@ -17,6 +17,7 @@ def read_file(fname):
     data = raw_read_file(fname)
     return data
 
+
 def raw_read_file(fname):
     trace("raw_read_file begin")
     if not os.path.isfile(fname):
@@ -26,8 +27,10 @@ def raw_read_file(fname):
     with open(fname, "r") as f:
         return f.read()
 
+
 def text_file_mock_path(fname):
     return os.path.join(config.mock, fname)
+
 
 def program_mock_path(cmdline):
     trace("program_mock_path begin")
@@ -47,7 +50,7 @@ def read_program(cmdline):
         (dname, rc_name) = program_mock_path(cmdline)
         data = raw_read_file(dname)
 
-        rc = 0   # Default return code
+        rc = 0  # Default return code
         if os.path.isfile(rc_name):
             rc = int(raw_read_file(rc_name))
         return data, rc
@@ -58,24 +61,3 @@ def read_program(cmdline):
     except Exception as e:
         debug(f"Error running program {cmdline}: {e}")
         return None, 1
-
-
-def read_program2(*args):
-
-    try:
-        result = subprocess.run(args, capture_output=True, text=True, check=True)
-        return result.stdout
-    except Exception:
-        return None
-
-
-def _subprocess_run(cmdline):
-    # TODO: Should this simply be merged into read_simple_program() ?
-    result = subprocess.run(
-        shlex.split(cmdline),
-        check=False,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        encoding="UTF-8",
-    )
-    return result

@@ -47,14 +47,13 @@ def parse_uname():
         "phy.arch.name",
         "phy.arch.family",
     ]
-    data = read_program("uname", "-snrmp")
+    data, rc = read_program("uname -snrmp")
     debug_var("data", data)
     debug("data type", type(data))
-    if data is None:
+    debug_var("rc", rc)
+    if data is None or rc != 0:
         panic("parse_uname: uname command failed")
-        return
     data = data.strip().split()
-    debug_var_list("data", data)
     if len(keys) != len(data):
         debug("count keys", len(keys))
         debug("count data", len(data))
@@ -90,11 +89,11 @@ def requires_uptime():
 
 def parse_uptime():
     trace("parse_uptime begin")
-    data = read_program("uptime")
+    data, rc = read_program("uptime")
+    if data is None or rc != 0:
+        panic("parse_uptime: uptime command failed")
     debug_var("data", data)
-    if not data:
-        return
-    match = re.match(r".* up (.*) \d+ user.*", data)
+    match = re.match(r".*up *(.*) \d+ user.*", data)
     uptime = match.group(1).rstrip(",") if match else ""
     debug_var("uptime", uptime)
     facts["run.uptime"] = uptime

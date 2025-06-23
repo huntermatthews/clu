@@ -5,7 +5,6 @@ from clu.debug import trace, debug, debug_var, debug_var_list, panic
 from clu.readers import read_program
 from clu.parse_generic import (
     requires_uname,
-    parse_uname,
     requires_uptime,
     parse_uptime,
     requires_clu,
@@ -40,10 +39,10 @@ def requires_sw_vers():
 
 def parse_sw_vers():
     trace("parse_sw_vers begin")
-    data = read_program("sw_vers")
+    data, rc = read_program("sw_vers")
     debug_var_list("data", data.splitlines() if data else [])
-    if not data:
-        return
+    if data is None or rc != 0:
+        panic("parse_sw_vers: uname command failed")
     for line in data.splitlines():
         if ":" not in line:
             continue
@@ -67,10 +66,11 @@ def requires_macos_name():
 def parse_macos_name():
     trace("parse_macos_name begin")
     version = facts.get("os.version", "")
-    major_ver = version.split(".")[0] if version else ""
-    debug_var("major_ver", major_ver)
-    if not major_ver:
+    if not version:
         panic("parse_macos_name: os.version is not set or empty")
+
+    major_ver = version.split(".")[0]
+    debug_var("major_ver", major_ver)
 
     if major_ver == "26":
         code_name = "Tahoe"
@@ -85,4 +85,8 @@ def parse_macos_name():
         code_name = "Monterey"
     elif major_ver == "11":
         code_name = "Big Sur"
+    else:
+        # Note that for older than 11, the logic of the code name changes
+        # and thats WAY out of support for us
+        code_name = f"Unknown-{major_ver}"
     facts["os.code_name"] = code_name
