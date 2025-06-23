@@ -11,9 +11,6 @@ from clu.report import do_report
 
 
 def main():
-    #    global config
-    print(f"{config=}")
-
     if sys.version_info < (3, 8):
         print("ERROR: Must use at least python 3.8")
         sys.exit(1)
