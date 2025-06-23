@@ -25,9 +25,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 
 [dependency-groups]
-dev = [
-    "ruff>=0.12.0",
-]
+dev = []
 
 [project.scripts]
 clu = "clu.cli:main"
