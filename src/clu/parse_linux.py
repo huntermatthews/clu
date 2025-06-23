@@ -123,18 +123,23 @@ def requires_udevadm_ram():
 
 def parse_udevadm_ram():
     trace("parse_udevadm_ram begin")
-    data = read_program("udevadm", "info", "-e")
-    if data is None:
+    data, rc = read_program("udevadm", "info", "-e")
+    if data is None or rc != 0:
         return
+
     # Find all MEMORY_DEVICE_x_SIZE=number
     raw_sizes = re.findall(r"MEMORY_DEVICE_\d+_SIZE=(\d+)", data)
     debug_var_list("raw_sizes", raw_sizes)
+
     sizes = [int(size) for size in raw_sizes]
     debug_var_list("sizes", sizes)
+
     total = sum(sizes)
     debug_var("total", total)
+
     bytes_str = bytes_to_si(total)
     debug_var("bytes", bytes_str)
+
     facts["phy.ram.size"] = bytes_str
 
 
@@ -144,10 +149,11 @@ def requires_virt_what():
 
 def parse_virt_what():
     trace("parse_virt_what begin")
-    data = read_program("virt-what")
-    if data is None:
+    data, rc = read_program("virt-what")
+    if data is None or rc != 0:
         facts["phy.platform"] = "UNKNOWN"
         return
+
     data = data.strip()
     debug_var_list("data", [data])
     if not data:
@@ -171,9 +177,10 @@ def parse_lscpu():
     }
     fields = {}
     attr_keys = ["model", "vendor", "cores", "threads", "sockets"]
-    data = read_program("lscpu")
-    if data is None:
+    data, rc = read_program("lscpu")
+    if data is None or rc != 0:
         return
+
     for regex, field in regexes.items():
         match = re.search(regex, data, re.MULTILINE)
         value = match.group(1).strip() if match else None
@@ -245,14 +252,16 @@ def requires_selinux():
 
 def parse_selinux():
     trace("parse_selinux begin")
-    rc = read_program("selinuxenabled")
-    if rc is not None:
+    _, rc = read_program("selinuxenabled")
+    # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
+    if rc == 0:
         facts["os.selinux.enable"] = True
     else:
         facts["os.selinux.enable"] = False
-    data = read_program("getenforce")
+
+    data, rc = read_program("getenforce")
     debug_var_list("data", [data])
-    facts["os.selinux.mode"] = data.strip() if data else None
+    facts["os.selinux.mode"] = data.strip() if data else "Unknown"
 
 
 def requires_no_salt():
@@ -294,5 +303,7 @@ def requires_ip_addr():
 
 def parse_ip_addr():
     trace("parse_ip_addr begin")
-    data = read_program("ip", "addr")
+    data, rc = read_program("ip", "addr")
+    if data is None or rc != 0:
+        return
     debug_var_list("data", data.splitlines() if data else [])
