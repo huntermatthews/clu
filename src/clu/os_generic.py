@@ -27,17 +27,15 @@ def parse_uname():
     ]
     data, rc = read_program("uname -snrmp")
     debug_var("data", data)
-    debug("data type", type(data))
     debug_var("rc", rc)
     if data is None or rc != 0:
         panic("parse_uname: uname command failed")
     data = data.strip().split()
     if len(keys) != len(data):
-        debug("count keys", len(keys))
-        debug("count data", len(data))
         debug_var("keys", keys)
         debug_var("data", data)
         panic("parse_uname: keys and data length don't match: You can't count")
+
     for idx in range(len(data)):
         debug_var(f"keys[{idx}]", keys[idx])
         debug_var(f"data[{idx}]", data[idx])

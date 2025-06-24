@@ -3,7 +3,7 @@
 import re
 
 from clu import facts
-from clu.debug import trace, debug, debug_var, debug_var_list, trace_var_list, panic
+from clu.debug import trace, debug, debug_var, trace_var, panic
 from clu.readers import read_program, read_file
 from clu.conversions import bytes_to_si
 from clu.os_generic import (
@@ -60,7 +60,7 @@ def requires_os_release():
 def parse_os_release():
     trace("parse_os_release begin")
     data = read_file("/etc/os-release")
-    debug_var_list("data", data)
+    debug_var("data", data)
     if not data:
         return
     for line in data.splitlines():
@@ -103,8 +103,6 @@ def parse_sys_dmi():
         "chassis_asset_tag",
     ]
     if len(keys) != len(entries):
-        debug("count keys", len(keys))
-        debug("count entries", len(entries))
         debug_var("keys", keys)
         debug_var("entries", entries)
         panic("parse_sys_dmi: keys and entries length don't match: You can't count")
@@ -112,9 +110,9 @@ def parse_sys_dmi():
         key = keys[idx]
         entry = entries[idx]
         data = read_file(f"/sys/devices/virtual/dmi/id/{entry}")
-        debug_var_list("data", data)
+        debug_var("data", data)
         debug_var("key", key)
-        facts[key] = data
+        facts[key] = data.strip()
 
 
 def requires_udevadm_ram():
@@ -129,10 +127,10 @@ def parse_udevadm_ram():
 
     # Find all MEMORY_DEVICE_x_SIZE=number
     raw_sizes = re.findall(r"MEMORY_DEVICE_\d+_SIZE=(\d+)", data)
-    debug_var_list("raw_sizes", raw_sizes)
+    debug_var("raw_sizes", raw_sizes)
 
     sizes = [int(size) for size in raw_sizes]
-    debug_var_list("sizes", sizes)
+    debug_var("sizes", sizes)
 
     total = sum(sizes)
     debug_var("total", total)
@@ -152,15 +150,12 @@ def parse_virt_what():
     data, rc = read_program("virt-what")
     if data is None or rc != 0:
         facts["phy.platform"] = "UNKNOWN"
-        debug(f"{facts=}")
         return
-
     data = data.strip()
-    debug_var_list("data", [data])
+    debug_var("data", [data])
     if not data:
         data = "physical"
     facts["phy.platform"] = data
-    debug(f"{facts=}")
 
 def requires_lscpu():
     return "prog:lscpu"
@@ -229,14 +224,14 @@ def parse_cpuinfo_flags():
         "avx512f avx512bw avx512cd avx512dq avx512vl",
     ]
     data = read_file("/proc/cpuinfo")
-    trace_var_list("data", data.splitlines() if data else [])
+    trace_var("data", data.splitlines() if data else [])
     cpu_flags = ""
     if data:
         for line in data.splitlines():
             if line.startswith("flags"):
                 cpu_flags = line.split(":", 1)[1].strip()
                 break
-    debug_var_list("cpu_flags", cpu_flags.split())
+    debug_var("cpu_flags", cpu_flags.split())
     cpu_version = 0
     for idx, v in enumerate(vers):
         if __has_flags(v, cpu_flags):
@@ -261,7 +256,7 @@ def parse_selinux():
         facts["os.selinux.enable"] = False
 
     data, rc = read_program("getenforce")
-    debug_var_list("data", [data])
+    debug_var("data", data)
     facts["os.selinux.mode"] = data.strip() if data else "Unknown"
 
 
@@ -276,7 +271,7 @@ def parse_no_salt():
         facts["salt.no_salt.exists"] = False
         return
     else:
-        debug_var_list("data", [data])
+        debug_var("data", data)
         facts["salt.no_salt.exists"] = True
     if not data.strip():
         data = "UNKNOWN"
@@ -307,4 +302,4 @@ def parse_ip_addr():
     data, rc = read_program("ip addr")
     if data is None or rc != 0:
         return
-    debug_var_list("data", data.splitlines() if data else [])
+    debug_var("data", data)

@@ -1,7 +1,7 @@
 """Doc Incomplete."""
 
 from clu import facts
-from clu.debug import trace, debug_var, debug_var_list, panic
+from clu.debug import trace, debug_var, panic
 from clu.readers import read_program
 from clu.os_generic import (
     requires_uname,
@@ -41,7 +41,7 @@ def requires_sw_vers():
 def parse_sw_vers():
     trace("parse_sw_vers begin")
     data, rc = read_program("sw_vers")
-    debug_var_list("data", data.splitlines() if data else [])
+    debug_var("data", data)
     if data is None or rc != 0:
         panic("parse_sw_vers: uname command failed")
     for line in data.splitlines():

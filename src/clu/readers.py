@@ -6,20 +6,21 @@ import subprocess
 
 
 from clu import config
-from clu.debug import trace, debug
+from clu.debug import trace, debug, debug_var
 
 
 def read_file(fname):
     trace("read_file begin")
     debug(f"read_file: {fname=}")
     if config.mock:
+        debug(f'config mocking {config.mock}')
         fname = get_file_mock_path(fname)
     data = raw_read_file(fname)
     return data
 
 
 def raw_read_file(fname):
-    trace("raw_read_file begin")
+    trace(f"raw_read_file begin {fname=}")
     if not os.path.isfile(fname):
         debug(f"File not found: {fname}")
         return None
@@ -29,7 +30,9 @@ def raw_read_file(fname):
 
 
 def get_file_mock_path(fname):
-    return os.path.join(config.mock, fname)
+    x = os.path.join(config.mock, fname.strip('/'))
+    debug_var("x", x)
+    return x
 
 
 def get_program_mock_path(cmdline):

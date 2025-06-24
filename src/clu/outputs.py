@@ -4,7 +4,7 @@ import json
 
 
 from clu import facts
-from clu.debug import trace, debug, debug_var, debug_var_list
+from clu.debug import trace
 
 
 def output_dots():

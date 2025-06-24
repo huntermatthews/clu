@@ -23,26 +23,9 @@ def debug(*args):
     if config.debug > 0:
         print("DEBUG:", *args, file=sys.stderr)
 
-
-def debug_var(var_name, value):
-    """
-    Print the value of a variable for debugging.
-    """
+def debug_var(var_name, var_value):
     if config.debug > 0:
-        print(f"DEBUG: variable {var_name} == '{value}'", file=sys.stderr)
-
-
-def debug_var_list(var_name, var_list):
-    """
-    Print the contents of a list variable for debugging.
-    """
-    if config.debug > 0:
-        print(
-            f"DEBUG: variable `{var_name}` of length {len(var_list)}:", file=sys.stderr
-        )
-        for i, val in enumerate(var_list, 1):
-            print(f"     debug: index: {i}, Value: {val}", file=sys.stderr)
-
+        _debug_var("DEBUG", var_name, var_value)
 
 def trace(*args):
     """
@@ -51,17 +34,31 @@ def trace(*args):
     if config.debug > 1:
         print("TRACE:", *args, file=sys.stderr)
 
-
-def trace_var_list(var_name, var_list):
-    """
-    Print the contents of a list variable for tracing.
-    """
+def trace_var(var_name, var_value):
     if config.debug > 1:
-        print(
-            f"TRACE: variable `{var_name}` of length {len(var_list)}:", file=sys.stderr
-        )
-        for i, val in enumerate(var_list, 1):
-            print(f"     trace: index: {i}, Value: {val}", file=sys.stderr)
+        _debug_var("TRACE", var_name, var_value)
+
+def _debug_var(level, var_name, var_value):
+    """
+    Print the value of a variable for debugging.
+    """
+    if config.debug > 0:
+        var_type = type(var_value)
+        if var_type is str:
+            print(f"{level}: {var_name} (str[{len(var_value)}]) == '{var_value}'", file=sys.stderr)
+        elif var_type is list or var_type is tuple:
+            print(f"{level}: {var_type}[{len(var_value)}] {var_name}:", file=sys.stderr)
+            for i, val in enumerate(var_value, 1):
+                print(f"     debug: index: {i}, Value: {val}", file=sys.stderr)
+        elif var_type is dict:
+            print(f"{level}: dict[{len(var_value)}] {var_name}:", file=sys.stderr)
+            for key, value in var_value:
+                print(f"  {var_name}[{key}] = {value}", file=sys.stderr)
+        elif var_type is None:
+            print(f"{level}: {var_name} is None...", file=sys.stderr)
+        else:
+            print(f"{level}: {var_name} (type {var_type} ) == '{var_value}'", file=sys.stderr)
+
 
 # def caller_function():
 #     return (inspect.stack()[1].function, inspect.stack()[1].filename)
