@@ -6,7 +6,7 @@ from pathlib import Path
 
 # import clu
 from clu import __about__, config
-from clu.debug import debug, debug_state, debug_var, trace, panic
+from clu.debug import debug, debug_var, trace, panic
 from clu.report import do_report
 
 
@@ -26,6 +26,7 @@ def main():
         help="Debug mode (use multiple times for more verbosity)",
     )
     parser.add_argument("--mock", help="Use mock data from a directory")
+    parser.add_argument("--test", action="store_true", help="Bypass uname checking and do whatever")
     parser.add_argument(
         "--output",
         choices=["dots", "shell"],
@@ -63,22 +64,14 @@ def main():
 
     parser.parse_args(namespace=config)
 
-    if config.debug == 1:
-        debug_state("debug")
-    elif config.debug >= 2:
-        debug_state("trace")
-    else:
-        debug_state("off")
-
     if config.mock:
         # BUG: This is WEAK - we should use a more robust way to find the mock data directory
         config.mock = Path(__file__).parent.parent.parent / "mock_data" / config.mock
         if not config.mock.is_dir():
-            panic(f"mock directory {config.mock_dir} does not exist")
+            panic(f"mock directory {config.mock} does not exist")
         debug_var("MOCK", config.mock)
 
-    trace("Starting clu utility...")
-    debug("Debugging enabled, debug state:", debug_state())
-    debug(f"{config=}")
+    trace(f"Starting clu utility... {sys.argv=}")
+    debug("Debugging enabled, debug state:", config.debug)
     do_report()
-    sys.exit(0)
+    return 0

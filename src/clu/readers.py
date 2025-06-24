@@ -6,7 +6,7 @@ import subprocess
 
 
 from clu import config
-from clu.debug import trace, debug, debug_var, debug_var_list, trace_var_list, panic
+from clu.debug import trace, debug
 
 
 def read_file(fname):
