@@ -6,9 +6,9 @@ from clu import facts
 from clu.debug import trace, debug, debug_var, debug_var_list, trace_var_list, panic
 from clu.readers import read_program, read_file
 from clu.conversions import bytes_to_si
-from clu.parse_generic import (
+from clu.os_generic import (
     requires_uname,
-    parse_uname,
+#     parse_uname,
     requires_uptime,
     parse_uptime,
     requires_clu,
@@ -152,6 +152,7 @@ def parse_virt_what():
     data, rc = read_program("virt-what")
     if data is None or rc != 0:
         facts["phy.platform"] = "UNKNOWN"
+        debug(f"{facts=}")
         return
 
     data = data.strip()
@@ -159,7 +160,7 @@ def parse_virt_what():
     if not data:
         data = "physical"
     facts["phy.platform"] = data
-
+    debug(f"{facts=}")
 
 def requires_lscpu():
     return "prog:lscpu"

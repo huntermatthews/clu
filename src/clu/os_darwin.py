@@ -1,10 +1,11 @@
 """Doc Incomplete."""
 
 from clu import facts
-from clu.debug import trace, debug, debug_var, debug_var_list, panic
+from clu.debug import trace, debug_var, debug_var_list, panic
 from clu.readers import read_program
-from clu.parse_generic import (
+from clu.os_generic import (
     requires_uname,
+#     parse_uname,
     requires_uptime,
     parse_uptime,
     requires_clu,

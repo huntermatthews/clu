@@ -5,31 +5,9 @@ import re
 import sys
 
 
-from clu import facts, config
-from clu.debug import trace, debug, debug_var, debug_var_list, panic
+from clu import facts
+from clu.debug import trace, debug, debug_var, panic
 from clu.readers import read_program
-
-# from clu.parse_linux import parse_os_release
-
-
-def requires_os_test():
-    trace("requires_os_test begin")
-    print("not implemented")
-
-
-def parse_os_test():
-    trace("parse_os_test begin")
-    print("parse_os_release() here I am")
-
-
-def requires_os_unsupported():
-    trace("requires_os_unsupported begin")
-    panic("Unsupported OS")
-
-
-def parse_os_unsupported():
-    trace("parse_os_unsupported begin")
-    panic("Unsupported OS")
 
 
 def requires_uname():
@@ -39,7 +17,7 @@ def requires_uname():
 
 def parse_uname():
     trace("parse_uname begin")
-    print(f"{config=}")
+
     keys = [
         "os.kernel.name",
         "os.hostname",
