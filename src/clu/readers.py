@@ -13,7 +13,7 @@ def read_file(fname):
     trace("read_file begin")
     debug(f"read_file: {fname=}")
     if config.mock:
-        fname = text_file_mock_path(fname)
+        fname = get_file_mock_path(fname)
     data = raw_read_file(fname)
     return data
 
@@ -28,11 +28,11 @@ def raw_read_file(fname):
         return f.read()
 
 
-def text_file_mock_path(fname):
+def get_file_mock_path(fname):
     return os.path.join(config.mock, fname)
 
 
-def program_mock_path(cmdline):
+def get_program_mock_path(cmdline):
     trace("program_mock_path begin")
 
     # cmdline is space separated, so we need to convert spaces to underscores
@@ -47,7 +47,7 @@ def read_program(cmdline):
     debug(f"read_program: {cmdline}")
 
     if config.mock:
-        (dname, rc_name) = program_mock_path(cmdline)
+        (dname, rc_name) = get_program_mock_path(cmdline)
         data = raw_read_file(dname)
 
         rc = 0  # Default return code

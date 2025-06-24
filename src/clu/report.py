@@ -2,22 +2,27 @@
 
 from clu import facts, config
 from clu.outputs import output_dots, output_shell
-from clu.parse_darwin import parse_os_darwin
-from clu.parse_linux import parse_os_linux
-from clu.parse_generic import parse_os_test, parse_os_unsupported, parse_uname
-
+from clu.os_darwin import parse_os_darwin
+from clu.os_linux import parse_os_linux
+from clu.os_test import parse_os_test
+from clu.os_unsupported import parse_os_unsupported
+from clu.os_generic import parse_uname   # There's always a uname, even if it's mocked.
 
 def do_report():
     """Generate a report based on the current (possibly mocked) OS."""
 
-    parse_uname()
-    if facts["os.kernel.name"] == "Darwin":
-        parse_os_darwin()
-    elif facts["os.kernel.name"] == "Linux":
-        # parse_os_linux()
+    if config.test:
+        # If we're in test mode, we don't need to do any checks.
+        # We just parse the test OS.
         parse_os_test()
     else:
-        parse_os_unsupported()
+        parse_uname()
+        if facts["os.kernel.name"] == "Darwin":
+            parse_os_darwin()
+        elif facts["os.kernel.name"] == "Linux":
+            parse_os_linux()
+        else:
+            parse_os_unsupported()
 
     if config.output == "dots":
         output_dots()
