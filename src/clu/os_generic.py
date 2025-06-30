@@ -70,6 +70,6 @@ def parse_uptime():
         panic("parse_uptime: uptime command failed")
     debug_var("data", data)
     match = re.match(r".*up *(.*) \d+ user.*", data)
-    uptime = match.group(1).rstrip(",") if match else ""
+    uptime = match.group(1).rstrip(",") if match else "unknown / error"
     debug_var("uptime", uptime)
     facts["run.uptime"] = uptime
