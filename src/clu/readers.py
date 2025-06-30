@@ -30,6 +30,7 @@ def raw_read_file(fname):
 
 
 def get_file_mock_path(fname):
+    # FIX: stupid os.path.join screws up if any entry STARTS with a slash...
     x = os.path.join(config.mock, fname.strip('/'))
     debug_var("x", x)
     return x
@@ -45,7 +46,7 @@ def get_program_mock_path(cmdline):
     cmdline = cmdline.replace("/", "%")
 
     data_file = os.path.join(config.mock, "_programs", cmdline)
-    rc_file = data_file + ".rc"
+    rc_file = data_file + "_rc"
     return (data_file, rc_file)
 
 
@@ -57,9 +58,14 @@ def read_program(cmdline):
         (dname, rc_name) = get_program_mock_path(cmdline)
         data = raw_read_file(dname)
 
-        rc = 0  # Default return code
         if os.path.isfile(rc_name):
             rc = int(raw_read_file(rc_name))
+        elif data is None:
+            rc = 127       # command not found (fish/bash/zsh/sh all consistent)
+        else:
+            rc = 0
+        debug_var(f"{cmdline} data", data)
+        debug_var(f"{cmdline} rc", rc)
         return data, rc
 
     try:

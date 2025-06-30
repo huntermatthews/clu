@@ -250,14 +250,17 @@ def parse_selinux():
     trace("parse_selinux begin")
     _, rc = read_program("selinuxenabled")
     # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
+    debug(f'rc is {rc}')
     if rc == 0:
         facts["os.selinux.enable"] = True
-    else:
+    elif rc == 1:
         facts["os.selinux.enable"] = False
+    else:
+        facts["os.selinux.enable"] = "Unknown/Error"
 
     data, rc = read_program("getenforce")
     debug_var("data", data)
-    facts["os.selinux.mode"] = data.strip() if data else "Unknown"
+    facts["os.selinux.mode"] = data.strip() if data else "Unknown/Error"
 
 
 def requires_no_salt():
