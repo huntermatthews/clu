@@ -52,8 +52,8 @@ def _debug_var(level, var_name, var_value):
                 print(f"     debug: index: {i}, Value: {val}", file=sys.stderr)
         elif var_type is dict:
             print(f"{level}: dict[{len(var_value)}] {var_name}:", file=sys.stderr)
-            for key, value in var_value:
-                print(f"  {var_name}[{key}] = {value}", file=sys.stderr)
+            for key in var_value:
+                print(f"  {var_name}[{key}] = {var_value[key]}", file=sys.stderr)
         elif var_type is None:
             print(f"{level}: {var_name} is None...", file=sys.stderr)
         else:
