@@ -6,7 +6,7 @@ import sys
 
 
 from clu import facts
-from clu.debug import trace, debug, debug_var, panic
+from clu.debug import trace, debug_var, trace_var, panic
 from clu.readers import read_program
 
 
@@ -22,12 +22,11 @@ def parse_uname():
         "os.kernel.name",
         "os.hostname",
         "os.kernel.version",
-        "phy.arch.name",
-        "phy.arch.family",
+        "phy.arch",
     ]
-    data, rc = read_program("uname -snrmp")
-    debug_var("data", data)
-    debug_var("rc", rc)
+    data, rc = read_program("uname -snrm")
+    trace_var("data", data)
+    trace_var("rc", rc)
     if data is None or rc != 0:
         panic("parse_uname: uname command failed")
     data = data.strip().split()
@@ -57,7 +56,8 @@ def parse_clu():
     # facts["clu.debug_mode"] = os.environ.get("_debug", "")
     facts["clu.path"] = os.environ.get("PATH", "")
     facts["clu.cmdline"] = " ".join(sys.argv)
-
+    # print('getcwd:      ', os.getcwd())
+    # print('__file__:    ', __file__)
 
 def requires_uptime():
     return "prog:uptime"
