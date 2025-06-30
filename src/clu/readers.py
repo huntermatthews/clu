@@ -40,6 +40,10 @@ def get_program_mock_path(cmdline):
 
     # cmdline is space separated, so we need to convert spaces to underscores
     cmdline = cmdline.replace(" ", "_")
+
+    # udevadm info uses path like things that are not really paths - get rid of slashes
+    cmdline = cmdline.replace("/", "%")
+
     data_file = os.path.join(config.mock, "_programs", cmdline)
     rc_file = data_file + ".rc"
     return (data_file, rc_file)

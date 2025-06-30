@@ -121,7 +121,7 @@ def requires_udevadm_ram():
 
 def parse_udevadm_ram():
     trace("parse_udevadm_ram begin")
-    data, rc = read_program("udevadm info -e")
+    data, rc = read_program("udevadm info --path /devices/virtual/dmi/id")
     if data is None or rc != 0:
         return
 
