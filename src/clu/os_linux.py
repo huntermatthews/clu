@@ -149,7 +149,7 @@ def parse_virt_what():
     trace("parse_virt_what begin")
     data, rc = read_program("virt-what")
     if data is None or rc != 0:
-        facts["phy.platform"] = "UNKNOWN"
+        facts["phy.platform"] = "Unknown/Error"
         return
     data = data.strip()
     debug_var("data", [data])
