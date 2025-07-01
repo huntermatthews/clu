@@ -19,7 +19,7 @@ def output_shell():
     for key in sorted(facts.keys()):
         value = facts[key]
         key_var = key.upper().replace(".", "_")
-        print(f"{key_var}='{value}'")
+        print(f"{key_var}=\"{value}\"")
 
 
 def output_json():
