@@ -138,7 +138,7 @@ def parse_udevadm_ram():
     bytes_str = bytes_to_si(total)
     debug_var("bytes", bytes_str)
 
-    facts["phy.ram.size"] = bytes_str
+    facts["phy.ram"] = bytes_str
 
 
 def requires_virt_what():
