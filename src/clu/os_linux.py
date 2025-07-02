@@ -40,10 +40,8 @@ def parse_os_linux():
     # parse_uname() done already
     parse_virt_what()
     parse_os_release()
-    if facts.get("phy.platform") == "physical":
-        parse_sys_dmi()
-    if facts.get("phy.arch.name") in ("x86_64", "amd64"):
-        parse_cpuinfo_flags()
+    parse_sys_dmi()
+    parse_cpuinfo_flags()
     parse_udevadm_ram()
     parse_lscpu()
     parse_selinux()
@@ -84,6 +82,13 @@ def requires_sys_dmi():
 
 def parse_sys_dmi():
     trace("parse_sys_dmi begin")
+
+    parse_virt_what()
+
+    if facts.get("phy.platform") != "physical":
+        debug("Not a physical platform, skipping sys.dmi parsing")
+        return
+
     keys = [
         "sys.vendor",
         "sys.model.family",
@@ -147,6 +152,10 @@ def requires_virt_what():
 
 def parse_virt_what():
     trace("parse_virt_what begin")
+    if "phy.platform" in facts:
+        # already set --skip it
+        return
+
     data, rc = read_program("virt-what")
     if data is None or rc != 0:
         facts["phy.platform"] = "Unknown/Error"
@@ -217,6 +226,12 @@ def requires_cpuinfo_flags():
 
 def parse_cpuinfo_flags():
     trace("parse_cpuinfo_flags begin")
+
+    # we can always assume uname has been parsed
+    if facts.get("phy.arch") not in ("x86_64", "amd64"):
+        debug("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
+        return
+
     vers = [
         "lm cmov cx8 fpu fxsr mmx syscall sse2",
         "cx16 lahf_lm popcnt sse4_1 sse4_2 ssse3",

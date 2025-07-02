@@ -1,6 +1,6 @@
 from clu.debug import trace, panic
 
-from clu.os_linux import parse_virt_what
+from clu.os_linux import parse_cpuinfo_flags
 
 
 def requires_os_test():
@@ -10,4 +10,4 @@ def requires_os_test():
 
 def parse_os_test():
     trace("parse_os_test begin")
-    parse_virt_what()
+    parse_cpuinfo_flags()
