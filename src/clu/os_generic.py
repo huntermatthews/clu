@@ -5,7 +5,7 @@ import re
 import sys
 
 
-from clu import facts
+from clu import facts, __about__
 from clu.debug import trace, debug_var, trace_var, panic
 from clu.readers import read_program
 
@@ -48,16 +48,13 @@ def requires_clu():
 def parse_clu():
     trace("parse_clu begin")
 
-    facts["clu.binary"] = os.path.realpath(__file__)
-    # facts["clu.version"] = os.environ.get("_VERSION", "unknown")
-    # facts["clu.version_info"] = facts["clu.version"].replace(".", " ")
-    # facts["clu.python.binary"] = os.environ.get("SHELL", "")
-    # facts["clu.python.version"] = os.environ.get("version", "")
-    # facts["clu.debug_mode"] = os.environ.get("_debug", "")
-    facts["clu.path"] = os.environ.get("PATH", "")
+    facts["clu.binary"] = sys.argv[0]
+    facts["clu.version"] = __about__.__version__
+    facts["clu.python.binary"] = sys.executable
+    facts["clu.python.version"] = ".".join(map(str, sys.version_info[:3]))
+#    facts["clu.path"] = os.environ.get("PATH", "")
     facts["clu.cmdline"] = " ".join(sys.argv)
-    # print('getcwd:      ', os.getcwd())
-    # print('__file__:    ', __file__)
+    facts["clu.cwd"] = os.getcwd()
 
 def requires_uptime():
     return "prog:uptime"

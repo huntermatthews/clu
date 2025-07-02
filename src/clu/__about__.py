@@ -9,7 +9,7 @@ from importlib import metadata
 # Recall that __name__ is a "keyword" and thus can't be used here.
 __title__ = "clu"
 __version__ = "0.1.0"  # This should be updated manually or via a build script.
-__url__ = "https://github.com/hunterjmatthews/clu"
+__url__ = "https://github.com/huntermatthews/clu"
 
 __author__ = "Hunter Matthews"
 __email__ = "hunter@unix.haus"
