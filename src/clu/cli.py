@@ -8,7 +8,8 @@ from pathlib import Path
 from clu import __about__, config
 from clu.debug import debug, debug_var, trace, panic
 from clu.report import do_report
-
+from clu.archive import do_archive
+from clu.requires import do_list_requires, do_check_requires
 
 def main():
     if sys.version_info < (3, 8):
@@ -72,6 +73,13 @@ def main():
         debug_var("MOCK", config.mock)
 
     trace(f"Starting clu utility... {sys.argv=}")
-    debug("Debugging enabled, debug state:", config.debug)
-    do_report()
+    if config.mode == "list-requires":
+        do_list_requires()
+    elif config.mode == "check-requires":
+        do_check_requires()
+    elif config.mode == "archive":
+        do_archive()
+    elif config.mode == "report":
+        do_report()
+
     return 0

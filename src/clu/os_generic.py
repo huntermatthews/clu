@@ -5,14 +5,14 @@ import re
 import sys
 
 
-from clu import facts, __about__
+from clu import facts, requires, __about__
 from clu.debug import trace, debug_var, trace_var, panic
 from clu.readers import read_program
 
 
 def requires_uname():
     trace("requires_uname begin")
-    return "prog:uname"
+    requires["programs"].append("uname -snrm")
 
 
 def parse_uname():
@@ -42,8 +42,8 @@ def parse_uname():
 
 
 def requires_clu():
-    return ""
-
+    # No specific requirements for clu group
+    pass
 
 def parse_clu():
     trace("parse_clu begin")
@@ -56,8 +56,9 @@ def parse_clu():
     facts["clu.cmdline"] = " ".join(sys.argv)
     facts["clu.cwd"] = os.getcwd()
 
+
 def requires_uptime():
-    return "prog:uptime"
+    requires["programs"].append("uptime")
 
 
 def parse_uptime():

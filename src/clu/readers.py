@@ -2,6 +2,7 @@
 
 import os
 import shlex
+import shutil
 import subprocess
 
 
@@ -74,3 +75,38 @@ def read_program(cmdline):
     except Exception as e:
         debug(f"Error running program {cmdline}: {e}")
         return None, 1
+
+
+def check_program_exists(program):
+    trace("check_program_exists begin")
+    debug(f"check_program_exists: {program}")
+
+    if config.mock:
+        (dname, _) = get_program_mock_path(program)
+        debug_var("mock path", dname)
+        exists = os.path.isfile(dname)
+        debug_var(f"{program} exists", exists)
+        if exists:
+            debug(f"Program {program} found in mock path: {dname}")
+            return dname
+        else:
+            debug(f"Program {program} not found in mock path: {dname}")
+            return None
+
+    return shutil.which(program.split()[0])  # Only check the actual command, not its arguments
+
+
+def check_file_exists(fname):
+    trace("check_file_exists begin")
+    debug(f"check_file_exists: {fname}")
+
+    if config.mock:
+        fname = get_file_mock_path(fname)
+
+    exists = os.path.isfile(fname)
+    if exists:
+        debug(f"File {fname} found")
+        return fname
+    else:
+        debug(f"File {fname} not found")
+        return None

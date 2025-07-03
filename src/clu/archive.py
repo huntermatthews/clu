@@ -5,45 +5,19 @@ import tempfile
 import tarfile
 from datetime import datetime
 
-FILES = [
-    "/etc/os-release",
-    "/proc/cpuinfo",
-    "/proc/meminfo",
-    "/proc/mounts",
-    "/sys/devices/virtual/dmi/id/bios_date",
-    "/sys/devices/virtual/dmi/id/board_serial",
-    "/sys/devices/virtual/dmi/id/uevent",
-    "/sys/devices/virtual/dmi/id/product_serial",
-    "/sys/devices/virtual/dmi/id/product_name",
-    "/sys/devices/virtual/dmi/id/chassis_vendor",
-    "/sys/devices/virtual/dmi/id/chassis_asset_tag",
-    "/sys/devices/virtual/dmi/id/sys_vendor",
-    "/sys/devices/virtual/dmi/id/bios_version",
-    "/sys/devices/virtual/dmi/id/product_version",
-    "/sys/devices/virtual/dmi/id/board_vendor",
-    "/sys/devices/virtual/dmi/id/chassis_version",
-    "/sys/devices/virtual/dmi/id/product_sku",
-    "/sys/devices/virtual/dmi/id/chassis_type",
-    "/sys/devices/virtual/dmi/id/chassis_serial",
-    "/sys/devices/virtual/dmi/id/product_family",
-    "/sys/devices/virtual/dmi/id/product_uuid",
-    "/sys/devices/virtual/dmi/id/bios_vendor",
-    "/sys/devices/virtual/dmi/id/board_asset_tag",
-    "/sys/devices/virtual/dmi/id/board_version",
-    "/sys/devices/virtual/dmi/id/modalias",
-    "/sys/devices/virtual/dmi/id/board_name",
-]
-
-PROGRAMS = [
-    ["dmidecode", "-t", "memory"],
-    ["lsblk"],
-    ["lsmem", "--summary", "--bytes"],
-    ["lscpu"],
-    ["lspci"],
-    ["ip", "addr"],
-    ["bash", "-c", "udevadm info -e | grep MEMORY"],
-    ["uname", "-snrmp"],
-]
+def do_archive():
+    """Create an archive of the current system state."""
+    return
+    hostname = os.uname().nodename
+    work_dir = setup_workdir(hostname)
+    try:
+        collect_metadata(work_dir, hostname)
+        collect_files(work_dir)
+        collect_programs(work_dir)
+        collect_uname(work_dir)
+        create_archive(hostname, work_dir)
+    finally:
+        cleanup_workdir(work_dir)
 
 
 def cleanup_workdir(work_dir):

@@ -1,6 +1,6 @@
 """Doc Incomplete."""
 
-from clu import facts
+from clu import facts, requires
 from clu.debug import trace, debug_var, panic
 from clu.readers import read_program
 from clu.os_generic import (
@@ -27,6 +27,7 @@ def parse_os_darwin():
 
     # Nothing explicitly says Apple, but we know its apple because Darwin is the OS
     facts["sys.vendor"] = "Apple"
+
     # parse_uname() done already
     parse_sw_vers()
     parse_macos_name()
@@ -35,7 +36,7 @@ def parse_os_darwin():
 
 
 def requires_sw_vers():
-    return "prog:sw_vers"
+    requires["programs"].append("sw_vers")
 
 
 def parse_sw_vers():
@@ -61,7 +62,8 @@ def parse_sw_vers():
 
 
 def requires_macos_name():
-    return ""
+    # its just logic code - there are no external requirements for this
+    pass
 
 
 def parse_macos_name():
@@ -91,3 +93,7 @@ def parse_macos_name():
         # and thats WAY out of support for us
         code_name = f"Unknown-{major_ver}"
     facts["os.code_name"] = code_name
+
+
+## TODO: add more requirements and parsing functions for macOS
+## 1. system_profiler SPSoftwareDataType -json
