@@ -1,13 +1,9 @@
-"""Doc Incomplete."""
-
-import os
-import shutil
-
-from clu import facts, requires
+from clu import requires
+from clu.facts import get_fact
 from clu.os_darwin import requires_os_darwin
 from clu.os_linux import requires_os_linux
 from clu.os_unsupported import requires_os_unsupported
-from clu.os_generic import parse_uname   # There's always a uname, even if it's mocked.
+from clu.os_generic import parse_uname   # we always need this, to know WHICH requires lists to handle.
 from clu.readers import check_file_exists, check_program_exists
 
 def do_list_requires():
@@ -15,7 +11,7 @@ def do_list_requires():
 
     _get_requirements()
 
-    print(f"Requirements: ({facts['os.kernel.name']})")
+    print(f"Requirements: ({get_fact('os.kernel.name')})")
 
     print("Files:")
     for file in requires["files"]:
@@ -36,7 +32,7 @@ def do_check_requires():
 
     _get_requirements()
 
-    print(f"Checking requirements: ({facts['os.kernel.name']})")
+    print(f"Checking requirements: ({get_fact('os.kernel.name')})")
 
     print("Files:")
     for file in requires["files"]:
@@ -65,9 +61,9 @@ def _get_requirements():
     # we always require uname, so we parse it first
     parse_uname()
 
-    if facts["os.kernel.name"] == "Darwin":
+    if get_fact("os.kernel.name") == "Darwin":
         requires_os_darwin()
-    elif facts["os.kernel.name"] == "Linux":
+    elif get_fact("os.kernel.name") == "Linux":
         requires_os_linux()
     else:
         requires_os_unsupported()
