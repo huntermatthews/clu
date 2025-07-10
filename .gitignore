@@ -8,3 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
