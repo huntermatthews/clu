@@ -1,10 +1,25 @@
-from clu import requires
+
 from clu.facts import get_fact
 from clu.os_darwin import requires_os_darwin
 from clu.os_linux import requires_os_linux
 from clu.os_unsupported import requires_os_unsupported
 from clu.os_generic import parse_uname   # we always need this, to know WHICH requires lists to handle.
 from clu.readers import check_file_exists, check_program_exists
+
+# These are the requirements that we will collect
+# They are used to generate the requirements list and check if they are met.
+requires = {
+    "files": [],
+    "programs": [],
+    "apis": [],
+}
+
+def add_requires(category, item):
+    """Add a requirement to the specified category."""
+    if category in requires:
+        requires[category].append(item)
+    else:
+        requires[category] = [item]
 
 def do_list_requires():
     """List all the requirements for the current OS."""

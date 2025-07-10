@@ -5,15 +5,16 @@ import re
 import sys
 
 
-from clu import requires, __about__
+from clu import config, __about__
 from clu.facts import add_fact
+from clu.requires import add_requires
 from clu.debug import trace, debug_var, trace_var, panic
 from clu.readers import read_program
 
 
 def requires_uname():
     trace("requires_uname begin")
-    requires["programs"].append("uname -snrm")
+    add_requires("programs", "uname -snrm")
 
 
 def parse_uname():
@@ -59,7 +60,7 @@ def parse_clu():
 
 
 def requires_uptime():
-    requires["programs"].append("uptime")
+    add_requires("programs", "uptime")
 
 
 def parse_uptime():

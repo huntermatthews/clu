@@ -1,6 +1,6 @@
 """Doc Incomplete."""
 
-from clu import requires
+from clu.requires import add_requires
 from clu.facts import add_fact, get_fact
 from clu.debug import trace, debug_var, panic
 from clu.readers import read_program
@@ -37,7 +37,7 @@ def parse_os_darwin():
 
 
 def requires_sw_vers():
-    requires["programs"].append("sw_vers")
+    add_requires("programs", "sw_vers")
 
 
 def parse_sw_vers():

@@ -2,7 +2,7 @@
 
 import re
 
-from clu import requires
+from clu.requires import add_requires
 from clu.facts import add_fact, get_fact, get_all_facts
 from clu.debug import trace, debug, debug_var, trace_var, panic
 from clu.readers import read_program, read_file
@@ -52,7 +52,7 @@ def parse_os_linux():
 
 def requires_os_release():
     trace("requires_os_release begin")
-    requires["files"].append("/etc/os-release")
+    add_requires("files", "/etc/os-release")
 
 
 def parse_os_release():
@@ -77,13 +77,13 @@ def parse_os_release():
 
 def requires_sys_dmi():
     trace("requires_sys_dmi begin")
-    requires["files"].append("/sys/devices/virtual/dmi/id/sys_vendor")
-    requires["files"].append("/sys/devices/virtual/dmi/id/product_family")
-    requires["files"].append("/sys/devices/virtual/dmi/id/product_name")
-    requires["files"].append("/sys/devices/virtual/dmi/id/product_serial")
-    requires["files"].append("/sys/devices/virtual/dmi/id/product_uuid")
-    requires["files"].append("/sys/devices/virtual/dmi/id/chassis_vendor")
-    requires["files"].append("/sys/devices/virtual/dmi/id/chassis_asset_tag")
+    add_requires("files", "/sys/devices/virtual/dmi/id/sys_vendor")
+    add_requires("files", "/sys/devices/virtual/dmi/id/product_family")
+    add_requires("files", "/sys/devices/virtual/dmi/id/product_name")
+    add_requires("files", "/sys/devices/virtual/dmi/id/product_serial")
+    add_requires("files", "/sys/devices/virtual/dmi/id/product_uuid")
+    add_requires("files", "/sys/devices/virtual/dmi/id/chassis_vendor")
+    add_requires("files", "/sys/devices/virtual/dmi/id/chassis_asset_tag")
 
 
 def parse_sys_dmi():
@@ -127,8 +127,7 @@ def parse_sys_dmi():
 
 
 def requires_udevadm_ram():
-    requires["programs"].append("udevadm info --path /devices/virtual/dmi/id")
-
+    add_requires("programs", "udevadm info --path /devices/virtual/dmi/id")
 
 
 def parse_udevadm_ram():
@@ -154,7 +153,7 @@ def parse_udevadm_ram():
 
 
 def requires_virt_what():
-    requires["programs"].append("virt-what")
+    add_requires("programs", "virt-what")
 
 
 def parse_virt_what():
@@ -174,7 +173,7 @@ def parse_virt_what():
     add_fact("phy.platform", data)
 
 def requires_lscpu():
-    requires["programs"].append("lscpu")
+    add_requires("programs", "lscpu")
 
 
 def parse_lscpu():
@@ -228,7 +227,7 @@ def __has_flags(check_flags, all_flags):
 
 
 def requires_cpuinfo_flags():
-    requires["files"].append("/proc/cpuinfo")
+    add_requires("files", "/proc/cpuinfo")
 
 
 def parse_cpuinfo_flags():
@@ -265,8 +264,8 @@ def parse_cpuinfo_flags():
 
 
 def requires_selinux():
-    requires["programs"].append("selinuxenabled")
-    requires["programs"].append("getenforce")
+    add_requires("programs", "selinuxenabled")
+    add_requires("programs", "getenforce")
 
 
 def parse_selinux():
@@ -287,7 +286,7 @@ def parse_selinux():
 
 
 def requires_no_salt():
-    requires["files"].append("/no_salt")
+    add_requires("files", "/no_salt")
 
 
 def parse_no_salt():
@@ -305,7 +304,7 @@ def parse_no_salt():
 
 
 def requires_proc_uptime():
-    requires["files"].append("/proc/uptime")
+    add_requires("files", "/proc/uptime")
 
 
 def parse_proc_uptime():
@@ -320,7 +319,7 @@ def parse_proc_uptime():
 
 
 def requires_ip_addr():
-    requires["programs"].append("ip")
+    add_requires("programs", "ip")
 
 
 def parse_ip_addr():
