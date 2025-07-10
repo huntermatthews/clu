@@ -1,0 +1,27 @@
+clu.binary: ./clu
+clu.cmdline: ./clu
+clu.cwd: /home/egglestongc/Downloads
+clu.python.binary: /usr/lib/python-exec/python3.13/python3
+clu.python.version: 3.13.5
+clu.version: 0.1.0
+os.distro.name: gentoo
+os.distro.version: 2.17
+os.hostname: hg-02224551-vlg.nhgri.nih.gov
+os.kernel.name: Linux
+os.kernel.version: 6.12.34-gentoo-dist
+os.name: Linux
+os.selinux.enable: False
+os.selinux.mode: Unknown/Error
+phy.arch: x86_64
+phy.cpu.arch_version: x86_64_v3
+phy.cpu.cores: 8
+phy.cpu.model: Intel(R) Core(TM) Ultra 7 165H
+phy.cpu.sockets: 2
+phy.cpu.threads: 8
+phy.cpu.vendor: GenuineIntel
+phy.platform: Unknown/Error
+phy.ram: 17.1 GB
+run.uptime: 1:11,
+salt.no_salt.exists: False
+# That ram figure is CORRECT, according to G - she set a slider in the VM GUI and its 17.1/17.3GB (depending on your POV)
+#
