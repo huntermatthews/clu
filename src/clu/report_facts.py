@@ -9,7 +9,8 @@ from clu.os_test import parse_os_test
 from clu.os_unsupported import parse_os_unsupported
 from clu.os_generic import parse_uname   # There's always a uname, even if it's mocked.
 
-def do_report():
+
+def do_report_facts():
     """Generate a report based on the current (possibly mocked) OS."""
 
     if config.test:

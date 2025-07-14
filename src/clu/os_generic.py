@@ -5,7 +5,7 @@ import re
 import sys
 
 
-from clu import config, __about__
+from clu import __about__
 from clu.facts import add_fact
 from clu.requires import add_requires
 from clu.debug import trace, debug_var, trace_var, panic

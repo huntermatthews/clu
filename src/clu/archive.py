@@ -7,13 +7,14 @@ from datetime import datetime
 
 from clu import requires, __about__
 from clu.debug import debug_var
-from clu.requires import _get_requirements
+from clu.report_requires import get_os_requirements
 from clu.readers import get_program_mock_path, read_program
+
 
 def do_archive():
     """Create an archive of the current system state."""
 
-    _get_requirements()
+    get_os_requirements()
     debug_var("requires", requires)
 
     hostname = os.uname().nodename

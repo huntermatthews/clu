@@ -6,7 +6,7 @@ from clu.debug import trace, debug_var, panic
 from clu.readers import read_program
 from clu.os_generic import (
     requires_uname,
-#     parse_uname,
+#    parse_uname,
     requires_uptime,
     parse_uptime,
     requires_clu,

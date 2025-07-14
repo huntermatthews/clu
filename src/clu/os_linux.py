@@ -9,7 +9,7 @@ from clu.readers import read_program, read_file
 from clu.conversions import bytes_to_si
 from clu.os_generic import (
     requires_uname,
-#     parse_uname,
+#    parse_uname,
     requires_uptime,
     parse_uptime,
     requires_clu,
