@@ -1,6 +1,10 @@
 
 _default: help
 
+# Clean up build / dist artifacts
+clean:
+  rm -rf build dist
+
 # Print out the list of valid targets
 help:
   @just --list
@@ -9,7 +13,3 @@ help:
 zip:
   mkdir -p dist
   uv run python -m zipapp src -m "clu.cli:main" -o dist/clu -p "/usr/bin/env python3"
-
-# Clean up build / dist artifacts
-clean:
-  rm -rf build dist
