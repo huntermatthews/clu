@@ -1,11 +1,12 @@
 """Doc Incomplete."""
 
-from clu import facts, requires
+from clu.requires import add_requires
+from clu.facts import add_fact, get_fact
 from clu.debug import trace, debug_var, panic
 from clu.readers import read_program
 from clu.os_generic import (
     requires_uname,
-#     parse_uname,
+#    parse_uname,
     requires_uptime,
     parse_uptime,
     requires_clu,
@@ -26,7 +27,7 @@ def parse_os_darwin():
     trace("os_darwin_parse begin")
 
     # Nothing explicitly says Apple, but we know its apple because Darwin is the OS
-    facts["sys.vendor"] = "Apple"
+    add_fact("sys.vendor", "Apple")
 
     # parse_uname() done already
     parse_sw_vers()
@@ -36,7 +37,7 @@ def parse_os_darwin():
 
 
 def requires_sw_vers():
-    requires["programs"].append("sw_vers")
+    add_requires("programs", "sw_vers")
 
 
 def parse_sw_vers():
@@ -54,11 +55,11 @@ def parse_sw_vers():
         debug_var("key", key)
         debug_var("value", value)
         if key == "ProductName":
-            facts["os.name"] = value
+            add_fact("os.name", value)
         elif key == "ProductVersion":
-            facts["os.version"] = value
+            add_fact("os.version", value)
         elif key == "BuildVersion":
-            facts["os.build"] = value
+            add_fact("os.build", value)
 
 
 def requires_macos_name():
@@ -68,7 +69,7 @@ def requires_macos_name():
 
 def parse_macos_name():
     trace("parse_macos_name begin")
-    version = facts.get("os.version", "")
+    version = get_fact("os.version", "")
     if not version:
         panic("parse_macos_name: os.version is not set or empty")
 
@@ -92,7 +93,7 @@ def parse_macos_name():
         # Note that for older than 11, the logic of the code name changes
         # and thats WAY out of support for us
         code_name = f"Unknown-{major_ver}"
-    facts["os.code_name"] = code_name
+    add_fact("os.code_name", code_name)
 
 
 ## TODO: add more requirements and parsing functions for macOS

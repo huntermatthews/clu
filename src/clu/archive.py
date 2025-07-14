@@ -6,14 +6,16 @@ import tarfile
 from datetime import datetime
 
 from clu import requires, __about__
-from clu.debug import debug_var
-from clu.requires import _get_requirements
+from clu.debug import debug_var, debug
+from clu.report_requires import get_os_requirements
 from clu.readers import get_program_mock_path, read_program
+from clu.requires import get_all_requires
+
 
 def do_archive():
     """Create an archive of the current system state."""
 
-    _get_requirements()
+    get_os_requirements()
     debug_var("requires", requires)
 
     hostname = os.uname().nodename
@@ -48,7 +50,7 @@ def create_archive(hostname, work_dir):
 
 
 def collect_files(work_dir):
-    for file in requires["files"]:
+    for file in get_all_requires()["files"]:
         if os.path.isfile(file):
             dest = os.path.join(work_dir, file.lstrip("/"))
             os.makedirs(os.path.dirname(dest), exist_ok=True)
@@ -61,9 +63,11 @@ def collect_files(work_dir):
 def collect_programs(work_dir):
     prog_dir = os.path.join(work_dir, "_programs")
     os.makedirs(prog_dir, exist_ok=True)
-    for prog in requires["programs"]:
+    for prog in get_all_requires()["programs"]:
         debug_var("collect_programs:prog", prog)
         (data_file, rc_file) = os.path.join(prog_dir, get_program_mock_path(prog))
+        debug("data_file", data_file)
+        debug("rc_file", rc_file)
         result = read_program(prog)
 
         with open(data_file, "w") as f:

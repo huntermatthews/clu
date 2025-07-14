@@ -6,10 +6,11 @@ from pathlib import Path
 
 # import clu
 from clu import __about__, config
-from clu.debug import debug, debug_var, trace, panic
-from clu.report import do_report
+from clu.debug import debug_var, trace, panic
+from clu.report_facts import do_report_facts
 from clu.archive import do_archive
-from clu.requires import do_list_requires, do_check_requires
+from clu.report_requires import do_list_requires, do_check_requires
+
 
 def main():
     if sys.version_info < (3, 8):
@@ -80,6 +81,6 @@ def main():
     elif config.mode == "archive":
         do_archive()
     elif config.mode == "report":
-        do_report()
+        do_report_facts()
 
     return 0

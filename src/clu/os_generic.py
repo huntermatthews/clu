@@ -5,14 +5,16 @@ import re
 import sys
 
 
-from clu import facts, requires, __about__
+from clu import __about__
+from clu.facts import add_fact
+from clu.requires import add_requires
 from clu.debug import trace, debug_var, trace_var, panic
 from clu.readers import read_program
 
 
 def requires_uname():
     trace("requires_uname begin")
-    requires["programs"].append("uname -snrm")
+    add_requires("programs", "uname -snrm")
 
 
 def parse_uname():
@@ -38,7 +40,7 @@ def parse_uname():
     for idx in range(len(data)):
         debug_var(f"keys[{idx}]", keys[idx])
         debug_var(f"data[{idx}]", data[idx])
-        facts[keys[idx]] = data[idx]
+        add_fact(keys[idx], data[idx])
 
 
 def requires_clu():
@@ -48,17 +50,17 @@ def requires_clu():
 def parse_clu():
     trace("parse_clu begin")
 
-    facts["clu.binary"] = sys.argv[0]
-    facts["clu.version"] = __about__.__version__
-    facts["clu.python.binary"] = sys.executable
-    facts["clu.python.version"] = ".".join(map(str, sys.version_info[:3]))
+    add_fact("clu.binary", sys.argv[0])
+    add_fact("clu.version", __about__.__version__)
+    add_fact("clu.python.binary", sys.executable)
+    add_fact("clu.python.version", ".".join(map(str, sys.version_info[:3])))
 #    facts["clu.path"] = os.environ.get("PATH", "")
-    facts["clu.cmdline"] = " ".join(sys.argv)
-    facts["clu.cwd"] = os.getcwd()
+    add_fact("clu.cmdline", " ".join(sys.argv))
+    add_fact("clu.cwd", os.getcwd())
 
 
 def requires_uptime():
-    requires["programs"].append("uptime")
+    add_requires("programs", "uptime")
 
 
 def parse_uptime():
@@ -70,4 +72,4 @@ def parse_uptime():
     match = re.match(r".*up *(.*) \d+ user.*", data)
     uptime = match.group(1).rstrip(",") if match else "unknown / error"
     debug_var("uptime", uptime)
-    facts["run.uptime"] = uptime
+    add_fact("run.uptime", uptime)
