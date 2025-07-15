@@ -8,7 +8,7 @@ from datetime import datetime
 from clu import requires, __about__
 from clu.debug import debug_var, debug
 from clu.report_requires import get_os_requirements
-from clu.readers import get_program_mock_path, read_program
+from clu.readers import transform_cmdline_to_filename, read_program
 from clu.requires import get_all_requires
 
 
@@ -55,7 +55,7 @@ def collect_files(work_dir):
             dest = os.path.join(work_dir, file.lstrip("/"))
             os.makedirs(os.path.dirname(dest), exist_ok=True)
             try:
-                shutil.copy2(file, dest)
+                shutil.copy(file, dest)
             except Exception as e:
                 print(f"Failed to copy {file}: {e}")
 
@@ -65,17 +65,19 @@ def collect_programs(work_dir):
     os.makedirs(prog_dir, exist_ok=True)
     for prog in get_all_requires()["programs"]:
         debug_var("collect_programs:prog", prog)
-        (data_file, rc_file) = os.path.join(prog_dir, get_program_mock_path(prog))
-        debug("data_file", data_file)
-        debug("rc_file", rc_file)
-        result = read_program(prog)
+        cmd_name, rc_name = transform_cmdline_to_filename(prog)
+        data_path = os.path.join(prog_dir, cmd_name)
+        rc_path = os.path.join(prog_dir, rc_name)
+        debug("data_file", data_path)
+        debug("rc_file", rc_path)
+        stdout, rc = read_program(prog)
 
-        with open(data_file, "w") as f:
-            f.write(result.stdout)
+        with open(data_path, "w") as f:
+            f.write(stdout)
         # Save return code if nonzero
-        if result.returncode != 0:
-            with open(rc_file, "w") as f:
-                f.write(str(result.returncode))
+        if rc != 0:
+            with open(rc_path, "w") as f:
+                f.write(str(rc))
 
 
 def collect_metadata(work_dir, hostname):

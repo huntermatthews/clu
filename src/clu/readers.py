@@ -37,8 +37,9 @@ def get_file_mock_path(fname):
     return x
 
 
-def get_program_mock_path(cmdline):
-    trace("program_mock_path begin")
+def transform_cmdline_to_filename(cmdline):
+    trace("transform_cmdline_to_filename begin")
+    debug(f"transform_cmdline_to_filename: {cmdline}")
 
     # cmdline is space separated, so we need to convert spaces to underscores
     cmdline = cmdline.replace(" ", "_")
@@ -46,9 +47,18 @@ def get_program_mock_path(cmdline):
     # udevadm info uses path like things that are not really paths - get rid of slashes
     cmdline = cmdline.replace("/", "%")
 
-    data_file = os.path.join(config.mock, "_programs", cmdline)
-    rc_file = data_file + "_rc"
-    return (data_file, rc_file)
+    debug_var("transformed cmdline", cmdline)
+    return cmdline, cmdline + "_rc"
+
+
+def get_program_mock_path(cmdline):
+    trace("program_mock_path begin")
+
+    cmd_name, rc_name = transform_cmdline_to_filename(cmdline)
+
+    data_path = os.path.join(config.mock, "_programs", cmd_name)
+    rc_path = os.path.join(config.mock, "_programs", rc_name)
+    return (data_path, rc_path)
 
 
 def read_program(cmdline):
