@@ -21,6 +21,7 @@ def requires_os_darwin():
     requires_macos_name()
     requires_uptime()
     requires_clu()
+    requires_systemversion_plist()
 
 
 def parse_os_darwin():
@@ -94,6 +95,10 @@ def parse_macos_name():
         # and thats WAY out of support for us
         code_name = f"Unknown-{major_ver}"
     add_fact("os.code_name", code_name)
+
+
+def requires_systemversion_plist():
+    add_requires("files", "/System/Library/CoreServices/SystemVersion.plist")
 
 
 ## TODO: add more requirements and parsing functions for macOS
