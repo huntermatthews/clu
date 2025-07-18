@@ -25,7 +25,9 @@ readme = "README.md"
 requires-python = ">=3.8"
 
 [dependency-groups]
-dev = []
+dev = [
+    "pytest>=8.3.5",
+]
 
 [project.scripts]
 clu = "clu.cli:main"
