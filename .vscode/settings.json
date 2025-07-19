@@ -1,5 +1,11 @@
 {
     "files.exclude": {
         "**/__pycache__": true
-    }
+    },
+    "cSpell.words": [
+        "Justfile",
+        "pycache",
+        "pytest",
+        "zipapp"
+    ]
 }
