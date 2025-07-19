@@ -33,3 +33,8 @@ def si_to_bytes(size_str):
         raise ValueError(f"Unknown unit: {unit}")
     exponent = units[unit]
     return int(number * (1024**exponent))
+
+
+# TODO:
+# - Consider adding support for binary prefixes (KiB, MiB, etc.) if needed
+# - extend to ZB, YB, RB, QB -- and link to https://en.wikipedia.org/wiki/Binary_prefix
