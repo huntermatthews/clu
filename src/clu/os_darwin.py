@@ -70,7 +70,7 @@ def requires_macos_name():
 
 def parse_macos_name():
     trace("parse_macos_name begin")
-    version = get_fact("os.version", "")
+    version = get_fact("os.version")
     if not version:
         panic("parse_macos_name: os.version is not set or empty")
 
