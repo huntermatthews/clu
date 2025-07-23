@@ -4,12 +4,12 @@ import re
 
 from clu.requires import add_requires
 from clu.facts import add_fact, get_fact, get_all_facts
-from clu.debug import trace, debug, debug_var, trace_var, panic
+from clu.debug import debug, debug_var, trace_var, panic
 from clu.readers import read_program, read_file
 from clu.conversions import bytes_to_si
 from clu.os_generic import (
     requires_uname,
-#    parse_uname,
+#     parse_uname,
     requires_uptime,
     parse_uptime,
     requires_clu,
@@ -48,14 +48,16 @@ def parse_os_linux():
 
 
 def requires_os_release():
-    add_requires("files", "/etc/os-release")
-
+    return {"files": ["/etc/os-release"]}
 
 def parse_os_release():
+    result = {}
     data = read_file("/etc/os-release")
     debug_var("data", data)
     if not data:
-        return
+        result["os.distro.name"] = "Unknown/Error"
+        result["os.distro.version"] = "Unknown/Error"
+        return result
     for line in data.splitlines():
         if "=" not in line:
             continue
@@ -64,10 +66,12 @@ def parse_os_release():
         value = value.strip().strip('"')
         debug_var("key", key)
         debug_var("value", value)
+
         if key == "ID":
-            add_fact("os.distro.name", value)
+            result["os.distro.name"] = value
         elif key == "VERSION_ID":
-            add_fact("os.distro.version", value)
+            result["os.distro.version"] = value
+    return result
 
 
 def requires_sys_dmi():
@@ -210,7 +214,6 @@ def __has_flags(check_flags, all_flags):
     for flag in check_flags:
         if flag not in all_flags:
             return False
-    trace("__has_flags end")
     return True
 
 

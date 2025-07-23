@@ -1,13 +1,18 @@
-from clu.debug import trace, panic
 
-from clu.os_linux import parse_cpuinfo_flags
+from clu.os_linux import parse_os_release, requires_os_release
 
 
 def requires_os_test():
-    trace("requires_os_test begin")
-    panic("not implemented")
+    requires = requires = {
+        "files": [],
+        "programs": [],
+        "apis": [],
+    }
+    requires.update(requires_os_release())
+    return requires
 
 
 def parse_os_test():
-    trace("parse_os_test begin")
-    parse_cpuinfo_flags()
+    facts = {}
+    facts.update(parse_os_release())
+    return facts

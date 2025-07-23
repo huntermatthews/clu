@@ -8,18 +8,15 @@ import sys
 from clu import __about__
 from clu.facts import add_fact
 from clu.requires import add_requires
-from clu.debug import trace, debug_var, trace_var, panic
+from clu.debug import debug_var, trace_var, panic
 from clu.readers import read_program
 
 
 def requires_uname():
-    trace("requires_uname begin")
     add_requires("programs", "uname -snrm")
 
 
 def parse_uname():
-    trace("parse_uname begin")
-
     keys = [
         "os.kernel.name",
         "os.hostname",
@@ -48,8 +45,6 @@ def requires_clu():
     pass
 
 def parse_clu():
-    trace("parse_clu begin")
-
     add_fact("clu.binary", sys.argv[0])
     add_fact("clu.version", __about__.__version__)
     add_fact("clu.python.binary", sys.executable)
@@ -64,7 +59,6 @@ def requires_uptime():
 
 
 def parse_uptime():
-    trace("parse_uptime begin")
     data, rc = read_program("uptime")
     if data is None or rc != 0:
         panic("parse_uptime: uptime command failed")

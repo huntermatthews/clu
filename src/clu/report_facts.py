@@ -16,19 +16,19 @@ def do_report_facts():
     if config.test:
         # If we're in test mode, we don't need to do any checks.
         # We just parse the test OS.
-        parse_os_test()
+        facts = parse_os_test()
     else:
         parse_uname()
         if get_fact("os.kernel.name") == "Darwin":
-            parse_os_darwin()
+            facts = parse_os_darwin()
         elif get_fact("os.kernel.name") == "Linux":
-            parse_os_linux()
+            facts = parse_os_linux()
         else:
-            parse_os_unsupported()
+            facts = parse_os_unsupported()
 
     if config.output == "dots":
-        output_dots()
+        output_dots(facts)
     elif config.output == "shell":
-        output_shell()
+        output_shell(facts)
     else:
-        output_dots()
+        output_dots(facts)

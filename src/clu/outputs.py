@@ -3,21 +3,18 @@
 import json
 
 
-from clu.facts import get_fact, get_all_facts
-
-
-def output_dots():
-    for key in sorted(get_all_facts().keys()):
-        value = get_fact(key)
+def output_dots(facts):
+    for key in sorted(facts.keys()):
+        value = facts[key]
         print(f"{key}: {value}")
 
 
-def output_shell():
-    for key in sorted(get_all_facts().keys()):
-        value = get_fact(key)
+def output_shell(facts):
+    for key in sorted(facts.keys()):
+        value = facts[key]
         key_var = key.upper().replace(".", "_")
         print(f"{key_var}=\"{value}\"")
 
 
-def output_json():
-    print(json.dumps(get_all_facts(), indent=2))
+def output_json(facts):
+    print(json.dumps(facts, indent=2))
