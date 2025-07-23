@@ -7,11 +7,10 @@ import subprocess
 
 
 from clu import config
-from clu.debug import trace, debug, debug_var
+from clu.debug import debug, debug_var
 
 
 def read_file(fname):
-    trace("read_file begin")
     debug(f"read_file: {fname=}")
     if config.mock:
         debug(f'config mocking {config.mock}')
@@ -21,7 +20,6 @@ def read_file(fname):
 
 
 def raw_read_file(fname):
-    trace(f"raw_read_file begin {fname=}")
     if not os.path.isfile(fname):
         debug(f"File not found: {fname}")
         return None
@@ -38,7 +36,6 @@ def get_file_mock_path(fname):
 
 
 def transform_cmdline_to_filename(cmdline):
-    trace("transform_cmdline_to_filename begin")
     debug(f"transform_cmdline_to_filename: {cmdline}")
 
     # cmdline is space separated, so we need to convert spaces to underscores
@@ -52,8 +49,6 @@ def transform_cmdline_to_filename(cmdline):
 
 
 def get_program_mock_path(cmdline):
-    trace("program_mock_path begin")
-
     cmd_name, rc_name = transform_cmdline_to_filename(cmdline)
 
     data_path = os.path.join(config.mock, "_programs", cmd_name)
@@ -62,7 +57,6 @@ def get_program_mock_path(cmdline):
 
 
 def read_program(cmdline):
-    trace("read_program begin")
     debug(f"read_program: {cmdline}")
 
     if config.mock:
@@ -88,7 +82,6 @@ def read_program(cmdline):
 
 
 def check_program_exists(program):
-    trace("check_program_exists begin")
     debug(f"check_program_exists: {program}")
 
     if config.mock:
@@ -107,7 +100,6 @@ def check_program_exists(program):
 
 
 def check_file_exists(fname):
-    trace("check_file_exists begin")
     debug(f"check_file_exists: {fname}")
 
     if config.mock:

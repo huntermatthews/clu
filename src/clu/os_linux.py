@@ -18,8 +18,6 @@ from clu.os_generic import (
 
 
 def requires_os_linux():
-    trace("requires_os_linux begin")
-
     requires_uname()
     requires_virt_what()
     requires_os_release()
@@ -34,7 +32,6 @@ def requires_os_linux():
 
 
 def parse_os_linux():
-    trace("parse_os_linux begin")
     add_fact("os.name", "Linux")
 
     # parse_uname() done already
@@ -51,12 +48,10 @@ def parse_os_linux():
 
 
 def requires_os_release():
-    trace("requires_os_release begin")
     add_requires("files", "/etc/os-release")
 
 
 def parse_os_release():
-    trace("parse_os_release begin")
     data = read_file("/etc/os-release")
     debug_var("data", data)
     if not data:
@@ -76,7 +71,6 @@ def parse_os_release():
 
 
 def requires_sys_dmi():
-    trace("requires_sys_dmi begin")
     add_requires("files", "/sys/devices/virtual/dmi/id/sys_vendor")
     add_requires("files", "/sys/devices/virtual/dmi/id/product_family")
     add_requires("files", "/sys/devices/virtual/dmi/id/product_name")
@@ -87,8 +81,6 @@ def requires_sys_dmi():
 
 
 def parse_sys_dmi():
-    trace("parse_sys_dmi begin")
-
     parse_virt_what()
 
     if get_fact("phy.platform") != "physical":
@@ -131,7 +123,6 @@ def requires_udevadm_ram():
 
 
 def parse_udevadm_ram():
-    trace("parse_udevadm_ram begin")
     data, rc = read_program("udevadm info --path /devices/virtual/dmi/id")
     if data is None or rc != 0:
         return
@@ -157,7 +148,6 @@ def requires_virt_what():
 
 
 def parse_virt_what():
-    trace("parse_virt_what begin")
     if "phy.platform" in get_all_facts():
         # already set --skip it
         return
@@ -177,7 +167,6 @@ def requires_lscpu():
 
 
 def parse_lscpu():
-    trace("parse_lscpu begin")
     regexes = {
         r"^ *Model name: *(.+)": "model",
         r"^ *Vendor ID: *(.+)": "vendor",
@@ -213,7 +202,6 @@ def parse_lscpu():
 
 
 def __has_flags(check_flags, all_flags):
-    trace("__has_flags begin")
     check_flags = check_flags.split()
     all_flags = all_flags.split()
     debug("count is", len(check_flags), len(all_flags))
@@ -231,8 +219,6 @@ def requires_cpuinfo_flags():
 
 
 def parse_cpuinfo_flags():
-    trace("parse_cpuinfo_flags begin")
-
     # we can always assume uname has been parsed
     if get_fact("phy.arch") not in ("x86_64", "amd64"):
         debug("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
@@ -269,7 +255,6 @@ def requires_selinux():
 
 
 def parse_selinux():
-    trace("parse_selinux begin")
     _, rc = read_program("selinuxenabled")
     # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
     debug(f'rc is {rc}')
@@ -290,7 +275,6 @@ def requires_no_salt():
 
 
 def parse_no_salt():
-    trace("parse_no_salt begin")
     data = read_file("/no_salt")
     if data is None:
         add_fact("salt.no_salt.exists", False)
@@ -308,7 +292,6 @@ def requires_proc_uptime():
 
 
 def parse_proc_uptime():
-    trace("parse_proc_uptime begin")
     data = read_file("/proc/uptime")
     debug_var("data", data)
     if not data:
@@ -323,7 +306,6 @@ def requires_ip_addr():
 
 
 def parse_ip_addr():
-    trace("parse_ip_addr begin")
     data, rc = read_program("ip addr")
     if data is None or rc != 0:
         return

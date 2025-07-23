@@ -2,7 +2,7 @@
 
 from clu.requires import add_requires
 from clu.facts import add_fact, get_fact
-from clu.debug import trace, debug_var, panic
+from clu.debug import debug_var, panic
 from clu.readers import read_program
 from clu.os_generic import (
     requires_uname,
@@ -15,7 +15,6 @@ from clu.os_generic import (
 
 
 def requires_os_darwin():
-    trace("requires_os_darwin begin")
     requires_uname()
     requires_sw_vers()
     requires_macos_name()
@@ -25,8 +24,6 @@ def requires_os_darwin():
 
 
 def parse_os_darwin():
-    trace("os_darwin_parse begin")
-
     # Nothing explicitly says Apple, but we know its apple because Darwin is the OS
     add_fact("sys.vendor", "Apple")
 
@@ -42,7 +39,6 @@ def requires_sw_vers():
 
 
 def parse_sw_vers():
-    trace("parse_sw_vers begin")
     data, rc = read_program("sw_vers")
     debug_var("data", data)
     if data is None or rc != 0:
@@ -69,7 +65,6 @@ def requires_macos_name():
 
 
 def parse_macos_name():
-    trace("parse_macos_name begin")
     version = get_fact("os.version")
     if not version:
         panic("parse_macos_name: os.version is not set or empty")
