@@ -1,16 +1,6 @@
-
-# I can global if I want to
-# (remember, this was ported from a couple of scripts that used globals)
-facts = {}
-
-def add_fact(key, value):
-    facts[key] = value
-
-def get_fact(key):
-    return facts.get(key)
-
-def get_all_facts():
-    return facts
+""" Module for a simple facts container.
+This module provides a simple container for facts, which behaves like a dictionary.
+"""
 
 class Facts(dict):
     """A simple facts container that behaves like a dict."""
