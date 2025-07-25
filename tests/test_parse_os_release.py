@@ -11,8 +11,8 @@ from clu.os_linux import parse_os_release
     ]
 )
 def test_parse_os_release(mock_name, expected_output):
-    call_thing(mock_name)
-    assert parse_os_release() == expected_output
+    assert parse_os_release(mock_name) == expected_output
+
 
 
 # @pytest.fixture
