@@ -1,7 +1,7 @@
 """Doc Incomplete."""
 
-from clu.requires import add_requires
-from clu.facts import add_fact, get_fact
+from clu.requires import Requires
+from clu.facts import Facts
 from clu.debug import debug_var, panic
 from clu.readers import read_program
 from clu.os_generic import (
@@ -14,31 +14,31 @@ from clu.os_generic import (
 )
 
 
-def requires_os_darwin():
-    requires_uname()
-    requires_sw_vers()
-    requires_macos_name()
-    requires_uptime()
-    requires_clu()
+def requires_os_darwin(requires: Requires) -> None:
+    requires_uname(requires)
+    requires_sw_vers(requires)
+    requires_macos_name(requires)
+    requires_uptime(requires)
+    requires_clu(requires)
     requires_systemversion_plist()
 
 
-def parse_os_darwin():
+def parse_os_darwin(facts: Facts) -> None:
     # Nothing explicitly says Apple, but we know its apple because Darwin is the OS
-    add_fact("sys.vendor", "Apple")
+    facts["sys.vendor"] = "Apple"
 
     # parse_uname() done already
-    parse_sw_vers()
-    parse_macos_name()
-    parse_uptime()
-    parse_clu()
+    parse_sw_vers(facts)
+    parse_macos_name(facts)
+    parse_uptime(facts)
+    parse_clu(facts)
 
 
-def requires_sw_vers():
-    add_requires("programs", "sw_vers")
+def requires_sw_vers(requires: Requires) -> None:
+    requires.programs.append("sw_vers")
 
 
-def parse_sw_vers():
+def parse_sw_vers(facts: Facts) -> None:
     data, rc = read_program("sw_vers")
     debug_var("data", data)
     if data is None or rc != 0:
@@ -52,20 +52,20 @@ def parse_sw_vers():
         debug_var("key", key)
         debug_var("value", value)
         if key == "ProductName":
-            add_fact("os.name", value)
+            facts["os.name"] = value
         elif key == "ProductVersion":
-            add_fact("os.version", value)
+            facts["os.version"] = value
         elif key == "BuildVersion":
-            add_fact("os.build", value)
+            facts["os.build"] = value
 
 
-def requires_macos_name():
+def requires_macos_name(requires: Requires) -> None:
     # its just logic code - there are no external requirements for this
     pass
 
 
-def parse_macos_name():
-    version = get_fact("os.version")
+def parse_macos_name(facts: Facts) -> None:
+    version = facts["os.version"]
     if not version:
         panic("parse_macos_name: os.version is not set or empty")
 
@@ -89,11 +89,11 @@ def parse_macos_name():
         # Note that for older than 11, the logic of the code name changes
         # and thats WAY out of support for us
         code_name = f"Unknown-{major_ver}"
-    add_fact("os.code_name", code_name)
+    facts["os.code_name"] = code_name
 
 
-def requires_systemversion_plist():
-    add_requires("files", "/System/Library/CoreServices/SystemVersion.plist")
+def requires_systemversion_plist(requires: Requires) -> None:
+    requires.files.append("/System/Library/CoreServices/SystemVersion.plist")
 
 
 ## TODO: add more requirements and parsing functions for macOS

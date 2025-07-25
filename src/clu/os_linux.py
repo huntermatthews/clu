@@ -2,8 +2,8 @@
 
 import re
 
-from clu.requires import add_requires
-from clu.facts import add_fact, get_fact, get_all_facts
+from clu.requires import Requires
+from clu.facts import Facts
 from clu.debug import debug, debug_var, trace_var, panic
 from clu.readers import read_program, read_file
 from clu.conversions import bytes_to_si
@@ -17,47 +17,47 @@ from clu.os_generic import (
 )
 
 
-def requires_os_linux():
-    requires_uname()
-    requires_virt_what()
-    requires_os_release()
-    requires_sys_dmi()
-    requires_cpuinfo_flags()
-    requires_udevadm_ram()
-    requires_lscpu()
-    requires_selinux()
-    requires_no_salt()
-    requires_uptime()
-    requires_clu()
+def requires_os_linux(requires: Requires) -> None:
+    requires_uname(requires)
+    requires_virt_what(requires)
+    requires_os_release(requires)
+    requires_sys_dmi(requires)
+    requires_cpuinfo_flags(requires)
+    requires_udevadm_ram(requires)
+    requires_lscpu(requires)
+    requires_selinux(requires)
+    requires_no_salt(requires)
+    requires_uptime(requires)
+    requires_clu(requires)
 
 
-def parse_os_linux():
-    add_fact("os.name", "Linux")
+def parse_os_linux(facts: Facts) -> None:
+    facts["os.name"] = "Linux"
 
     # parse_uname() done already
-    parse_virt_what()
-    parse_os_release()
-    parse_sys_dmi()
-    parse_cpuinfo_flags()
-    parse_udevadm_ram()
-    parse_lscpu()
-    parse_selinux()
-    parse_no_salt()
-    parse_uptime()
-    parse_clu()
+    parse_virt_what(facts)
+    parse_os_release(facts)
+    parse_sys_dmi(facts)
+    parse_cpuinfo_flags(facts)
+    parse_udevadm_ram(facts)
+    parse_lscpu(facts)
+    parse_selinux(facts)
+    parse_no_salt(facts)
+    parse_uptime(facts)
+    parse_clu(facts)
 
 
-def requires_os_release():
-    return {"files": ["/etc/os-release"]}
+def requires_os_release(requires: Requires) -> None:
+    requires.files.append("/etc/os-release")
 
-def parse_os_release():
-    result = {}
+
+def parse_os_release(facts: Facts) -> None:
     data = read_file("/etc/os-release")
     debug_var("data", data)
     if not data:
-        result["os.distro.name"] = "Unknown/Error"
-        result["os.distro.version"] = "Unknown/Error"
-        return result
+        facts["os.distro.name"] = "Unknown/Error"
+        facts["os.distro.version"] = "Unknown/Error"
+        return
     for line in data.splitlines():
         if "=" not in line:
             continue
@@ -68,26 +68,26 @@ def parse_os_release():
         debug_var("value", value)
 
         if key == "ID":
-            result["os.distro.name"] = value
+            facts["os.distro.name"] = value
         elif key == "VERSION_ID":
-            result["os.distro.version"] = value
-    return result
+            facts["os.distro.version"] = value
 
 
-def requires_sys_dmi():
-    add_requires("files", "/sys/devices/virtual/dmi/id/sys_vendor")
-    add_requires("files", "/sys/devices/virtual/dmi/id/product_family")
-    add_requires("files", "/sys/devices/virtual/dmi/id/product_name")
-    add_requires("files", "/sys/devices/virtual/dmi/id/product_serial")
-    add_requires("files", "/sys/devices/virtual/dmi/id/product_uuid")
-    add_requires("files", "/sys/devices/virtual/dmi/id/chassis_vendor")
-    add_requires("files", "/sys/devices/virtual/dmi/id/chassis_asset_tag")
+def requires_sys_dmi(requires: Requires) -> None:
+    requires.files.extend([
+        "/sys/devices/virtual/dmi/id/sys_vendor",
+        "/sys/devices/virtual/dmi/id/product_family",
+        "/sys/devices/virtual/dmi/id/product_name",
+        "/sys/devices/virtual/dmi/id/product_serial",
+        "/sys/devices/virtual/dmi/id/product_uuid",
+        "/sys/devices/virtual/dmi/id/chassis_vendor",
+        "/sys/devices/virtual/dmi/id/chassis_asset_tag",
+    ])
 
 
-def parse_sys_dmi():
-    parse_virt_what()
+def parse_sys_dmi(facts: Facts) -> None:
 
-    if get_fact("phy.platform") != "physical":
+    if facts["phy.platform"] != "physical":
         debug("Not a physical platform, skipping sys.dmi parsing")
         return
 
@@ -119,14 +119,14 @@ def parse_sys_dmi():
         data = read_file(f"/sys/devices/virtual/dmi/id/{entry}")
         debug_var("data", data)
         debug_var("key", key)
-        add_fact(key, data.strip())
+        facts[key] = data.strip()
 
 
-def requires_udevadm_ram():
-    add_requires("programs", "udevadm info --path /devices/virtual/dmi/id")
+def requires_udevadm_ram(requires: Requires) -> None:
+    requires.programs.append("udevadm info --path /devices/virtual/dmi/id")
 
 
-def parse_udevadm_ram():
+def parse_udevadm_ram(facts: Facts) -> None:
     data, rc = read_program("udevadm info --path /devices/virtual/dmi/id")
     if data is None or rc != 0:
         return
@@ -144,33 +144,34 @@ def parse_udevadm_ram():
     bytes_str = bytes_to_si(total)
     debug_var("bytes", bytes_str)
 
-    add_fact("phy.ram", bytes_str)
+    facts["phy.ram"] = bytes_str
 
 
-def requires_virt_what():
-    add_requires("programs", "virt-what")
+def requires_virt_what(requires: Requires) -> None:
+    requires.programs.append("virt-what")
 
 
-def parse_virt_what():
-    if "phy.platform" in get_all_facts():
+def parse_virt_what(facts: Facts) -> None:
+    if "phy.platform" in facts:
         # already set --skip it
         return
 
     data, rc = read_program("virt-what")
     if data is None or rc != 0:
-        add_fact("phy.platform", "Unknown/Error")
+        facts["phy.platform"] = "Unknown/Error"
         return
     data = data.strip()
     debug_var("data", [data])
     if not data:
         data = "physical"
-    add_fact("phy.platform", data)
-
-def requires_lscpu():
-    add_requires("programs", "lscpu")
+    facts["phy.platform"] = data
 
 
-def parse_lscpu():
+def requires_lscpu(requires: Requires) -> None:
+    requires.programs.append("lscpu")
+
+# Todo: clean this up, it is a mess
+def parse_lscpu(facts: Facts) -> None:
     regexes = {
         r"^ *Model name: *(.+)": "model",
         r"^ *Vendor ID: *(.+)": "vendor",
@@ -202,7 +203,7 @@ def parse_lscpu():
         value = fields.get(key)
         debug_var("key", key)
         debug_var("value", value)
-        add_fact(f"phy.cpu.{key}", value)
+        facts[f"phy.cpu.{key}"] = value
 
 
 def __has_flags(check_flags, all_flags):
@@ -217,13 +218,13 @@ def __has_flags(check_flags, all_flags):
     return True
 
 
-def requires_cpuinfo_flags():
-    add_requires("files", "/proc/cpuinfo")
+def requires_cpuinfo_flags(requires: Requires) -> None:
+    requires.files.append("/proc/cpuinfo")
 
 
-def parse_cpuinfo_flags():
+def parse_cpuinfo_flags(facts: Facts) -> None:
     # we can always assume uname has been parsed
-    if get_fact("phy.arch") not in ("x86_64", "amd64"):
+    if facts["phy.arch"] not in ("x86_64", "amd64"):
         debug("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
         return
 
@@ -249,67 +250,69 @@ def parse_cpuinfo_flags():
         else:
             break
     debug_var("idx", idx if data else 0)
-    add_fact("phy.cpu.arch_version", f"x86_64_v{cpu_version}")
+    facts["phy.cpu.arch_version"] = f"x86_64_v{cpu_version}"
 
 
-def requires_selinux():
-    add_requires("programs", "selinuxenabled")
-    add_requires("programs", "getenforce")
+def requires_selinux(requires: Requires) -> None:
+    requires.programs.extend(["selinuxenabled", "getenforce"])
 
 
-def parse_selinux():
+def parse_selinux(facts: Facts) -> None:
     _, rc = read_program("selinuxenabled")
     # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
     debug(f'rc is {rc}')
     if rc == 0:
-        add_fact("os.selinux.enable", True)
+        facts["os.selinux.enable"] = True
     elif rc == 1:
-        add_fact("os.selinux.enable", False)
+        facts["os.selinux.enable"] = False
     else:
-        add_fact("os.selinux.enable", "Unknown/Error")
+        facts["os.selinux.enable"] = "Unknown/Error"
 
     data, rc = read_program("getenforce")
     debug_var("data", data)
-    add_fact("os.selinux.mode", data.strip() if data else "Unknown/Error")
+    facts["os.selinux.mode"] = data.strip() if data else "Unknown/Error"
 
 
-def requires_no_salt():
-    add_requires("files", "/no_salt")
+def requires_no_salt(requires: Requires) -> None:
+    requires.files.append("/no_salt")
 
 
-def parse_no_salt():
+def parse_no_salt(facts: Facts) -> None:
     data = read_file("/no_salt")
     if data is None:
-        add_fact("salt.no_salt.exists", False)
+        facts["salt.no_salt.exists"] = False
         return
     else:
         debug_var("data", data)
-        add_fact("salt.no_salt.exists", True)
+        facts["salt.no_salt.exists"] = True
     if not data.strip():
         data = "UNKNOWN"
-    add_fact("salt.no_salt.reason", data.strip())
+    facts["salt.no_salt.reason"] = data.strip()
 
 
-def requires_proc_uptime():
-    add_requires("files", "/proc/uptime")
+def requires_proc_uptime(requires: Requires) -> None:
+    requires.files.append("/proc/uptime")
 
 
-def parse_proc_uptime():
+def parse_proc_uptime(facts: Facts) -> None:
     data = read_file("/proc/uptime")
     debug_var("data", data)
     if not data:
         return
     uptime_secs = data.split()[0]
     debug_var("uptime_secs", uptime_secs)
-    add_fact("run.uptime", uptime_secs)
+    facts["run.uptime"] = uptime_secs
 
 
-def requires_ip_addr():
-    add_requires("programs", "ip")
+def requires_ip_addr(requires: Requires) -> None:
+    requires.programs.append("ip")
 
 
-def parse_ip_addr():
+def parse_ip_addr(facts: Facts) -> None:
     data, rc = read_program("ip addr")
     if data is None or rc != 0:
         return
     debug_var("data", data)
+
+# TODO:
+# 1. Create parse_ram() function to parse ls_mem and if that fails fallback to udevadm_ram()

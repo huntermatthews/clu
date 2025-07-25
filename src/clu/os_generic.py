@@ -6,17 +6,17 @@ import sys
 
 
 from clu import __about__
-from clu.facts import add_fact
-from clu.requires import add_requires
+from clu.facts import Facts
+from clu.requires import Requires
 from clu.debug import debug_var, trace_var, panic
 from clu.readers import read_program
 
 
-def requires_uname():
-    add_requires("programs", "uname -snrm")
+def requires_uname(requires: Requires) -> None:
+    requires.programs.append("uname -snrm")
 
 
-def parse_uname():
+def parse_uname(facts: Facts) -> None:
     keys = [
         "os.kernel.name",
         "os.hostname",
@@ -37,28 +37,28 @@ def parse_uname():
     for idx in range(len(data)):
         debug_var(f"keys[{idx}]", keys[idx])
         debug_var(f"data[{idx}]", data[idx])
-        add_fact(keys[idx], data[idx])
+        facts[keys[idx]] = data[idx]
 
 
-def requires_clu():
+def requires_clu(requires: Requires) -> None:
     # No specific requirements for clu group
     pass
 
-def parse_clu():
-    add_fact("clu.binary", sys.argv[0])
-    add_fact("clu.version", __about__.__version__)
-    add_fact("clu.python.binary", sys.executable)
-    add_fact("clu.python.version", ".".join(map(str, sys.version_info[:3])))
+def parse_clu(facts: Facts) -> None:
+    facts["clu.binary"] = sys.argv[0]
+    facts["clu.version"] = __about__.__version__
+    facts["clu.python.binary"] = sys.executable
+    facts["clu.python.version"] = ".".join(map(str, sys.version_info[:3]))
 #    facts["clu.path"] = os.environ.get("PATH", "")
-    add_fact("clu.cmdline", " ".join(sys.argv))
-    add_fact("clu.cwd", os.getcwd())
+    facts["clu.cmdline"] = " ".join(sys.argv)
+    facts["clu.cwd"] = os.getcwd()
 
 
-def requires_uptime():
-    add_requires("programs", "uptime")
+def requires_uptime(requires: Requires) -> None:
+    requires.programs.append("uptime")
 
 
-def parse_uptime():
+def parse_uptime(facts: Facts) -> None:
     data, rc = read_program("uptime")
     if data is None or rc != 0:
         panic("parse_uptime: uptime command failed")
@@ -66,4 +66,4 @@ def parse_uptime():
     match = re.match(r".*up *(.*) \d+ user.*", data)
     uptime = match.group(1).rstrip(",") if match else "unknown / error"
     debug_var("uptime", uptime)
-    add_fact("run.uptime", uptime)
+    facts["run.uptime"] = uptime

@@ -11,3 +11,7 @@ def get_fact(key):
 
 def get_all_facts():
     return facts
+
+class Facts(dict):
+    """A simple facts container that behaves like a dict."""
+    pass
