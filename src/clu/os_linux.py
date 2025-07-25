@@ -17,7 +17,10 @@ from clu.os_generic import (
 )
 
 
-def requires_os_linux(requires: Requires) -> None:
+def requires_os_linux() -> Requires:
+    """Define the requirements for Linux."""
+    requires = Requires()
+
     requires_uname(requires)
     requires_virt_what(requires)
     requires_os_release(requires)
@@ -30,8 +33,13 @@ def requires_os_linux(requires: Requires) -> None:
     requires_uptime(requires)
     requires_clu(requires)
 
+    return requires
 
-def parse_os_linux(facts: Facts) -> None:
+
+def parse_os_linux() -> Facts:
+    """Parse the facts for Linux."""
+    facts = Facts()
+
     facts["os.name"] = "Linux"
 
     # parse_uname() done already
@@ -45,6 +53,8 @@ def parse_os_linux(facts: Facts) -> None:
     parse_no_salt(facts)
     parse_uptime(facts)
     parse_clu(facts)
+
+    return facts
 
 
 def requires_os_release(requires: Requires) -> None:

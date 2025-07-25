@@ -1,11 +1,5 @@
-from clu import config
-from clu.facts import Facts
-from clu.os_darwin import requires_os_darwin
-from clu.os_linux import requires_os_linux
-from clu.os_unsupported import requires_os_unsupported
-from clu.os_generic import parse_uname
+from clu.os_map import get_os_functions
 from clu.readers import check_file_exists, check_program_exists
-from clu.os_test import requires_os_test
 from clu.requires import Requires
 
 def do_list_requires() -> None:
@@ -59,22 +53,8 @@ def do_check_requires() -> None:
 def get_os_requirements() -> Requires:
     """Get the requirements for the current OS."""
 
-    if config.test:
-    # If we're in test mode, we don't need to do any checks.
-    # We just requires the test OS.
-        requires = Requires()
-        requires_os_test(requires)
-    else:
-        # we always require uname, so we parse it first
-        facts = Facts()
-        parse_uname(facts)
-
-        if facts["os.kernel.name"] == "Darwin":
-            requires_os_darwin(requires)
-        elif facts["os.kernel.name"] == "Linux":
-            requires_os_linux(requires)
-        else:
-            requires_os_unsupported(requires)
+    (requires_fn, _) = get_os_functions()
+    requires = requires_fn()
 
     requires.sort()
     return requires

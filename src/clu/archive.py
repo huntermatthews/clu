@@ -5,23 +5,24 @@ import tempfile
 import tarfile
 from datetime import datetime
 
-from clu import requires, __about__
-from clu.report_requires import get_os_requirements
+from clu import __about__
+from clu.os_map import get_os_functions
 from clu.readers import transform_cmdline_to_filename, read_program
-from clu.requires import get_all_requires
+
 
 
 def do_archive():
     """Create an archive of the current system state."""
 
-    get_os_requirements()
+    (requires_fn, _) = get_os_functions()
+    requires = requires_fn()
 
     hostname = os.uname().nodename
     work_dir = setup_workdir(hostname)
     try:
         collect_metadata(work_dir, hostname)
-        collect_files(work_dir)
-        collect_programs(work_dir)
+        collect_files(requires, work_dir)
+        collect_programs(requires, work_dir)
         create_archive(hostname, work_dir)
     finally:
         cleanup_workdir(work_dir)
@@ -47,8 +48,8 @@ def create_archive(hostname, work_dir):
     print(f"Archive created at {archive_path}")
 
 
-def collect_files(work_dir):
-    for file in get_all_requires()["files"]:
+def collect_files(requires, work_dir):
+    for file in requires.files:
         if os.path.isfile(file):
             dest = os.path.join(work_dir, file.lstrip("/"))
             os.makedirs(os.path.dirname(dest), exist_ok=True)
@@ -58,10 +59,10 @@ def collect_files(work_dir):
                 print(f"Failed to copy {file}: {e}")
 
 
-def collect_programs(work_dir):
+def collect_programs(requires, work_dir):
     prog_dir = os.path.join(work_dir, "_programs")
     os.makedirs(prog_dir, exist_ok=True)
-    for prog in get_all_requires()["programs"]:
+    for prog in requires.programs:
         cmd_name, rc_name = transform_cmdline_to_filename(prog)
         data_path = os.path.join(prog_dir, cmd_name)
         rc_path = os.path.join(prog_dir, rc_name)

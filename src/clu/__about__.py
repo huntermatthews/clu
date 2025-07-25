@@ -1,21 +1,21 @@
 """This file contains metadata about the package."""
 
-from importlib import metadata
+# from importlib import metadata
 
 ##
 ## Static fields
 ##
 
 # Recall that __name__ is a "keyword" and thus can't be used here.
-__title__ = "clu"
-__version__ = "0.1.0"  # This should be updated manually or via a build script.
-__url__ = "https://github.com/huntermatthews/clu"
+__title__: str = "clu"
+__version__: str = "0.1.0"  # This should be updated manually or via a build script.
+__url__: str = "https://github.com/huntermatthews/clu"
 
-__author__ = "Hunter Matthews"
-__email__ = "hunter@unix.haus"
+__author__: str = "Hunter Matthews"
+__email__: str = "hunter@unix.haus"
 
-__copyright__ = "(c) 2012-2025 Hunter Matthews"
-__license__ = "Apache-2.0"
+__copyright__: str = "(c) 2012-2025 Hunter Matthews"
+__license__: str = "Apache-2.0"
 
 
 ##

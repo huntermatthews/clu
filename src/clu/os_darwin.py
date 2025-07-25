@@ -14,16 +14,24 @@ from clu.os_generic import (
 )
 
 
-def requires_os_darwin(requires: Requires) -> None:
+def requires_os_darwin() -> Requires:
+    """Define the requirements for macOS (Darwin)."""
+    requires = Requires()
+
     requires_uname(requires)
     requires_sw_vers(requires)
     requires_macos_name(requires)
     requires_uptime(requires)
     requires_clu(requires)
-    requires_systemversion_plist()
+    requires_systemversion_plist(requires)
+
+    return requires
 
 
-def parse_os_darwin(facts: Facts) -> None:
+def parse_os_darwin() -> Facts:
+    """Parse the facts for macOS (Darwin)."""
+    facts = Facts()
+
     # Nothing explicitly says Apple, but we know its apple because Darwin is the OS
     facts["sys.vendor"] = "Apple"
 
@@ -32,6 +40,8 @@ def parse_os_darwin(facts: Facts) -> None:
     parse_macos_name(facts)
     parse_uptime(facts)
     parse_clu(facts)
+
+    return facts
 
 
 def requires_sw_vers(requires: Requires) -> None:

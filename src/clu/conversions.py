@@ -1,7 +1,7 @@
 """Doc Incomplete."""
 
 
-def bytes_to_si(size):
+def bytes_to_si(size: int) -> str:
     """
     Convert a number of bytes to a human-readable SI string (e.g., 1536 -> '1.5 KB').
     """
@@ -14,7 +14,7 @@ def bytes_to_si(size):
     return f"{size:.1f} {units[-1]}"
 
 
-def si_to_bytes(size_str):
+def si_to_bytes(size_str: str) -> int:
     """
     Convert a human-readable SI string (e.g., '1.5 KB') to bytes (int).
     """
