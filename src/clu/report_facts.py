@@ -1,7 +1,6 @@
 """Doc Incomplete."""
 
 from clu import config
-from clu.facts import Facts
 from clu.outputs import output_dots, output_shell
 from clu.os_map import get_os_functions
 

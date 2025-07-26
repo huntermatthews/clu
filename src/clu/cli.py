@@ -12,7 +12,7 @@ from clu.archive import do_archive
 from clu.report_requires import do_list_requires, do_check_requires
 
 
-def main():
+def main()  -> int:
     if sys.version_info < (3, 8):
         print("ERROR: Must use at least python 3.8")
         sys.exit(1)
