@@ -6,9 +6,9 @@ _default: help
 # Clean up build artifacts
 [group('build')]
 clean:
-	rm -rf build dist
-	find src -type d -name '*.egg-info' -exec rm -r {} + -depth
-	find src -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
+    rm -rf build dist
+    find src -type d -name '*.egg-info' -exec rm -r {} + -depth
+    find src -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
 # Print the list of targets and their descriptions.
 help:
@@ -18,6 +18,11 @@ help:
 [group('test')]
 test *args:
     uv run pytest tests {{args}}
+
+# Type check the code using mypy
+[group('test')]
+mypy:
+    uv run mypy src tests
 
 # zip the program as a single file executable (zipapp)
 [group('build')]
