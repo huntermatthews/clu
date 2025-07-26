@@ -25,3 +25,4 @@ def get_os_functions() -> tuple:
         return (requires_os_linux, parse_os_linux)
     else:
         panic("Unsupported OS")
+        return (None, None)    # make mypy happy, but this line is unreachable

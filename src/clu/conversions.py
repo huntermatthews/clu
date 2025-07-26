@@ -1,7 +1,7 @@
 """Doc Incomplete."""
 
 
-def bytes_to_si(size: int) -> str:
+def bytes_to_si(size: float) -> str:
     """
     Convert a number of bytes to a human-readable SI string (e.g., 1536 -> '1.5 KB').
     """
@@ -14,7 +14,7 @@ def bytes_to_si(size: int) -> str:
     return f"{size:.1f} {units[-1]}"
 
 
-def si_to_bytes(size_str: str) -> int:
+def si_to_bytes(size_str: str) -> float:
     """
     Convert a human-readable SI string (e.g., '1.5 KB') to bytes (int).
     """
@@ -32,7 +32,7 @@ def si_to_bytes(size_str: str) -> int:
     if unit not in units:
         raise ValueError(f"Unknown unit: {unit}")
     exponent = units[unit]
-    return int(number * (1024**exponent))
+    return float(number * (1024**exponent))
 
 
 # TODO:
