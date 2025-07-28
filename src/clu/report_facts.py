@@ -9,9 +9,7 @@ def do_report_facts() -> None:
     """Generate a report based on the current OS."""
 
     (_, parse_fn) = get_os_functions()
-    print(type(parse_fn))
     facts = parse_fn()
-    print(type(facts))
 
     if config.output == "dots":
         output_dots(facts)

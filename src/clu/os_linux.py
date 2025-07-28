@@ -234,7 +234,6 @@ def requires_cpuinfo_flags(requires: Requires) -> None:
 
 def parse_cpuinfo_flags(facts: Facts) -> None:
     # we can always assume uname has been parsed
-    print(facts)
     if facts["phy.arch"] not in ("x86_64", "amd64"):
         debug("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
         return
