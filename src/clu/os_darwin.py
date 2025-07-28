@@ -6,7 +6,7 @@ from clu.debug import debug_var, panic
 from clu.readers import read_program
 from clu.os_generic import (
     requires_uname,
-#    parse_uname,
+    parse_uname,
     requires_uptime,
     parse_uptime,
     requires_clu,
@@ -35,7 +35,7 @@ def parse_os_darwin() -> Facts:
     # Nothing explicitly says Apple, but we know its apple because Darwin is the OS
     facts["sys.vendor"] = "Apple"
 
-    # parse_uname() done already
+    parse_uname(facts)
     parse_sw_vers(facts)
     parse_macos_name(facts)
     parse_uptime(facts)

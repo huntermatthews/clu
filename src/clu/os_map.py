@@ -16,7 +16,7 @@ def get_os_functions() -> tuple:
         return (requires_os_test, parse_os_test)
 
     facts = Facts()
-    parse_uname(facts)
+    parse_uname(facts)    # we end up throwing this away, but thats temporary until full pytest support
     kernel_name = facts.get("os.kernel.name", "Unknown")
 
     if kernel_name == "Darwin":

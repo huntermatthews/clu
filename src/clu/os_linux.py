@@ -9,7 +9,7 @@ from clu.readers import read_program, read_file
 from clu.conversions import bytes_to_si
 from clu.os_generic import (
     requires_uname,
-#     parse_uname,
+    parse_uname,
     requires_uptime,
     parse_uptime,
     requires_clu,
@@ -42,7 +42,7 @@ def parse_os_linux() -> Facts:
 
     facts["os.name"] = "Linux"
 
-    # parse_uname() done already
+    parse_uname(facts)
     parse_virt_what(facts)
     parse_os_release(facts)
     parse_sys_dmi(facts)
@@ -234,6 +234,7 @@ def requires_cpuinfo_flags(requires: Requires) -> None:
 
 def parse_cpuinfo_flags(facts: Facts) -> None:
     # we can always assume uname has been parsed
+    print(facts)
     if facts["phy.arch"] not in ("x86_64", "amd64"):
         debug("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
         return
