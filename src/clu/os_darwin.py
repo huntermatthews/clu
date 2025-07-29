@@ -52,7 +52,7 @@ def parse_sw_vers(facts: Facts) -> None:
     data, rc = read_program("sw_vers")
     debug_var("data", data)
     if data is None or rc != 0:
-        panic("parse_sw_vers: uname command failed")
+        return
     for line in data.splitlines():
         if ":" not in line:
             continue
@@ -61,6 +61,7 @@ def parse_sw_vers(facts: Facts) -> None:
         value = value.strip()
         debug_var("key", key)
         debug_var("value", value)
+
         if key == "ProductName":
             facts["os.name"] = value
         elif key == "ProductVersion":
