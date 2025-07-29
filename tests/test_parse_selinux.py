@@ -9,9 +9,9 @@ from tests import mock_read_program
 
 
 @pytest.mark.parametrize("mock_host, expected_result", [
-    ("host1", {"os.selinux.enable": True, "os.selinux.mode": "Permissive"}),
+    ("host1", {"os.selinux.enable": "True", "os.selinux.mode": "Permissive"}),
     ("host2", {"os.selinux.enable": "Unknown/Error", "os.selinux.mode": "Unknown/Error"}),
-    ("host3", {"os.selinux.enable": False, "os.selinux.mode": "Disabled"}),
+    ("host3", {"os.selinux.enable": "False", "os.selinux.mode": "Disabled"}),
     ("macos", {"os.selinux.enable": "Unknown/Error", "os.selinux.mode": "Unknown/Error"}),
 ])
 def test_parse_selinux(mock_host, expected_result):

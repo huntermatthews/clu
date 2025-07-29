@@ -9,10 +9,10 @@ from tests import mock_read_file
 
 
 @pytest.mark.parametrize("mock_host, expected_result", [
-    ("host1", {"salt.no_salt.exists": True, "salt.no_salt.reason": "matthewsht - 2025-05-04 - This server is full of sadness."}),
-    ("host2", {"salt.no_salt.exists": False}),
-    ("host3", {"salt.no_salt.exists": False}),
-    ("macos", {"salt.no_salt.exists": False}),
+    ("host1", {"salt.no_salt.exists": "True", "salt.no_salt.reason": "matthewsht - 2025-05-04 - This server is full of sadness."}),
+    ("host2", {"salt.no_salt.exists": "False"}),
+    ("host3", {"salt.no_salt.exists": "False"}),
+    ("macos", {"salt.no_salt.exists": "False"}),
 ])
 def test_parse_no_salt(mock_host, expected_result):
     """Test parse_no_salt function with mock data from different hosts."""

@@ -272,9 +272,9 @@ def parse_selinux(facts: Facts) -> None:
     # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
     debug(f'rc is {rc}')
     if rc == 0:
-        facts["os.selinux.enable"] = True
+        facts["os.selinux.enable"] = "True"
     elif rc == 1:
-        facts["os.selinux.enable"] = False
+        facts["os.selinux.enable"] = "False"
     else:
         facts["os.selinux.enable"] = "Unknown/Error"
 
@@ -290,11 +290,11 @@ def requires_no_salt(requires: Requires) -> None:
 def parse_no_salt(facts: Facts) -> None:
     data = read_file("/no_salt")
     if data is None:
-        facts["salt.no_salt.exists"] = False
+        facts["salt.no_salt.exists"] = "False"
         return
     else:
         debug_var("data", data)
-        facts["salt.no_salt.exists"] = True
+        facts["salt.no_salt.exists"] = "True"
     if not data.strip():
         data = "UNKNOWN"
     facts["salt.no_salt.reason"] = data.strip()
