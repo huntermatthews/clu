@@ -101,7 +101,7 @@ def requires_sys_dmi(requires: Requires) -> None:
 def parse_sys_dmi(facts: Facts) -> None:
 
     if facts["phy.platform"] != "physical":
-        log.debug("Not a physical platform, skipping sys.dmi parsing")
+        log.info("Not a physical platform, skipping sys.dmi parsing")
         return
 
     keys = [
@@ -238,7 +238,7 @@ def requires_cpuinfo_flags(requires: Requires) -> None:
 def parse_cpuinfo_flags(facts: Facts) -> None:
     # we can always assume uname has been parsed
     if facts["phy.arch"] not in ("x86_64", "amd64"):
-        log.debug("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
+        log.info("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
         return
 
     vers = [
