@@ -39,9 +39,9 @@ def main()  -> int:
     parser.add_argument("--test", action="store_true", help="Bypass uname checking and do whatever")
     parser.add_argument(
         "--output",
-        choices=["dots", "shell"],
+        choices=["dots", "shell", "json"],
         default="dots",
-        help="Output format: 'dots' or 'shell'",
+        help="Output format: 'dots', 'shell', or 'json'",
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
