@@ -44,7 +44,7 @@ def parse_os_linux() -> Facts:
 
     parse_uname(facts)
     parse_virt_what(facts)
-    parse_os_release(facts)
+    parse_uname(facts)
     parse_sys_dmi(facts)
     parse_cpuinfo_flags(facts)
     parse_udevadm_ram(facts)
