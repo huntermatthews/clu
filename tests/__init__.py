@@ -3,7 +3,7 @@
 import os
 from pathlib import Path
 
-from clu.readers import raw_read_file, transform_cmdline_to_filename
+from clu.readers import read_file, transform_cmdline_to_filename
 
 
 def get_file_mock_path(mock_dir, fname):
@@ -14,7 +14,7 @@ def get_file_mock_path(mock_dir, fname):
 
 def mock_read_file(mock_dir: Path, fname: str) -> str:
     fname = get_file_mock_path(mock_dir, fname)
-    data = raw_read_file(fname)
+    data = read_file(fname)
     return data
 
 
@@ -30,10 +30,10 @@ def mock_read_program(mock_dir: Path, cmdline):
     """Read a program's output from the mock directory."""
 
     (dname, rc_name) = get_program_mock_path(mock_dir, cmdline)
-    data = raw_read_file(dname)
+    data = read_file(dname)
 
     if os.path.isfile(rc_name):
-        rc = int(raw_read_file(rc_name))
+        rc = int(read_file(rc_name))
     elif data is None:
         rc = 127       # command not found (fish/bash/zsh/sh all consistent = 127)
     else:

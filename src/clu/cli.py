@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 # import clu
-from clu import __about__, config, panic
+from clu import __about__, config
 from clu.report_facts import do_report_facts
 from clu.archive import do_archive
 from clu.report_requires import do_list_requires, do_check_requires
@@ -37,7 +37,6 @@ def main()  -> int:
         dest="verbosity",
         help="Verbose mode -- slightly more information than a normal run.",
     )
-    parser.add_argument("--mock", help="Use mock data from a directory")
     parser.add_argument("--test", action="store_true", help="Bypass uname checking and do whatever")
     parser.add_argument(
         "--output",
@@ -78,13 +77,6 @@ def main()  -> int:
 
     if config.verbosity is not logging.WARNING:
         logging.basicConfig(level=config.verbosity)
-
-    if config.mock:
-        # BUG: This is WEAK - we should use a more robust way to find the mock data directory
-        config.mock = Path(__file__).parent.parent.parent / "mock_data" / config.mock
-        if not config.mock.is_dir():
-            panic(f"mock directory {config.mock} does not exist")
-        log.info("MOCK: %s", config.mock)
 
     log.info(f"Starting clu utility... {sys.argv=}")
     if config.mode == "list-requires":
