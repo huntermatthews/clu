@@ -11,8 +11,6 @@ from clu.conversions import bytes_to_si
 from clu.os_generic import (
     requires_uname,
     parse_uname,
-    requires_uptime,
-    parse_uptime,
     requires_clu,
     parse_clu,
 )

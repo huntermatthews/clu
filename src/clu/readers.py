@@ -7,8 +7,6 @@ import shutil
 import subprocess
 
 
-from clu import config
-
 log = logging.getLogger(__name__)
 
 

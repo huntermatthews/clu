@@ -3,7 +3,6 @@
 import argparse
 import logging
 import sys
-from pathlib import Path
 
 # import clu
 from clu import __about__, config
