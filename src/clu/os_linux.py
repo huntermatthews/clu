@@ -30,7 +30,7 @@ def requires_os_linux() -> Requires:
     requires_lscpu(requires)
     requires_selinux(requires)
     requires_no_salt(requires)
-    requires_uptime(requires)
+    requires_proc_uptime(requires)
     requires_clu(requires)
 
     return requires
@@ -51,7 +51,7 @@ def parse_os_linux() -> Facts:
     parse_lscpu(facts)
     parse_selinux(facts)
     parse_no_salt(facts)
-    parse_uptime(facts)
+    parse_proc_uptime(facts)
     parse_clu(facts)
 
     return facts
@@ -180,7 +180,7 @@ def parse_virt_what(facts: Facts) -> None:
 def requires_lscpu(requires: Requires) -> None:
     requires.programs.append("lscpu")
 
-# Todo: clean this up, it is a mess
+# TODO: clean this up, it is a mess because it didn't translate from the original code well
 def parse_lscpu(facts: Facts) -> None:
     regexes = {
         r"^ *Model name: *(.+)": "model",
