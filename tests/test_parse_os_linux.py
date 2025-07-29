@@ -96,5 +96,5 @@ def test_parse_os_linux(mock_host, expected_result):
         for key in keys_to_remove:
             del facts[key]
 
-        # # Assert the expected results
+        # Assert the expected results
         assert facts == expected_result, mock_host

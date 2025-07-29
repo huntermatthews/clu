@@ -23,5 +23,5 @@ def test_parse_udevadm_ram(mock_host, expected_result):
         facts = Facts()
         parse_udevadm_ram(facts)
 
-        # # Assert the expected results
-        assert facts == expected_result
+        # Assert the expected results
+        assert facts == expected_result, mock_host

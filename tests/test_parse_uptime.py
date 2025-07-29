@@ -24,5 +24,5 @@ def test_parse_uptime(mock_host, expected_result):
         facts = Facts()
         parse_uptime(facts)
 
-        # # Assert the expected results
-        assert facts == expected_result
+        # Assert the expected results
+        assert facts == expected_result, mock_host

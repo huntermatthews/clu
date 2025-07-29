@@ -33,5 +33,5 @@ def test_parse_sys_dmi(mock_host, input_facts, expected_result):
         facts.update(input_facts)
         parse_sys_dmi(facts)
 
-        # # Assert the expected results
-        assert facts == expected_result
+        # Assert the expected results
+        assert facts == expected_result, mock_host

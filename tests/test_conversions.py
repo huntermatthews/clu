@@ -21,7 +21,7 @@ from clu.conversions import bytes_to_si, si_to_bytes
 def test_si_to_bytes(si_string, expected_output):
     bytes_count = si_to_bytes(si_string)
 
-    assert bytes_count == expected_output
+    assert bytes_count == expected_output, f"Expected {expected_output} for {si_string}, got {bytes_count}"
 
 @pytest.mark.parametrize(
     "bytes_count, expected_output",
@@ -39,4 +39,4 @@ def test_si_to_bytes(si_string, expected_output):
 def test_bytes_to_si(bytes_count, expected_output):
     si_string = bytes_to_si(bytes_count)
 
-    assert si_string == expected_output
+    assert si_string == expected_output, f"Expected {expected_output} for {bytes_count}, got {si_string}"

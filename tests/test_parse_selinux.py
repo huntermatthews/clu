@@ -23,5 +23,5 @@ def test_parse_selinux(mock_host, expected_result):
         facts = Facts()
         parse_selinux(facts)
 
-        # # Assert the expected results
+        # Assert the expected results
         assert facts == expected_result, mock_host

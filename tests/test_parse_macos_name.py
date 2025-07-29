@@ -27,5 +27,5 @@ def test_parse_macos_name(input_facts, expected_result):
         facts.update(input_facts)
         parse_macos_name(facts)
 
-        # # Assert the expected results
-        assert facts == expected_result
+        # Assert the expected results
+        assert facts == expected_result, input_facts

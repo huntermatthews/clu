@@ -23,5 +23,5 @@ def test_parse_uname(mock_host, expected_result):
         facts = Facts()
         parse_uname(facts)
 
-        # # Assert the expected results
-        assert facts == expected_result
+        # Assert the expected results
+        assert facts == expected_result, mock_host

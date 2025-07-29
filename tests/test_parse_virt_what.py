@@ -23,5 +23,5 @@ def test_parse_virt_what(mock_host, expected_result):
         facts = Facts()
         parse_virt_what(facts)
 
-        # # Assert the expected results
-        assert facts == expected_result
+        # Assert the expected results
+        assert facts == expected_result, mock_host

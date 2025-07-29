@@ -28,5 +28,5 @@ def test_parse_cpuinfo_flags(mock_host, input_facts, expected_result):
         facts.update(input_facts)
         parse_cpuinfo_flags(facts)
 
-        # # Assert the expected results
-        assert facts == expected_result
+        # Assert the expected results
+        assert facts == expected_result, mock_host
