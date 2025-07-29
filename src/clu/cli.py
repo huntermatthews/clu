@@ -1,20 +1,21 @@
 """The main() function implementation for the program."""
 
 import argparse
+import logging
 import sys
 from pathlib import Path
 
 # import clu
-from clu import __about__, config
-from clu.debug import debug_var, trace, panic
+from clu import __about__, config, panic
 from clu.report_facts import do_report_facts
 from clu.archive import do_archive
 from clu.report_requires import do_list_requires, do_check_requires
 
+log = logging.getLogger(__name__)
 
 def main()  -> int:
     if sys.version_info < (3, 8):
-        print("ERROR: Must use at least python 3.8")
+        log.error("Must use at least python 3.8")
         sys.exit(1)
 
     parser = argparse.ArgumentParser(prog="clu", description="clu utility")
@@ -23,9 +24,18 @@ def main()  -> int:
     )
     parser.add_argument(
         "--debug",
-        action="count",
-        default=0,
-        help="Debug mode (use multiple times for more verbosity)",
+        action="store_const",
+        const=logging.DEBUG,
+        default=logging.WARNING,
+        dest="verbosity",
+        help="Debug mode -- boring nerdy details.",
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_const",
+        const=logging.INFO,
+        dest="verbosity",
+        help="Verbose mode -- slightly more information than a normal run.",
     )
     parser.add_argument("--mock", help="Use mock data from a directory")
     parser.add_argument("--test", action="store_true", help="Bypass uname checking and do whatever")
@@ -66,14 +76,17 @@ def main()  -> int:
 
     parser.parse_args(namespace=config)
 
+    if config.verbosity is not logging.WARNING:
+        logging.basicConfig(level=config.verbosity)
+
     if config.mock:
         # BUG: This is WEAK - we should use a more robust way to find the mock data directory
         config.mock = Path(__file__).parent.parent.parent / "mock_data" / config.mock
         if not config.mock.is_dir():
             panic(f"mock directory {config.mock} does not exist")
-        debug_var("MOCK", config.mock)
+        log.info("MOCK: %s", config.mock)
 
-    trace(f"Starting clu utility... {sys.argv=}")
+    log.info(f"Starting clu utility... {sys.argv=}")
     if config.mode == "list-requires":
         do_list_requires()
     elif config.mode == "check-requires":

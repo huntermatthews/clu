@@ -1,5 +1,6 @@
 """Doc Incomplete."""
 
+import logging
 import os
 import re
 import sys
@@ -8,8 +9,10 @@ import sys
 from clu import __about__
 from clu.facts import Facts
 from clu.requires import Requires
-from clu.debug import debug_var, trace_var, panic
+from clu import panic
 from clu.readers import read_program
+
+log = logging.getLogger(__name__)
 
 
 def requires_uname(requires: Requires) -> None:
@@ -24,19 +27,19 @@ def parse_uname(facts: Facts) -> None:
         "phy.arch",
     ]
     data, rc = read_program("uname -snrm")
-    trace_var("data", data)
-    trace_var("rc", rc)
+    log.debug(f"{data=}")
+    log.debug(f"{rc=}")
     if data is None or rc != 0:
         panic("parse_uname: uname command failed")
     data = data.strip().split()
     if len(keys) != len(data):
-        debug_var("keys", keys)
-        debug_var("data", data)
+        log.debug(f"{keys=}")
+        log.debug(f"{data=}")
         panic("parse_uname: keys and data length don't match: You can't count")
 
     for idx in range(len(data)):
-        debug_var(f"keys[{idx}]", keys[idx])
-        debug_var(f"data[{idx}]", data[idx])
+        log.debug(f"{keys[idx]=}")
+        log.debug(f"{data[idx]=}")
         facts[keys[idx]] = data[idx]
 
 
@@ -62,8 +65,8 @@ def parse_uptime(facts: Facts) -> None:
     data, rc = read_program("uptime")
     if data is None or rc != 0:
         panic("parse_uptime: uptime command failed")
-    debug_var("data", data)
+    log.debug(f"{data=}")
     match = re.match(r".*up *(.*) \d+ user.*", data)
     uptime = match.group(1).rstrip(",") if match else "unknown / error"
-    debug_var("uptime", uptime)
+    log.debug(f"{uptime=}")
     facts["run.uptime"] = uptime

@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 import sys
@@ -5,10 +6,11 @@ import tempfile
 import tarfile
 from datetime import datetime
 
-from clu import __about__
+from clu import __about__, panic
 from clu.os_map import get_os_functions
 from clu.readers import transform_cmdline_to_filename, read_program
 
+log = logging.getLogger(__name__)
 
 
 def do_archive():
@@ -35,8 +37,7 @@ def cleanup_workdir(work_dir):
 def setup_workdir(hostname):
     work_dir = tempfile.mkdtemp(prefix=f"{hostname}.")
     if not work_dir or not os.path.isdir(work_dir):
-        print("ERROR: Could not create temp dir")
-        sys.exit(1)
+        panic("Could not create temp dir")
     return work_dir
 
 
@@ -45,7 +46,7 @@ def create_archive(hostname, work_dir):
     with tarfile.open(archive_path, "w:gz") as tar:
         tar.add(work_dir, arcname=".")
     os.chmod(archive_path, 0o444)  # ugo+r
-    print(f"Archive created at {archive_path}")
+    log.info(f"Archive created at {archive_path}")
 
 
 def collect_files(requires, work_dir):
@@ -56,7 +57,7 @@ def collect_files(requires, work_dir):
             try:
                 shutil.copy(file, dest)
             except Exception as e:
-                print(f"Failed to copy {file}: {e}")
+                log.error(f"Failed to copy {file}: {e}")
 
 
 def collect_programs(requires, work_dir):

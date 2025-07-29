@@ -1,9 +1,11 @@
 """Doc Incomplete."""
 
+import logging
+
 from clu.requires import Requires
 from clu.facts import Facts
-from clu.debug import debug_var, panic
-from clu.readers import read_program
+from clu import panic
+from clu.readers import read_program, read_file
 from clu.os_generic import (
     requires_uname,
     parse_uname,
@@ -12,6 +14,8 @@ from clu.os_generic import (
     requires_clu,
     parse_clu,
 )
+
+log = logging.getLogger(__name__)
 
 
 def requires_os_darwin() -> Requires:
@@ -50,7 +54,7 @@ def requires_sw_vers(requires: Requires) -> None:
 
 def parse_sw_vers(facts: Facts) -> None:
     data, rc = read_program("sw_vers")
-    debug_var("data", data)
+    log.debug(f"{data=}")
     if data is None or rc != 0:
         return
     for line in data.splitlines():
@@ -59,8 +63,8 @@ def parse_sw_vers(facts: Facts) -> None:
         key, value = line.split(":", 1)
         key = key.strip()
         value = value.strip()
-        debug_var("key", key)
-        debug_var("value", value)
+        log.debug(f"{key=}")
+        log.debug(f"{value=}")
 
         if key == "ProductName":
             facts["os.name"] = value
@@ -81,7 +85,7 @@ def parse_macos_name(facts: Facts) -> None:
         panic("parse_macos_name: os.version is not set or empty")
 
     major_ver = version.split(".")[0]
-    debug_var("major_ver", major_ver)
+    log.debug(f"{major_ver=}")
 
     if major_ver == "26":
         code_name = "Tahoe"
