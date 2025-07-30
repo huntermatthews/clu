@@ -6,7 +6,7 @@ from clu.facts import Facts
 from clu.os_linux import parse_os_linux
 
 from tests import mock_read_program, mock_read_file
-
+import tests.test_parse_clu
 
 @pytest.mark.parametrize("mock_host, expected_result", [
     ("host1", {
@@ -74,27 +74,26 @@ from tests import mock_read_program, mock_read_file
         "salt.no_salt.exists": "False",
         "run.uptime": "350735.47"
     }),
-#    ("macos", {"os.selinux.enable": "Unknown/Error", "os.selinux.mode": "Unknown/Error"}),   maybe later...
 ])
 def test_parse_os_linux(mock_host, expected_result):
     """Test parse_os_linux function with mock data from different hosts."""
 
+    expected_result.update(tests.test_parse_clu.expected_result)
+
     with patch.object(config, 'debug', 0, create=True), \
          patch('clu.os_linux.read_program') as lmrp, \
          patch('clu.os_linux.read_file') as lmrf, \
-         patch('clu.os_generic.read_program') as gmrp:
+         patch('clu.os_generic.read_program') as gmrp, \
+         patch('sys.argv', tests.test_parse_clu.mock_sys.argv), \
+         patch('sys.executable', tests.test_parse_clu.mock_sys.executable), \
+         patch('sys.version_info', tests.test_parse_clu.mock_sys.version_info), \
+         patch('os.getcwd', tests.test_parse_clu.mock_sys.getcwd), \
+         patch('clu.os_generic.__about__', tests.test_parse_clu.mock_sys):
         lmrp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
         lmrf.side_effect = lambda filepath: mock_read_file(pytest.mock_dir / mock_host, filepath)
         gmrp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
 
-
         facts = parse_os_linux()
-
-        # Remove all entries where the key starts with "clu."
-        # TODO: figure out how to mock parse_clu to avoid this
-        keys_to_remove = [key for key in facts.keys() if key.startswith("clu.")]
-        for key in keys_to_remove:
-            del facts[key]
 
         # Assert the expected results
         assert facts == expected_result, mock_host
