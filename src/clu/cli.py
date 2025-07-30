@@ -88,3 +88,6 @@ def main()  -> int:
         do_report_facts()
 
     return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
