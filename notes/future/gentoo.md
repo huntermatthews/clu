@@ -1,3 +1,7 @@
+
+# some text here
+
+``` text
 egglestongc@hg-02224551-vlg ~/Downloads> eselect profile show
 Current /etc/portage/make.profile symlink:
   default/linux/amd64/23.0/desktop/systemd
@@ -8,3 +12,4 @@ egglestongc@hg-02224551-vlg ~/Downloads>
 Whatever man, whatever - she says "linx/amd/23.0/desktop/sysstemd"
 
 So... uh?
+```
