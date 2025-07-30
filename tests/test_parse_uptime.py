@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from clu import config
 from clu.facts import Facts
-from clu.os_linux import parse_uptime
+from clu.os_generic import parse_uptime
 
 
 from tests import mock_read_program
