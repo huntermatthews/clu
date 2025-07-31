@@ -43,3 +43,9 @@ build-backend = "hatchling.build"
 packages = [
     "src/clu",
 ]
+
+# [tool.ruff.lint]
+# select = ["ALL"]
+
+# [tool.ruff]
+# line-length = 120
