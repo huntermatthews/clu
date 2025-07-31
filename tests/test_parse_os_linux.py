@@ -80,18 +80,16 @@ def test_parse_os_linux(mock_host, expected_result):
 
     expected_result.update(tests.test_parse_clu.expected_result)
 
+    # patch out parse_clu() because we test it elsewhere and its output varies too much.
     with patch.object(config, 'debug', 0, create=True), \
          patch('clu.os_linux.read_program') as lmrp, \
          patch('clu.os_linux.read_file') as lmrf, \
          patch('clu.os_generic.read_program') as gmrp, \
-         patch('sys.argv', tests.test_parse_clu.mock_sys.argv), \
-         patch('sys.executable', tests.test_parse_clu.mock_sys.executable), \
-         patch('sys.version_info', tests.test_parse_clu.mock_sys.version_info), \
-         patch('os.getcwd', tests.test_parse_clu.mock_sys.getcwd), \
-         patch('clu.os_generic.__about__', tests.test_parse_clu.mock_sys):
+         patch('clu.os_linux.parse_clu') as cpc:
         lmrp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
         lmrf.side_effect = lambda filepath: mock_read_file(pytest.mock_dir / mock_host, filepath)
         gmrp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
+        cpc.side_effect = lambda facts: facts.update(tests.test_parse_clu.expected_result)
 
         facts = parse_os_linux()
 
