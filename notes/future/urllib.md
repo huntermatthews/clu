@@ -1,5 +1,7 @@
 # URLIB
 
+<https://dev.to/bowmanjd/http-calls-in-python-without-requests-or-other-external-dependencies-5aj1>
+
 ```python
 
 import urllib2
@@ -21,4 +23,15 @@ def submit_pull_request(user, repo):
             "User-Agent": "Myapp/Gunio",
         }, data = json.dumps(params))
     f = urllib2.urlopen(req)
+```
+
+```python
+import json
+
+newConditions = {"con1":40, "con2":20, "con3":99, "con4":40, "password":"1234"}
+params = json.dumps(newConditions).encode('utf8')
+req = urllib.request.Request(conditionsSetURL, data=params,
+                             headers={'content-type': 'application/json'})
+response = urllib.request.urlopen(req)
+
 ```
