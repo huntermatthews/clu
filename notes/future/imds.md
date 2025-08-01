@@ -2,6 +2,7 @@
 
 ## basic stuff as one query
 
+```text
 curl -s http://169.254.169.254/latest/dynamic/instance-identity/document
 {
   "accountId": "012345678901",
@@ -48,7 +49,7 @@ security-groups
 services/
 
 http://169.254.169.254/latest/meta-data/<metadata-path>
-
+```
 
 ## AWS tool from S3
 
