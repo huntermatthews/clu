@@ -1,0 +1,234 @@
+# /api/1.0/device/name/' + ORIGINAL_DEVICE_NAME + '/'
+{
+    "mac_addresses": [
+        {
+            "mac": "d4:04:e6:ef:9d:90",
+            "port_name": "",
+            "vlan": "v174-B12",
+            "port": null
+        },
+        {
+            "mac": "d0:46:0c:70:51:b8",
+            "port_name": "mgmt",
+            "vlan": "v330-B12",
+            "port": null
+        }
+    ],
+    "rack_id": 24,
+    "asset_no": "02313337",
+    "preferred_alias": null,
+    "row": "F",
+    "where": 5,
+    "ucs_manager": null,
+    "hdd_details": null,
+    "hddraid_type": null,
+    "type": "physical",
+    "last_updated": "2025-01-07T22:24:58.918637Z",
+    "xpos": 0,
+    "is_it_switch": "no",
+    "rack": "F26",
+    "notes": "iDRAC MAC: d0:46:0c:70:51:b8",
+    "ip_addresses": [
+        {
+            "type": 1,
+            "subnet": "DC-B12-NHGRI-CSA2-165.112.174.0/24",
+            "label": null,
+            "ip": "165.112.174.7",
+            "subnet_id": 1,
+            "macaddress": "d4:04:e6:ef:9d:90"
+        },
+        {
+            "type": 1,
+            "subnet": "DC-B12-NHGRI-CSA2-2607:f220:404:2101::/64",
+            "label": null,
+            "ip": "2607:f220:404:2101::14",
+            "subnet_id": 9,
+            "macaddress": "d4:04:e6:ef:9d:90"
+        },
+        {
+            "type": 1,
+            "subnet": "DC-B12-NHGRI-CSA2-mgmt-10.136.28.0/24",
+            "label": "mgmt",
+            "ip": "10.136.28.96",
+            "subnet_id": 2,
+            "macaddress": "d0:46:0c:70:51:b8"
+        }
+    ],
+    "in_service": true,
+    "cpucount": 2,
+    "device_sub_type": "Rackable",
+    "cpuspeed": 2000.0,
+    "customer": "ITB",
+    "name": "blueplate",
+    "device_id": 1926,
+    "uuid": "",
+    "hddraid": null,
+    "custom_fields": [
+        {
+            "value": null,
+            "key": "aws:autoscaling:groupName",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "aws:cloudformation:logical-id",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "aws:cloudformation:stack-id",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "aws:cloudformation:stack-name",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "aws:ec2:fleet-id",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "aws:ec2launchtemplate:id",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "aws:ec2launchtemplate:version",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "aws:eks:cluster-name",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "Created",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "Creator",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "eks:cluster-name",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "eks:nodegroup-name",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "GuardDutyMalwareExclusion",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "InspectorEc2Exclusion",
+            "notes": null
+        },
+        {
+            "value": "Unix Team",
+            "key": "ITB Team",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "nhgri:itb:automation",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "nhgri:itb:customer",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "nhgri:itb:ic",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "nhgri:itb:itb_team",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "nhgri:itb:ssa:automation",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "nhgri:itb:ssa:base_ami_name",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "nhgri:itb:ssa:build_release",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "nhgri:itb:ssa:os_name",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "nhgri:itb:ssa:os_version",
+            "notes": null
+        },
+        {
+            "value": null,
+            "key": "Provision_Data",
+            "notes": null
+        },
+        {
+            "value": "blueplate-old",
+            "key": "Replaced_Device",
+            "notes": null
+        },
+        {
+            "value": "Storage Team",
+            "key": "Stakeholders",
+            "notes": null
+        }
+    ],
+    "ram": 65536.0,
+    "nonauthoritativealiases": [],
+    "virtual_host_name": null,
+    "os": "Red Hat Enterprise Linux 9 (64-bit)",
+    "category": "",
+    "tags": [
+        "unx_shutdown_stage3",
+        "unx_startup_stage2"
+    ],
+    "hw_size": 1.0,
+    "cpucore": 24,
+    "hddsize": "",
+    "serial_no": "95KQ144",
+    "customer_id": 40,
+    "manufacturer": "DellEMC",
+    "hw_model_id": 307,
+    "hw_depth": 1,
+    "room": "CSA1",
+    "orientation": 1,
+    "id": 1926,
+    "is_it_blade_host": "no",
+    "aliases": [],
+    "device_purchase_line_items": [],
+    "corethread": 48,
+    "is_it_virtual_host": "no",
+    "service_level": "Production",
+    "hddcount": "",
+    "hw_model": "PowerEdge R660xs",
+    "building": "Building 12",
+    "device_external_links": [],
+    "start_at": 28.0
+}

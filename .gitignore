@@ -13,3 +13,6 @@ wheels/
 *.egg-info/
 dist/
 build/
+
+# Test creds
+notes/d42/creds.py
