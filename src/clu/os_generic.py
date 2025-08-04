@@ -4,7 +4,8 @@ import logging
 import os
 import re
 import sys
-
+import datetime
+import getpass
 
 from clu import __about__
 from clu.facts import Facts
@@ -47,14 +48,21 @@ def requires_clu(requires: Requires) -> None:
     # No specific requirements for clu group
     pass
 
+def _get_rfc3339_timestamp() -> str:
+    """Get the current time in RFC 3339 format."""
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    return now_utc.isoformat(sep='T', timespec='seconds')
+
 def parse_clu(facts: Facts) -> None:
+
     facts["clu.binary"] = sys.argv[0]
     facts["clu.version"] = __about__.__version__
     facts["clu.python.binary"] = sys.executable
     facts["clu.python.version"] = ".".join(map(str, sys.version_info[:3]))
-#    facts["clu.path"] = os.environ.get("PATH", "")
     facts["clu.cmdline"] = " ".join(sys.argv)
     facts["clu.cwd"] = os.getcwd()
+    facts["clu.user"] = getpass.getuser()
+    facts["clu.date"] = _get_rfc3339_timestamp()
 
 
 def requires_uptime(requires: Requires) -> None:
