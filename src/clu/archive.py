@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 def do_archive():
     """Create an archive of the current system state."""
 
-    (requires_fn, _) = get_os_functions()
+    (requires_fn, _, _) = get_os_functions()
     requires = requires_fn()
 
     hostname = os.uname().nodename

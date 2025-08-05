@@ -53,7 +53,7 @@ def do_check_requires() -> None:
 def get_os_requirements() -> Requires:
     """Get the requirements for the current OS."""
 
-    (requires_fn, _) = get_os_functions()
+    (requires_fn, _, _, _) = get_os_functions()
     requires = requires_fn()
 
     requires.sort()

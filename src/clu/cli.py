@@ -70,7 +70,7 @@ def main()  -> int:
         dest="mode",
     )
 
-    parser.add_argument("facts", nargs="*", help="Facts to collect")
+    parser.add_argument("facts", nargs="*", help="Facts to report on")
 
     parser.parse_args(namespace=config)
 
