@@ -1,11 +1,10 @@
 """Doc Incomplete."""
 
 import logging
-import os
 import shlex
 import shutil
 import subprocess
-
+from pathlib import Path
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +16,7 @@ def read_file(fname):
     """
     log.debug(f"read_file: {fname=}")
 
-    if not os.path.isfile(fname):
+    if not Path(fname).is_file():
         log.info(f"File not found: {fname}")
         return None
     with open(fname, "r") as f:
@@ -57,7 +56,7 @@ def check_program_exists(program):
 def check_file_exists(fname):
     log.debug(f"check_file_exists: {fname}")
 
-    exists = os.path.isfile(fname)
+    exists = Path(fname).is_file()
     if exists:
         log.debug(f"File {fname} found")
         return fname
