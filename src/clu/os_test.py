@@ -5,12 +5,15 @@ from clu.provides import Provides
 from clu.requires import Requires
 
 
+def default_facts_os_test():
+    return []
 
 
 def provides_os_test() -> Provides:
     provides = Provides()
 
     return provides
+
 
 def requires_os_test() -> Requires:
     """Define the requirements for the test OS."""

@@ -21,6 +21,16 @@ from clu.os_generic import (
 log = logging.getLogger(__name__)
 
 
+def default_facts_os_linux() -> list:
+    return [
+        'os.name',
+        'os.hostname',
+        'os.distro.name',
+        'os.distro.version',
+        'phy.ram',
+        'run.uptime',
+        'clu.version'
+    ]
 
 
 def provides_os_linux() -> Provides:
