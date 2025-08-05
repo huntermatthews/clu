@@ -44,11 +44,11 @@ def setup_workdir(hostname):
 
 
 def create_archive(hostname, work_dir):
-    archive_path = f"/tmp/{hostname}.tgz"
+    archive_path = f"/tmp/{__about__.__title__}_{hostname}.tgz"
     with tarfile.open(archive_path, "w:gz") as tar:
         tar.add(work_dir, arcname=".")
-    os.chmod(archive_path, 0o444)  # ugo+r
-    log.info(f"Archive created at {archive_path}")
+    os.chmod(archive_path, 0o644)  # u=rw,go=r
+    print(f"Archive created at {archive_path}")
 
 
 def collect_files(requires, work_dir):
