@@ -9,11 +9,19 @@ import getpass
 
 from clu import __about__
 from clu.facts import Facts
+from clu.provides import Provides
 from clu.requires import Requires
 from clu import panic
 from clu.readers import read_program
 
 log = logging.getLogger(__name__)
+
+
+def provides_uname(provides: Provides) -> None:
+    provides["os.kernel.name"] = parse_uname
+    provides["os.hostname"] = parse_uname
+    provides["os.kernel.version"] = parse_uname
+    provides["phy.arch"] = parse_uname
 
 
 def requires_uname(requires: Requires) -> None:
@@ -44,6 +52,16 @@ def parse_uname(facts: Facts) -> None:
         facts[keys[idx]] = data[idx]
 
 
+def provides_clu(provides: Provides) -> None:
+    provides["clu.binary"] = parse_clu
+    provides["clu.version"] = parse_clu
+    provides["clu.python.binary"] = parse_clu
+    provides["clu.python.version"] = parse_clu
+    provides["clu.cmdline"] = parse_clu
+    provides["clu.cwd"] = parse_clu
+    provides["clu.user"] = parse_clu
+    provides["clu.date"] = parse_clu
+
 def requires_clu(requires: Requires) -> None:
     # No specific requirements for clu group
     pass
@@ -65,6 +83,10 @@ def parse_clu(facts: Facts) -> None:
     facts["clu.cwd"] = os.getcwd()
     facts["clu.user"] = getpass.getuser()
     facts["clu.date"] = _get_rfc3339_timestamp()
+
+
+def provides_uptime(provides: Provides) -> None:
+    provides["run.uptime"] = parse_uptime
 
 
 def requires_uptime(requires: Requires) -> None:

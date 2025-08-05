@@ -5,10 +5,13 @@ import re
 
 from clu.requires import Requires
 from clu.facts import Facts
+from clu.provides import Provides
 from clu import panic
 from clu.readers import read_program, read_file
 from clu.conversions import bytes_to_si
 from clu.os_generic import (
+    provides_clu,
+    provides_uname,
     requires_uname,
     parse_uname,
     requires_clu,
@@ -16,6 +19,27 @@ from clu.os_generic import (
 )
 
 log = logging.getLogger(__name__)
+
+
+
+
+def provides_os_linux() -> Provides:
+    """Define the provider map for Linux."""
+    provides = Provides()
+
+    provides_uname(provides)
+    provides_virt_what(provides)
+    provides_os_release(provides)
+    provides_sys_dmi(provides)
+    provides_cpuinfo_flags(provides)
+    provides_udevadm_ram(provides)
+    provides_lscpu(provides)
+    provides_selinux(provides)
+    provides_no_salt(provides)
+    provides_proc_uptime(provides)
+    provides_clu(provides)
+
+    return provides
 
 
 def requires_os_linux() -> Requires:
@@ -58,6 +82,11 @@ def parse_os_linux() -> Facts:
     return facts
 
 
+def provides_os_release(provides: Provides) -> None:
+    provides["os.distro.name"] = parse_os_release
+    provides["os.distro.version"] = parse_os_release
+
+
 def requires_os_release(requires: Requires) -> None:
     requires.files.append("/etc/os-release")
 
@@ -82,6 +111,16 @@ def parse_os_release(facts: Facts) -> None:
             facts["os.distro.name"] = value
         elif key == "VERSION_ID":
             facts["os.distro.version"] = value
+
+
+def provides_sys_dmi(provides: Provides) -> None:
+    provides["sys.vendor"] = parse_sys_dmi
+    provides["sys.model.family"] = parse_sys_dmi
+    provides["sys.model.name"] = parse_sys_dmi
+    provides["sys.serial_no"] = parse_sys_dmi
+    provides["sys.uuid"] = parse_sys_dmi
+    provides["sys.oem"] = parse_sys_dmi
+    provides["sys.asset_no"] = parse_sys_dmi
 
 
 def requires_sys_dmi(requires: Requires) -> None:
@@ -133,6 +172,10 @@ def parse_sys_dmi(facts: Facts) -> None:
         facts[key] = data.strip()
 
 
+def provides_udevadm_ram(provides: Provides) -> None:
+    provides["phy.ram"] = parse_udevadm_ram
+
+
 def requires_udevadm_ram(requires: Requires) -> None:
     requires.programs.append("udevadm info --path /devices/virtual/dmi/id")
 
@@ -158,6 +201,10 @@ def parse_udevadm_ram(facts: Facts) -> None:
     facts["phy.ram"] = bytes_str
 
 
+def provides_virt_what(provides: Provides) -> None:
+    provides["phy.platform"] = parse_virt_what
+
+
 def requires_virt_what(requires: Requires) -> None:
     requires.programs.append("virt-what")
 
@@ -176,6 +223,14 @@ def parse_virt_what(facts: Facts) -> None:
     if not data:
         data = "physical"
     facts["phy.platform"] = data
+
+
+def provides_lscpu(provides: Provides) -> None:
+    provides["phy.cpu.model"] = parse_lscpu
+    provides["phy.cpu.vendor"] = parse_lscpu
+    provides["phy.cpu.cores"] = parse_lscpu
+    provides["phy.cpu.threads"] = parse_lscpu
+    provides["phy.cpu.sockets"] = parse_lscpu
 
 
 def requires_lscpu(requires: Requires) -> None:
@@ -229,6 +284,10 @@ def __has_flags(check_flags, all_flags):
     return True
 
 
+def provides_cpuinfo_flags(provides: Provides) -> None:
+    provides["phy.cpu.arch_version"] = parse_cpuinfo_flags
+
+
 def requires_cpuinfo_flags(requires: Requires) -> None:
     requires.files.append("/proc/cpuinfo")
 
@@ -264,6 +323,11 @@ def parse_cpuinfo_flags(facts: Facts) -> None:
     facts["phy.cpu.arch_version"] = f"x86_64_v{cpu_version}"
 
 
+def provides_selinux(provides: Provides) -> None:
+    provides["os.selinux.enable"] = parse_selinux
+    provides["os.selinux.mode"] = parse_selinux
+
+
 def requires_selinux(requires: Requires) -> None:
     requires.programs.extend(["selinuxenabled", "getenforce"])
 
@@ -284,6 +348,11 @@ def parse_selinux(facts: Facts) -> None:
     facts["os.selinux.mode"] = data.strip() if data else "Unknown/Error"
 
 
+def provides_no_salt(provides: Provides) -> None:
+    provides["os.no_salt.exists"] = parse_no_salt
+    provides["os.no_salt.reason"] = parse_no_salt
+
+
 def requires_no_salt(requires: Requires) -> None:
     requires.files.append("/no_salt")
 
@@ -301,6 +370,10 @@ def parse_no_salt(facts: Facts) -> None:
     facts["salt.no_salt.reason"] = data.strip()
 
 
+def provides_proc_uptime(provides: Provides) -> None:
+    provides["run.uptime"] = parse_proc_uptime
+
+
 def requires_proc_uptime(requires: Requires) -> None:
     requires.files.append("/proc/uptime")
 
@@ -313,6 +386,10 @@ def parse_proc_uptime(facts: Facts) -> None:
     uptime_secs = data.split()[0]
     log.debug(f"{uptime_secs=}")
     facts["run.uptime"] = uptime_secs
+
+
+def provides_ip_addr(provides: Provides) -> None:
+    pass
 
 
 def requires_ip_addr(requires: Requires) -> None:

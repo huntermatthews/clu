@@ -2,20 +2,36 @@
 
 import logging
 
+from clu.provides import Provides
 from clu.requires import Requires
 from clu.facts import Facts
 from clu import panic
 from clu.readers import read_program
 from clu.os_generic import (
+    provides_uname,
     requires_uname,
     parse_uname,
+    provides_uptime,
     requires_uptime,
     parse_uptime,
+    provides_clu,
     requires_clu,
     parse_clu,
 )
 
 log = logging.getLogger(__name__)
+
+def provides_os_darwin() -> Provides:
+    """Define the provider map for macOS (Darwin)."""
+    provides = Provides()
+
+    provides_uname(provides)
+    provides_sw_vers(provides)
+    provides_macos_name(provides)
+    provides_uptime(provides)
+    provides_clu(provides)
+
+    return provides
 
 
 def requires_os_darwin() -> Requires:
@@ -48,6 +64,12 @@ def parse_os_darwin() -> Facts:
     return facts
 
 
+def provides_sw_vers(provides: Provides) -> None:
+    provides["os.name"] = parse_sw_vers
+    provides["os.version"] = parse_sw_vers
+    provides["os.build"] = parse_sw_vers
+
+
 def requires_sw_vers(requires: Requires) -> None:
     requires.programs.append("sw_vers")
 
@@ -72,6 +94,10 @@ def parse_sw_vers(facts: Facts) -> None:
             facts["os.version"] = value
         elif key == "BuildVersion":
             facts["os.build"] = value
+
+
+def provides_macos_name(provides: Provides) -> None:
+    provides["os.code_name"] = parse_macos_name
 
 
 def requires_macos_name(requires: Requires) -> None:

@@ -1,8 +1,16 @@
 
 from clu.facts import Facts
 from clu.os_linux import parse_uname, requires_os_release, parse_lscpu, requires_lscpu
+from clu.provides import Provides
 from clu.requires import Requires
 
+
+
+
+def provides_os_test() -> Provides:
+    provides = Provides()
+
+    return provides
 
 def requires_os_test() -> Requires:
     """Define the requirements for the test OS."""
