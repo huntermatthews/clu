@@ -22,6 +22,7 @@ def _debug_var(var_name, var_value):
     """
     Return a debug string representation of a variable.
     """
+    # TODO: change this to a match statement?
     var_type = type(var_value)
     if var_type is str:
         return f"{var_name} (str[{len(var_value)}]) == '{var_value}'"

@@ -11,7 +11,7 @@ def get_os_functions() -> tuple:
 
     if config.test:
         # If we're in test mode, we don't need to do any checks.
-        # We just parse the test OS.
+        # We just use the test OS.
         return (requires_os_test, parse_os_test)
 
     facts = Facts()

@@ -5,7 +5,7 @@ import logging
 from clu.requires import Requires
 from clu.facts import Facts
 from clu import panic
-from clu.readers import read_program, read_file
+from clu.readers import read_program
 from clu.os_generic import (
     requires_uname,
     parse_uname,

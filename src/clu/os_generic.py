@@ -48,10 +48,12 @@ def requires_clu(requires: Requires) -> None:
     # No specific requirements for clu group
     pass
 
+
 def _get_rfc3339_timestamp() -> str:
     """Get the current time in RFC 3339 format."""
     now_utc = datetime.datetime.now(datetime.timezone.utc)
     return now_utc.isoformat(sep='T', timespec='seconds')
+
 
 def parse_clu(facts: Facts) -> None:
 
