@@ -86,6 +86,9 @@ def requires_sw_vers(requires: Requires) -> None:
 
 
 def parse_sw_vers(facts: Facts) -> None:
+    if "os.version" in facts:
+        # we already ran...
+        return
     data, rc = read_program("sw_vers")
     log.debug(f"{data=}")
     if data is None or rc != 0:
@@ -117,6 +120,9 @@ def requires_macos_name(requires: Requires) -> None:
 
 
 def parse_macos_name(facts: Facts) -> None:
+    if "os.version" not in facts:
+        parse_sw_vers(facts)
+
     version = facts["os.version"]
     if not version:
         panic("parse_macos_name: os.version is not set or empty")

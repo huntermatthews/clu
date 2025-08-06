@@ -29,6 +29,9 @@ def requires_uname(requires: Requires) -> None:
 
 
 def parse_uname(facts: Facts) -> None:
+    if "phy.arch" in facts:
+        return
+
     keys = [
         "os.kernel.name",
         "os.hostname",

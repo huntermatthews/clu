@@ -147,6 +147,9 @@ def requires_sys_dmi(requires: Requires) -> None:
 
 def parse_sys_dmi(facts: Facts) -> None:
 
+    if "phy.platform" not in facts:
+        parse_virt_what(facts)
+
     if facts["phy.platform"] != "physical":
         log.info("Not a physical platform, skipping sys.dmi parsing")
         return
@@ -221,7 +224,6 @@ def requires_virt_what(requires: Requires) -> None:
 
 def parse_virt_what(facts: Facts) -> None:
     if "phy.platform" in facts:
-        # already set --skip it
         return
 
     data, rc = read_program("virt-what")
@@ -303,7 +305,9 @@ def requires_cpuinfo_flags(requires: Requires) -> None:
 
 
 def parse_cpuinfo_flags(facts: Facts) -> None:
-    # we can always assume uname has been parsed
+    if "phy.arch" not in facts:
+        parse_uname(facts)
+
     if facts["phy.arch"] not in ("x86_64", "amd64"):
         log.info("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
         return
