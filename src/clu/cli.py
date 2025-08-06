@@ -43,6 +43,11 @@ def main()  -> int:
         default="dots",
         help="Output format: 'dots', 'shell', or 'json'",
     )
+    parser.add_argument(
+        "--all", "-A",
+        action="store_true",
+        help="Output all facts",
+    )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "--report",

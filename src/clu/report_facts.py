@@ -15,7 +15,9 @@ def do_report_facts() -> None:
     provides_map = provides_fn()
     parsers_to_call = set()
 
-    if not config.facts:
+    if config.all:
+        config.facts = "os sys phy run salt clu"
+    elif not config.facts:
         config.facts = default_facts_fn()
 
     # Loop through the facts that were requested on the command line and get a set of parsers that will
