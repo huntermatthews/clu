@@ -9,12 +9,25 @@ help:
     @just --list
 
 
+# build it all
+[group('build')]
+build: clean _dirs wheel zipapp
+
+# Create the build / dist dirs
+[group('build')]
+_dirs:
+    mkdir build dist
+
+# Build a proper python package (wheel)
+[group('build')]
+wheel: _dirs
+    uv build --wheel
+
 # build the program as a single file executable (zipapp)
 [group('build')]
-build: clean
-    mkdir -p dist
-    uv run python -m zipapp src -m "clu.cli:main" -o dist/clu -p "/usr/bin/env python3"
-
+zipapp: _dirs wheel
+    uv pip install --target=build dist/clu-*-any.whl
+    uv run python -m zipapp build -m "clu.cli:main" -o dist/clu -p "/usr/bin/env python3"
 
 # Clean up build artifacts
 [group('build')]
@@ -39,3 +52,7 @@ mypy:
 [group('dev')]
 lint *args:
     uv run ruff check {{args}}
+
+# uv build
+# uv pip install dist/clu-0.1.0-py3-none-any.whl --target=build/
+# uv run python -m zipapp build -m "clu.cli:main" -o dist/clu -p "/usr/bin/env python3"
