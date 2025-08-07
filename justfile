@@ -53,6 +53,10 @@ types:
 format:
     uv run ruff format --diff src tests
 
+# Format the code and write it
+[group('dev')]
+reformat:
+    uv run ruff format src tests
 
 # Run linter using ruff
 [group('dev')]
