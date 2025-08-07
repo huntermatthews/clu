@@ -6,6 +6,7 @@ They are used to generate the requirements list and check if they are met.
 from dataclasses import dataclass, field
 from typing import List
 
+
 @dataclass
 class Requires:
     files: List[str] = field(default_factory=list)

@@ -21,15 +21,9 @@ from clu.os_generic import (
 
 log = logging.getLogger(__name__)
 
+
 def default_facts_os_darwin() -> list:
-    return [
-        'os.name',
-        'os.hostname',
-        'os.version',
-        'os.codename',
-        'run.uptime',
-        'clu.version'
-    ]
+    return ["os.name", "os.hostname", "os.version", "os.codename", "run.uptime", "clu.version"]
 
 
 def provides_os_darwin() -> Provides:

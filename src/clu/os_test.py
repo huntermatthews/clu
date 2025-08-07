@@ -1,4 +1,3 @@
-
 from clu.facts import Facts
 from clu.os_linux import parse_uname, requires_os_release, parse_lscpu, requires_lscpu
 from clu.provides import Provides

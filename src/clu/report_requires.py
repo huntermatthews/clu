@@ -2,6 +2,7 @@ from clu.os_map import get_os_functions
 from clu.readers import check_file_exists, check_program_exists
 from clu.requires import Requires
 
+
 def do_list_requires() -> None:
     """List all the requirements for the current OS."""
 
@@ -19,7 +20,7 @@ def do_list_requires() -> None:
 
     print("APIs:")
     for api in requires.apis:
-         print(f"  - {api}")
+        print(f"  - {api}")
 
 
 def do_check_requires() -> None:

@@ -12,7 +12,8 @@ from clu.report_requires import do_list_requires, do_check_requires
 
 log = logging.getLogger(__name__)
 
-def main()  -> int:
+
+def main() -> int:
     if sys.version_info < __about__.__minimum_python_info__:
         print(f"Must use at least python {__about__.__minimum_python__}", file=sys.stderr)
         sys.exit(1)
@@ -44,7 +45,8 @@ def main()  -> int:
         help="Output format: 'dots', 'shell', or 'json'",
     )
     parser.add_argument(
-        "--all", "-A",
+        "--all",
+        "-A",
         action="store_true",
         help="Output all facts",
     )
@@ -93,6 +95,7 @@ def main()  -> int:
         do_report_facts()
 
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

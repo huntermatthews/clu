@@ -40,7 +40,6 @@ def do_report_facts() -> None:
             if key.startswith(fact_spec):
                 output_facts[key] = parsed_facts[key]
 
-
     if config.output == "json":
         output_json(output_facts)
     elif config.output == "shell":
@@ -59,7 +58,7 @@ def output_shell(facts: Facts) -> None:
     for key in facts:
         value = facts[key]
         key_var = key.upper().replace(".", "_")
-        print(f"{key_var}=\"{value}\"")
+        print(f'{key_var}="{value}"')
 
 
 def output_json(facts: Facts) -> None:

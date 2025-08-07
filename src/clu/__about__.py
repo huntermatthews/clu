@@ -30,7 +30,7 @@ __email__ = dist_info.metadata["Author-email"]
 # Make some assumptions about the metadata for the requires-python field.
 assert dist_info.metadata["Requires-Python"].startswith(">=")
 __minimum_python__: str = dist_info.metadata["Requires-Python"][2:]
-__minimum_python_info__: tuple = tuple([int(item) for item in __minimum_python__.split('.')])
+__minimum_python_info__: tuple = tuple([int(item) for item in __minimum_python__.split(".")])
 
 
 # # NOTE: This mess is due to:

@@ -76,6 +76,7 @@ def seconds_to_text(secs: int) -> str:
 
     return ", ".join(parts)
 
+
 # TODO:
 # - Consider adding support for binary prefixes (KiB, MiB, etc.) if needed
 # - extend to ZB, YB, RB, QB -- and link to https://en.wikipedia.org/wiki/Binary_prefix

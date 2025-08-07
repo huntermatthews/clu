@@ -65,6 +65,7 @@ def provides_clu(provides: Provides) -> None:
     provides["clu.user"] = parse_clu
     provides["clu.date"] = parse_clu
 
+
 def requires_clu(requires: Requires) -> None:
     # No specific requirements for clu group
     pass
@@ -73,11 +74,10 @@ def requires_clu(requires: Requires) -> None:
 def _get_rfc3339_timestamp() -> str:
     """Get the current time in RFC 3339 format."""
     now_utc = datetime.datetime.now(datetime.timezone.utc)
-    return now_utc.isoformat(sep='T', timespec='seconds')
+    return now_utc.isoformat(sep="T", timespec="seconds")
 
 
 def parse_clu(facts: Facts) -> None:
-
     facts["clu.binary"] = sys.argv[0]
     facts["clu.version"] = __about__.__version__
     facts["clu.python.binary"] = sys.executable

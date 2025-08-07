@@ -23,13 +23,13 @@ log = logging.getLogger(__name__)
 
 def default_facts_os_linux() -> list:
     return [
-        'os.name',
-        'os.hostname',
-        'os.distro.name',
-        'os.distro.version',
-        'phy.ram',
-        'run.uptime',
-        'clu.version'
+        "os.name",
+        "os.hostname",
+        "os.distro.name",
+        "os.distro.version",
+        "phy.ram",
+        "run.uptime",
+        "clu.version",
     ]
 
 
@@ -134,19 +134,20 @@ def provides_sys_dmi(provides: Provides) -> None:
 
 
 def requires_sys_dmi(requires: Requires) -> None:
-    requires.files.extend([
-        "/sys/devices/virtual/dmi/id/sys_vendor",
-        "/sys/devices/virtual/dmi/id/product_family",
-        "/sys/devices/virtual/dmi/id/product_name",
-        "/sys/devices/virtual/dmi/id/product_serial",
-        "/sys/devices/virtual/dmi/id/product_uuid",
-        "/sys/devices/virtual/dmi/id/chassis_vendor",
-        "/sys/devices/virtual/dmi/id/chassis_asset_tag",
-    ])
+    requires.files.extend(
+        [
+            "/sys/devices/virtual/dmi/id/sys_vendor",
+            "/sys/devices/virtual/dmi/id/product_family",
+            "/sys/devices/virtual/dmi/id/product_name",
+            "/sys/devices/virtual/dmi/id/product_serial",
+            "/sys/devices/virtual/dmi/id/product_uuid",
+            "/sys/devices/virtual/dmi/id/chassis_vendor",
+            "/sys/devices/virtual/dmi/id/chassis_asset_tag",
+        ]
+    )
 
 
 def parse_sys_dmi(facts: Facts) -> None:
-
     if "phy.platform" not in facts:
         parse_virt_what(facts)
 
@@ -247,6 +248,7 @@ def provides_lscpu(provides: Provides) -> None:
 
 def requires_lscpu(requires: Requires) -> None:
     requires.programs.append("lscpu")
+
 
 # TODO: clean this up, it is a mess because it didn't translate from the original code well
 def parse_lscpu(facts: Facts) -> None:
@@ -349,7 +351,7 @@ def requires_selinux(requires: Requires) -> None:
 def parse_selinux(facts: Facts) -> None:
     _, rc = read_program("selinuxenabled")
     # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
-    log.debug(f'rc is {rc}')
+    log.debug(f"rc is {rc}")
     if rc == 0:
         facts["os.selinux.enable"] = "True"
     elif rc == 1:
@@ -415,6 +417,7 @@ def parse_ip_addr(facts: Facts) -> None:
     if data is None or rc != 0:
         return
     log.debug(f"{data=}")
+
 
 # TODO:
 # 1. Create parse_ram() function to parse ls_mem and if that fails fallback to udevadm_ram()
