@@ -14,6 +14,7 @@ def bytes_to_si(size: float) -> str:
     return f"{size:.1f} {units[-1]}"
 
 
+# FIXME: mypy complains here because number is a str and then its a float
 def si_to_bytes(size_str: str) -> float:
     """
     Convert a human-readable SI string (e.g., '1.5 KB') to bytes (int).
