@@ -44,8 +44,14 @@ test *args:
 
 # Type check the code using mypy
 [group('dev')]
-mypy:
+types:
     uv run mypy src tests
+
+
+# Format the code (--diff only for now)
+[group('dev')]
+format:
+    uv run ruff format --diff src tests
 
 
 # Run linter using ruff

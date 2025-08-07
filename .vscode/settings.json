@@ -4,6 +4,7 @@
     },
     "cSpell.words": [
         "Justfile",
+        "mypy",
         "pycache",
         "pytest",
         "zipapp"
