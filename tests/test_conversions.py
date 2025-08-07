@@ -1,7 +1,7 @@
 import pytest
 
 
-from clu.conversions import bytes_to_si, si_to_bytes
+from clu.conversions import bytes_to_si, si_to_bytes, seconds_to_text
 
 
 @pytest.mark.parametrize(
@@ -45,3 +45,18 @@ def test_bytes_to_si(bytes_count, expected_output):
     assert si_string == expected_output, (
         f"Expected {expected_output} for {bytes_count}, got {si_string}"
     )
+
+
+@pytest.mark.parametrize(
+    "seconds, expected_output",
+    [
+        (3601, "1 hour, 1 second"),
+        (2443044.61, "28 days, 6 hours, 37 minutes, 24 seconds"),
+        (350735.47, "4 days, 1 hour, 25 minutes, 35 seconds"),
+        (5114048.68, "1 month, 29 days, 4 hours, 34 minutes, 8 seconds"),
+    ],
+)
+def test_seconds_to_text(seconds, expected_output):
+    text = seconds_to_text(int(seconds))
+
+    assert text == expected_output, f"Expected {expected_output} for {seconds}, got {text}"
