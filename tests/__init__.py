@@ -35,12 +35,11 @@ def mock_read_program(mock_dir: Path, cmdline):
     if os.path.isfile(rc_name):
         rc = int(read_file(rc_name))
     elif data is None:
-        rc = 127       # command not found (fish/bash/zsh/sh all consistent = 127)
+        rc = 127  # command not found (fish/bash/zsh/sh all consistent = 127)
     else:
         rc = 0
 
     return data, rc
-
 
 
 # For later tests

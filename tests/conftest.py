@@ -1,7 +1,9 @@
-""" Configure pytest itself
+"""Configure pytest itself
 (we just cheat and grab the rootdir)
 """
+
 import pytest
+
 
 @pytest.hookimpl
 def pytest_configure(config: pytest.Config) -> None:
