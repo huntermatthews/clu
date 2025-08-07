@@ -11,12 +11,12 @@ help:
 
 # build it all
 [group('build')]
-build: clean _dirs wheel zipapp
+build: _dirs wheel zipapp
 
-# Create the build / dist dirs
+# Create the required build / dist dirs
 [group('build')]
 _dirs:
-    mkdir build dist
+    mkdir -p build dist
 
 # Build a proper python package (wheel)
 [group('build')]
