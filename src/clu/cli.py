@@ -13,8 +13,8 @@ from clu.report_requires import do_list_requires, do_check_requires
 log = logging.getLogger(__name__)
 
 def main()  -> int:
-    if sys.version_info < (3, 8):
-        log.error("Must use at least python 3.8")
+    if sys.version_info < __about__.__minimum_python_info__:
+        print(f"Must use at least python {__about__.__minimum_python__}", file=sys.stderr)
         sys.exit(1)
 
     parser = argparse.ArgumentParser(prog="clu", description="clu utility")
