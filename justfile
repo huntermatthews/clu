@@ -27,7 +27,7 @@ wheel: _dirs
 [group('build')]
 zipapp: _dirs wheel
     uv pip install --target=build dist/clu-*-any.whl
-    uv run python -m zipapp build -m "clu.cli:main" -o dist/clu -p "/usr/bin/env python3"
+    uv run python -m zipapp build -m "clu.cli:main" -o dist/clu -p "/usr/bin/env python3" -c
 
 # Clean up build artifacts
 [group('build')]
