@@ -8,7 +8,7 @@ from clu.facts import Facts
 from clu.provides import Provides
 from clu import panic
 from clu.readers import read_program, read_file
-from clu.conversions import bytes_to_si
+from clu.conversions import bytes_to_si, seconds_to_text
 from clu.os_generic import (
     provides_clu,
     provides_uname,
@@ -397,9 +397,9 @@ def parse_proc_uptime(facts: Facts) -> None:
     log.debug(f"{data=}")
     if not data:
         return
-    uptime_secs = data.split()[0]
+    uptime_secs = int(float(data.split()[0]))
     log.debug(f"{uptime_secs=}")
-    facts["run.uptime"] = uptime_secs
+    facts["run.uptime"] = seconds_to_text(uptime_secs)
 
 
 def provides_ip_addr(provides: Provides) -> None:

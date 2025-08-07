@@ -35,6 +35,47 @@ def si_to_bytes(size_str: str) -> float:
     return float(number * (1024**exponent))
 
 
+def seconds_to_text(secs: int) -> str:
+    """
+    Convert seconds to a human-readable string with weeks, days, hours, and minutes.
+
+    Args:
+        secs: Number of seconds to convert
+
+    Returns:
+        A formatted string like "1 week, 2 days, 3 hours, 45 minutes"
+    """
+    if secs < 0:
+        return "0 seconds"
+
+    # Calculate time units
+    months = secs // 2592000  # 30 * 24 * 60 * 60
+    remaining = secs % 2592000
+
+    days = remaining // 86400  # 24 * 60 * 60
+    remaining = remaining % 86400
+
+    hours = remaining // 3600  # 60 * 60
+    remaining = remaining % 3600
+
+    minutes = remaining // 60
+    seconds = remaining % 60
+
+    # Build result parts
+    parts = []
+    if months > 0:
+        parts.append(f"{months} month{'s' if months != 1 else ''}")
+    if days > 0:
+        parts.append(f"{days} day{'s' if days != 1 else ''}")
+    if hours > 0:
+        parts.append(f"{hours} hour{'s' if hours != 1 else ''}")
+    if minutes > 0:
+        parts.append(f"{minutes} minute{'s' if minutes != 1 else ''}")
+    if seconds > 0 or len(parts) == 0:
+        parts.append(f"{seconds} second{'s' if seconds != 1 else ''}")
+
+    return ", ".join(parts)
+
 # TODO:
 # - Consider adding support for binary prefixes (KiB, MiB, etc.) if needed
 # - extend to ZB, YB, RB, QB -- and link to https://en.wikipedia.org/wiki/Binary_prefix

@@ -9,9 +9,9 @@ from tests import mock_read_file
 
 
 @pytest.mark.parametrize("mock_host, expected_result", [
-    ("host1", {"run.uptime": "3601"}),
-    ("host2", {"run.uptime": "2443044.61"}),
-    ("host3", {"run.uptime": "350735.47"}),
+    ("host1", {"run.uptime": "1 hour, 1 second"}),
+    ("host2", {"run.uptime": "28 days, 6 hours, 37 minutes, 24 seconds"}),
+    ("host3", {"run.uptime": "4 days, 1 hour, 25 minutes, 35 seconds"}),
     ("macos", {}),
 ])
 def test_parse_proc_uptime(mock_host, expected_result):

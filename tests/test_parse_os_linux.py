@@ -29,7 +29,7 @@ import tests.test_parse_clu
         "os.selinux.mode": "Permissive",
         "salt.no_salt.exists": "True",
         "salt.no_salt.reason": "matthewsht - 2025-05-04 - This server is full of sadness.",
-        "run.uptime": "3601",
+        "run.uptime": "1 hour, 1 second",
     }),
     ("host2", {
         "os.name": "Linux",
@@ -50,7 +50,7 @@ import tests.test_parse_clu
         "os.selinux.enable": "Unknown/Error",
         "os.selinux.mode": "Unknown/Error",
         "salt.no_salt.exists": "False",
-        "run.uptime": "2443044.61",
+        "run.uptime": "28 days, 6 hours, 37 minutes, 24 seconds",
     }),
     ("host3", {
         "os.name": "Linux",
@@ -78,7 +78,7 @@ import tests.test_parse_clu
         "os.selinux.enable": "False",
         "os.selinux.mode": "Disabled",
         "salt.no_salt.exists": "False",
-        "run.uptime": "350735.47"
+        "run.uptime": "4 days, 1 hour, 25 minutes, 35 seconds"
     }),
 ])
 def test_parse_os_linux(mock_host, expected_result):
