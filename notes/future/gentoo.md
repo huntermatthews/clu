@@ -1,5 +1,5 @@
 
-# some text here
+# Gentoo
 
 ``` text
 egglestongc@hg-02224551-vlg ~/Downloads> eselect profile show
@@ -13,3 +13,9 @@ Whatever man, whatever - she says "linx/amd/23.0/desktop/sysstemd"
 
 So... uh?
 ```
+
+## Reboot detection - Not available in gentoo
+
+## Update detection
+
+`emerge -DupvN @world`
