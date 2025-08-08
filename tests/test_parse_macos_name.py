@@ -24,10 +24,9 @@ from clu.os_darwin import parse_macos_name
 def test_parse_macos_name(input_facts, expected_result):
     """Test parse_macos_name function with mock data from various versions."""
 
-    with patch.object(config, "debug", 0, create=True):
-        facts = Facts()
-        facts.update(input_facts)
-        parse_macos_name(facts)
+    facts = Facts()
+    facts.update(input_facts)
+    parse_macos_name(facts)
 
-        # Assert the expected results
-        assert facts == expected_result, input_facts
+    # Assert the expected results
+    assert facts == expected_result, input_facts

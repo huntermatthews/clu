@@ -34,9 +34,9 @@ def test_parse_os_darwin(mock_host, expected_result):
     expected_result.update(tests.test_parse_clu.expected_result)
 
     # patch out parse_clu() because we test it elsewhere and its output varies too much.
-    with patch.object(config, "debug", 0, create=True), patch(
-        "clu.os_darwin.read_program"
-    ) as drp, patch("clu.os_generic.read_program") as grp, patch("clu.os_darwin.parse_clu") as cpc:
+    with patch("clu.os_darwin.read_program") as drp, patch(
+        "clu.os_generic.read_program"
+    ) as grp, patch("clu.os_darwin.parse_clu") as cpc:
         drp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
         grp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
         cpc.side_effect = lambda facts: facts.update(tests.test_parse_clu.expected_result)

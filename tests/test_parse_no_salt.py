@@ -26,7 +26,7 @@ from tests import mock_read_file
 def test_parse_no_salt(mock_host, expected_result):
     """Test parse_no_salt function with mock data from different hosts."""
 
-    with patch.object(config, "debug", 0, create=True), patch("clu.os_linux.read_file") as mrf:
+    with patch("clu.os_linux.read_file") as mrf:
         mrf.return_value = mock_read_file(pytest.mock_dir / mock_host, "/no_salt")
 
         facts = Facts()

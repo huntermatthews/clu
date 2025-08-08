@@ -21,7 +21,7 @@ from tests import mock_read_program
 def test_parse_uptime(mock_host, expected_result):
     """Test parse_uptime function with mock data from different hosts."""
 
-    with patch.object(config, "debug", 0, create=True), patch("clu.os_generic.read_program") as mrf:
+    with patch("clu.os_generic.read_program") as mrf:
         mrf.return_value = mock_read_program(pytest.mock_dir / mock_host, "uptime")
 
         facts = Facts()

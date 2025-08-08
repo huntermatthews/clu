@@ -35,7 +35,7 @@ def test_parse_sys_dmi(mock_host, input_facts, expected_result):
     def result_mocker(fname):
         return mock_read_file(pytest.mock_dir / mock_host, fname)
 
-    with patch.object(config, "debug", 0, create=True), patch("clu.os_linux.read_file") as mrf:
+    with patch("clu.os_linux.read_file") as mrf:
         mrf.side_effect = result_mocker
 
         facts = Facts()
