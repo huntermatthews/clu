@@ -22,7 +22,7 @@ def test_parse_virt_what(mock_host, expected_result):
     """Test parse_virt_what function with mock data from different hosts."""
 
     with patch("clu.os_linux.read_program") as mrf:
-        mrf.return_value = mock_read_program(pytest.mock_dir / mock_host, "virt-what")
+        mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
         parse_virt_what(facts)

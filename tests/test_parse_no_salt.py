@@ -27,7 +27,7 @@ def test_parse_no_salt(mock_host, expected_result):
     """Test parse_no_salt function with mock data from different hosts."""
 
     with patch("clu.os_linux.read_file") as mrf:
-        mrf.return_value = mock_read_file(pytest.mock_dir / mock_host, "/no_salt")
+        mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
         parse_no_salt(facts)

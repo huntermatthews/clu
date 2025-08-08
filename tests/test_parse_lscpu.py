@@ -48,7 +48,7 @@ def test_parse_lscpu(mock_host, expected_result):
     """Test parse_lscpu function with mock data from different hosts."""
 
     with patch("clu.os_linux.read_program") as mrf:
-        mrf.return_value = mock_read_program(pytest.mock_dir / mock_host, "lscpu")
+        mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
         parse_lscpu(facts)

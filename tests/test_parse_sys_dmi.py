@@ -32,11 +32,8 @@ from tests import mock_read_file
 def test_parse_sys_dmi(mock_host, input_facts, expected_result):
     """Test parse_sys_dmi function with mock data from different hosts."""
 
-    def result_mocker(fname):
-        return mock_read_file(pytest.mock_dir / mock_host, fname)
-
     with patch("clu.os_linux.read_file") as mrf:
-        mrf.side_effect = result_mocker
+        mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
         facts.update(input_facts)

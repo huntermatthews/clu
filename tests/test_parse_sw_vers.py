@@ -21,7 +21,7 @@ def test_parse_sw_vers(mock_host, expected_result):
     """Test parse_sw_vers function with mock data from different hosts."""
 
     with patch("clu.os_darwin.read_program") as mrf:
-        mrf.return_value = mock_read_program(pytest.mock_dir / mock_host, "sw_vers")
+        mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
         parse_sw_vers(facts)
