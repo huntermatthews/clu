@@ -53,7 +53,7 @@ def test_parse_uname(mock_host, expected_result):
     """Test parse_uname function with mock data from different hosts."""
 
     with patch("clu.os_generic.read_program") as mrf:
-        mrf.return_value = mock_read_program(pytest.mock_dir / mock_host, "uname -snrm")
+        mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
         parse_uname(facts)

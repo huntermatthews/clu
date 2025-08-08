@@ -21,7 +21,7 @@ def test_parse_os_release(mock_host, expected_result):
     """Test parse_os_release function with mock data from different hosts."""
 
     with patch("clu.os_linux.read_file") as mrf:
-        mrf.return_value = mock_read_file(pytest.mock_dir / mock_host, "/etc/os-release")
+        mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
         parse_os_release(facts)

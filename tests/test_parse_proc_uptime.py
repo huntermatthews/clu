@@ -21,7 +21,7 @@ def test_parse_proc_uptime(mock_host, expected_result):
     """Test parse_proc_uptime function with mock data from different hosts."""
 
     with patch("clu.os_linux.read_file") as mrf:
-        mrf.return_value = mock_read_file(pytest.mock_dir / mock_host, "/proc/uptime")
+        mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
         parse_proc_uptime(facts)
