@@ -9,12 +9,12 @@ from pathlib import Path
 log = logging.getLogger(__name__)
 
 
-def read_file(fname):
+def text_file(fname):
     """Read a file and return its contents.
 
     We [will] do checks for existance, size, perms and such thus the wrapper.
     """
-    log.debug(f"read_file: {fname=}")
+    log.debug(f"text_file: {fname=}")
 
     if not Path(fname).is_file():
         log.info(f"File not found: {fname}")
@@ -36,8 +36,8 @@ def transform_cmdline_to_filename(cmdline):
     return cmdline, cmdline + "_rc"
 
 
-def read_program(cmdline):
-    log.debug(f"read_program: {cmdline}")
+def text_program(cmdline):
+    log.debug(f"text_program: {cmdline}")
 
     try:
         result = subprocess.run(shlex.split(cmdline), capture_output=True, text=True)

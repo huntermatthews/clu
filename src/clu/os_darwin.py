@@ -6,7 +6,7 @@ from clu.provides import Provides
 from clu.requires import Requires
 from clu.facts import Facts
 from clu import panic
-from clu.readers import read_program
+from clu.input import text_program
 from clu.os_generic import (
     provides_uname,
     requires_uname,
@@ -83,7 +83,7 @@ def parse_sw_vers(facts: Facts) -> None:
     if "os.version" in facts:
         # we already ran...
         return
-    data, rc = read_program("sw_vers")
+    data, rc = text_program("sw_vers")
     log.debug(f"{data=}")
     if data is None or rc != 0:
         return

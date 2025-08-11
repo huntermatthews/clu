@@ -12,7 +12,7 @@ from clu.facts import Facts
 from clu.provides import Provides
 from clu.requires import Requires
 from clu import panic
-from clu.readers import read_program
+from clu.input import text_program
 
 log = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ def parse_uname(facts: Facts) -> None:
         "os.kernel.version",
         "phy.arch",
     ]
-    data, rc = read_program("uname -snrm")
+    data, rc = text_program("uname -snrm")
     log.debug(f"{data=}")
     log.debug(f"{rc=}")
     if data is None or rc != 0:
@@ -97,7 +97,7 @@ def requires_uptime(requires: Requires) -> None:
 
 
 def parse_uptime(facts: Facts) -> None:
-    data, rc = read_program("uptime")
+    data, rc = text_program("uptime")
     if data is None or rc != 0:
         panic("parse_uptime: uptime command failed")
     log.debug(f"{data=}")

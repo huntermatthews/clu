@@ -9,7 +9,7 @@ from pathlib import Path
 
 from clu import __about__, panic
 from clu.os_map import get_os_functions
-from clu.readers import transform_cmdline_to_filename, read_program
+from clu.input import transform_cmdline_to_filename, text_program
 
 log = logging.getLogger(__name__)
 
@@ -72,7 +72,7 @@ def collect_programs(requires, work_dir):
         cmd_name, rc_name = transform_cmdline_to_filename(prog)
         data_path = prog_dir / cmd_name
         rc_path = prog_dir / rc_name
-        stdout, rc = read_program(prog)
+        stdout, rc = text_program(prog)
 
         with open(data_path, "w") as f:
             f.write(stdout)

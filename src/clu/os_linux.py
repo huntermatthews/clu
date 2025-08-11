@@ -7,7 +7,7 @@ from clu.requires import Requires
 from clu.facts import Facts
 from clu.provides import Provides
 from clu import panic
-from clu.readers import read_program, read_file
+from clu.input import text_program, text_file
 from clu.conversions import bytes_to_si, seconds_to_text
 from clu.os_generic import (
     provides_clu,
@@ -105,7 +105,7 @@ def requires_os_release(requires: Requires) -> None:
 
 
 def parse_os_release(facts: Facts) -> None:
-    data = read_file("/etc/os-release")
+    data = text_file("/etc/os-release")
     log.debug(f"{data=}")
     if not data:
         facts["os.distro.name"] = "Unknown/Error"
@@ -183,10 +183,10 @@ def parse_sys_dmi(facts: Facts) -> None:
     for idx in range(len(keys)):
         key = keys[idx]
         entry = entries[idx]
-        data = read_file(f"/sys/devices/virtual/dmi/id/{entry}")
+        data = text_file(f"/sys/devices/virtual/dmi/id/{entry}")
         log.debug(f"{data=}")
         log.debug(f"{key=}")
-        facts[key] = data.strip()
+        facts[key] = data.strip() if data else ""
 
 
 def provides_udevadm_ram(provides: Provides) -> None:
@@ -198,7 +198,7 @@ def requires_udevadm_ram(requires: Requires) -> None:
 
 
 def parse_udevadm_ram(facts: Facts) -> None:
-    data, rc = read_program("udevadm info --path /devices/virtual/dmi/id")
+    data, rc = text_program("udevadm info --path /devices/virtual/dmi/id")
     if data is None or rc != 0:
         return
 
@@ -230,7 +230,7 @@ def parse_virt_what(facts: Facts) -> None:
     if "phy.platform" in facts:
         return
 
-    data, rc = read_program("virt-what")
+    data, rc = text_program("virt-what")
     if data is None or rc != 0:
         facts["phy.platform"] = "Unknown/Error"
         return
@@ -265,7 +265,7 @@ def parse_lscpu(facts: Facts) -> None:
     }
     fields = {}
     attr_keys = ["model", "vendor", "cores", "threads", "sockets"]
-    data, rc = read_program("lscpu")
+    data, rc = text_program("lscpu")
     if data is None or rc != 0:
         return
 
@@ -323,7 +323,7 @@ def parse_cpuinfo_flags(facts: Facts) -> None:
         "avx avx2 bmi1 bmi2 f16c fma abm movbe xsave",
         "avx512f avx512bw avx512cd avx512dq avx512vl",
     ]
-    data = read_file("/proc/cpuinfo")
+    data = text_file("/proc/cpuinfo")
     log.debug(f"data={data.splitlines() if data else []}")
     cpu_flags = ""
     if data:
@@ -352,7 +352,7 @@ def requires_selinux(requires: Requires) -> None:
 
 
 def parse_selinux(facts: Facts) -> None:
-    _, rc = read_program("selinuxenabled")
+    _, rc = text_program("selinuxenabled")
     # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
     log.debug(f"rc is {rc}")
     if rc == 0:
@@ -362,7 +362,7 @@ def parse_selinux(facts: Facts) -> None:
     else:
         facts["os.selinux.enable"] = "Unknown/Error"
 
-    data, rc = read_program("getenforce")
+    data, rc = text_program("getenforce")
     log.debug(f"{data=}")
     facts["os.selinux.mode"] = data.strip() if data else "Unknown/Error"
 
@@ -377,7 +377,7 @@ def requires_no_salt(requires: Requires) -> None:
 
 
 def parse_no_salt(facts: Facts) -> None:
-    data = read_file("/no_salt")
+    data = text_file("/no_salt")
     if data is None:
         facts["salt.no_salt.exists"] = "False"
         return
@@ -398,7 +398,7 @@ def requires_proc_uptime(requires: Requires) -> None:
 
 
 def parse_proc_uptime(facts: Facts) -> None:
-    data = read_file("/proc/uptime")
+    data = text_file("/proc/uptime")
     log.debug(f"{data=}")
     if not data:
         return
@@ -416,7 +416,7 @@ def requires_ip_addr(requires: Requires) -> None:
 
 
 def parse_ip_addr(facts: Facts) -> None:
-    data, rc = read_program("ip addr")
+    data, rc = text_program("ip addr")
     if data is None or rc != 0:
         return
     log.debug(f"{data=}")
@@ -447,7 +447,7 @@ def _parse_ipmitool_lan_print(facts: Facts) -> None:
         r"^MAC Address *: (.+)": "bmc.mac_address",
     }
     fields = {}
-    data, rc = read_program("ipmitool lan print")
+    data, rc = text_program("ipmitool lan print")
     if data is None or rc != 0:
         return
 
@@ -469,7 +469,7 @@ def _parse_ipmitool_mc_info(facts: Facts) -> None:
         r"^Manufacturer Name *: (.+)": "bmc.manufacturer_name",
     }
     fields = {}
-    data, rc = read_program("ipmitool mc info")
+    data, rc = text_program("ipmitool mc info")
     if data is None or rc != 0:
         return
 
