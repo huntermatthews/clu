@@ -8,9 +8,9 @@ import datetime
 import getpass
 
 from clu import __about__
-from clu.facts import Facts
-from clu.provides import Provides
-from clu.requires import Requires
+from clu import Facts
+from clu import Provides
+from clu import Requires
 from clu.debug import panic
 from clu.input import text_program
 

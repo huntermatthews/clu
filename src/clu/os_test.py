@@ -1,7 +1,7 @@
-from clu.facts import Facts
+from clu import Facts
 from clu.os_linux import parse_uname, requires_os_release, parse_lscpu, requires_lscpu
-from clu.provides import Provides
-from clu.requires import Requires
+from clu import Provides
+from clu import Requires
 
 
 def default_facts_os_test():

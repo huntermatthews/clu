@@ -2,9 +2,9 @@
 
 import logging
 
-from clu.provides import Provides
-from clu.requires import Requires
-from clu.facts import Facts
+from clu import Provides
+from clu import Requires
+from clu import Facts
 from clu.debug import panic
 from clu.input import text_program
 from clu.os_generic import (

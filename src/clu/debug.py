@@ -30,3 +30,7 @@ def _debug_var(var_name, var_value):
 		return f"{var_name} is None..."
 	else:
 		return f"{var_name} (type {var_type} ) == '{var_value}'"
+
+
+# def caller_function():
+#     return (inspect.stack()[1].function, inspect.stack()[1].filename)

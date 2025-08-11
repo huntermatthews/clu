@@ -3,9 +3,9 @@
 import logging
 import re
 
-from clu.requires import Requires
-from clu.facts import Facts
-from clu.provides import Provides
+from clu import Requires
+from clu import Facts
+from clu import Provides
 from clu.debug import panic
 from clu.input import text_program, text_file
 from clu.conversions import bytes_to_si, seconds_to_text

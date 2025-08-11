@@ -1,6 +1,6 @@
 from clu import config
 from clu.debug import panic
-from clu.facts import Facts
+from clu import Facts
 from clu.os_test import requires_os_test, parse_os_test, provides_os_test, default_facts_os_test
 from clu.os_darwin import (
     default_facts_os_darwin,
