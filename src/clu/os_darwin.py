@@ -5,7 +5,7 @@ import logging
 from clu.provides import Provides
 from clu.requires import Requires
 from clu.facts import Facts
-from clu import panic
+from clu.debug import panic
 from clu.input import text_program
 from clu.os_generic import (
     provides_uname,

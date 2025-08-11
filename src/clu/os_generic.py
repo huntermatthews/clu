@@ -11,7 +11,7 @@ from clu import __about__
 from clu.facts import Facts
 from clu.provides import Provides
 from clu.requires import Requires
-from clu import panic
+from clu.debug import panic
 from clu.input import text_program
 
 log = logging.getLogger(__name__)

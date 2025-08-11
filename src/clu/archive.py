@@ -7,7 +7,8 @@ import tarfile
 from datetime import datetime
 from pathlib import Path
 
-from clu import __about__, panic
+from clu import __about__
+from clu.debug import panic
 from clu.os_map import get_os_functions
 from clu.input import transform_cmdline_to_filename, text_program
 
