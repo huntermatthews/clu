@@ -6,6 +6,30 @@ from clu import config
 from clu.os_map import get_os_functions
 from clu import Facts
 
+def setup_args(subparsers):
+    subp_report = subparsers.add_parser("report")
+    subp_report.set_defaults(func=run)
+
+    subp_report.add_argument("--test", action="store_true", help="Bypass uname checking and do whatever")
+    subp_report.add_argument(
+        "--output",
+        choices=["dots", "shell", "json"],
+        default="dots",
+        help="Output format: 'dots', 'shell', or 'json'",
+    )
+    subp_report.add_argument(
+        "--all",
+        "-A",
+        action="store_true",
+        help="Output all facts",
+    )
+    subp_report.add_argument("facts", nargs="*", help="Facts to report on")
+
+
+def run():
+    print('im a report!')
+    print(f"Running command {config.cmd} with args={config}")
+
 
 def do_report_facts() -> None:
     """Generate a report based on the current OS."""

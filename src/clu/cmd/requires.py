@@ -1,6 +1,18 @@
+from clu import config
 from clu.os_map import get_os_functions
 from clu.input import check_file_exists, check_program_exists
 from clu import Requires
+
+
+def setup_args(subparsers):
+    subp_requires = subparsers.add_parser("requires")
+    subp_requires.set_defaults(func=run)
+
+    subp_requires.add_argument("speed", type=int)
+
+
+def run():
+    print(f"Running command {config.cmd} with args={config}")
 
 
 def do_list_requires() -> None:

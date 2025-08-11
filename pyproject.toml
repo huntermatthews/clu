@@ -1,6 +1,6 @@
 [project]
 name        = "clu"
-version     = "0.9.0"
+version     = "0.10.0"
 description = "clu describes the os and hardware of a system."
 license     = "Apache-2.0"
 
