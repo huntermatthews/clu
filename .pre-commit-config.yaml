@@ -1,0 +1,125 @@
+---
+default_stages: [pre-commit]
+exclude: ^(tests/mock_data|notes|build|dist)/
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: check-toml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: trailing-whitespace
+      - id: check-added-large-files
+        args: ["--maxkb=123"]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-symlinks
+      - id: debug-statements
+      - id: detect-aws-credentials
+      - id: mixed-line-ending
+        args: ["--fix=no"]
+      - id: name-tests-test
+        args: ["--pytest-test-first"]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.8
+    hooks:
+      - id: ruff
+        name: Ruff check
+        description: "Run 'ruff check' for extremely fast Python linting"
+        args: [--fix]
+
+      - id: ruff-format
+        name: Ruff format
+        description: "Run 'ruff format' for extremely fast Python formatting"
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.8.9
+    hooks:
+      - id: uv-lock
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        description: "Run pytest tests"
+        entry: uv run pytest tests
+        language: system
+        types: [python]
+        pass_filenames: false
+#
+# https://adamj.eu/tech/2025/05/07/pre-commit-install-uv/
+
+#
+#
+# assuming
+#   - pytest is in your venv (called .venv)
+#   - your tests are in a folder called tests
+# - repo: local
+#   hooks:
+#   - id: pytest
+#     name: pytest
+#     entry: ./.venv/bin/pytest tests
+#     language: system
+#     types: [python]
+#     pass_filenames: false
+#     always_run: true
+
+# repos:
+#   - repo: local
+#     hooks:
+#       - id: pytest-check
+#         name: Run Pytest
+#         entry: pytest
+#         language: system
+#         types: [python]
+#         pass_filenames: false
+
+# - repo: https://github.com/astral-sh/ruff-pre-commit
+#   rev: v0.12.8
+#   hooks:
+#     - id: ruff-format
+#       alias: ruff
+#     - id: ruff-check
+#       args: ["--fix"]
+#       alias: ruff
+
+# - repo: https://github.com/astral-sh/ruff-pre-commit
+#   rev: "v0.12.8"
+#   hooks:
+#     - id: ruff
+#       args: ["--fix"]
+#     - id: ruff-format
+
+# -   repo: https://github.com/codespell-project/codespell
+#     rev: v2.4.1
+#     hooks:
+#     -   id: codespell
+#         args: ["--toml=pyproject.toml"]
+#         additional_dependencies:
+#           - tomli
+
+# -   repo: https://github.com/codespell-project/codespell
+#     rev: v2.4.1
+#     hooks:
+#     -   id: codespell
+
+# repos:
+#   - repo: https://github.com/pre-commit/pre-commit-hooks.git
+#     rev: v6.0.0
+#     hooks:
+#       - id: check-added-large-files
+#       - id: check-merge-conflict
+#       - id: check-symlinks
+#       - id: debug-statements
+#       - id: detect-private-key
+#       - id: end-of-file-fixer
+#       - id: trailing-whitespace
+#       - id: mixed-line-ending
+#       - id: fix-byte-order-marker
+#       - id: check-executables-have-shebangs
+#       - id: debug-statements
+#         language_version: python3
