@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import patch
 
-from clu import config
 from clu.facts import Facts
 from clu.os_generic import parse_uptime
 

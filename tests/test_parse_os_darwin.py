@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import patch
 
-from clu import config
 from clu.os_darwin import parse_os_darwin
 
 from tests import mock_read_program

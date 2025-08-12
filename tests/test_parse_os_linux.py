@@ -1,8 +1,6 @@
 import pytest
 from unittest.mock import patch
 
-from clu import config
-from clu.facts import Facts
 from clu.os_linux import parse_os_linux
 
 from tests import mock_read_program, mock_read_file

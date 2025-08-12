@@ -1,7 +1,5 @@
 import pytest
-from unittest.mock import patch
 
-from clu import config
 from clu.facts import Facts
 from clu.os_darwin import parse_macos_name
 
