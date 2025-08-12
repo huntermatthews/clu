@@ -1,14 +1,13 @@
-"""Doc Incomplete."""
 
 import json
 
-from clu import config
 from clu.os_map import get_os_functions
 from clu import Facts
 
+
 def setup_args(subparsers):
     subp_report = subparsers.add_parser("report")
-    subp_report.set_defaults(func=run)
+    subp_report.set_defaults(func=report_facts)
 
     subp_report.add_argument("--test", action="store_true", help="Bypass uname checking and do whatever")
     subp_report.add_argument(
@@ -26,27 +25,25 @@ def setup_args(subparsers):
     subp_report.add_argument("facts", nargs="*", help="Facts to report on")
 
 
-def run():
-    print('im a report!')
-    print(f"Running command {config.cmd} with args={config}")
-
-
-def do_report_facts() -> None:
+def report_facts(args) -> None:
     """Generate a report based on the current OS."""
 
-    (_, parse_fn, provides_fn, default_facts_fn) = get_os_functions()
+    print(f"Running command {args.cmd} with args={args}")
+#    return 0
+
+    (_, parse_fn, provides_fn, default_facts_fn) = get_os_functions(args.test)
 
     provides_map = provides_fn()
     parsers_to_call = set()
 
-    if config.all:
-        config.facts = "os sys phy run salt clu"
-    elif not config.facts:
-        config.facts = default_facts_fn()
+    if args.all:
+        args.facts = "os sys phy run salt clu"
+    elif not args.facts:
+        args.facts = default_facts_fn()
 
     # Loop through the facts that were requested on the command line and get a set of parsers that will
     # obtain those facts (there's likely duplicates, so we use a set here)
-    for fact_spec in config.facts:
+    for fact_spec in args.facts:
         for key in provides_map:
             if key.startswith(fact_spec):
                 parsers_to_call.add(provides_map[key])
@@ -59,14 +56,14 @@ def do_report_facts() -> None:
     # Loop through the facts that were requested on the command line (again) and make a new
     # facts list/dict that has JUST those matching facts
     output_facts = Facts()
-    for fact_spec in config.facts:
+    for fact_spec in args.facts:
         for key in parsed_facts:
             if key.startswith(fact_spec):
                 output_facts[key] = parsed_facts[key]
 
-    if config.output == "json":
+    if args.output == "json":
         output_json(output_facts)
-    elif config.output == "shell":
+    elif args.output == "shell":
         output_shell(output_facts)
     else:
         output_dots(output_facts)

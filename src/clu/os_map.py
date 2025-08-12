@@ -1,4 +1,4 @@
-from clu import config
+
 from clu.debug import panic
 from clu import Facts
 from clu.os_test import requires_os_test, parse_os_test, provides_os_test, default_facts_os_test
@@ -17,10 +17,10 @@ from clu.os_linux import (
 from clu.os_generic import parse_uname
 
 
-def get_os_functions() -> tuple:
+def get_os_functions(test: bool = False) -> tuple:
     """Get the requirements and parsing functions for the current OS."""
 
-    if config.test:
+    if test:
         # If we're in test mode, we don't need to do any checks.
         # We just use the test OS.
         return (requires_os_test, parse_os_test, provides_os_test, default_facts_os_test)

@@ -1,15 +1,6 @@
 
-"""Doc Incomplete."""
-
-import argparse
-import logging
 from dataclasses import dataclass, field
 from typing import List
-
-
-log = logging.getLogger(__name__)
-
-config = argparse.Namespace()
 
 
 @dataclass

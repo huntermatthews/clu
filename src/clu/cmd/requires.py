@@ -1,4 +1,3 @@
-from clu import config
 from clu.os_map import get_os_functions
 from clu.input import check_file_exists, check_program_exists
 from clu import Requires
@@ -8,14 +7,21 @@ def setup_args(subparsers):
     subp_requires = subparsers.add_parser("requires")
     subp_requires.set_defaults(func=run)
 
-    subp_requires.add_argument("speed", type=int)
+    subp_requires.add_argument("subcmd", choices=["list", "check"], help="Sub-Command to run")
 
 
-def run():
-    print(f"Running command {config.cmd} with args={config}")
+def run(args):
+    print(f"Running command {args.cmd} with args={args}")
+    if args.subcmd == "list":
+        list_requires()
+    elif args.subcmd == "check":
+        check_requires()
+    else:
+        raise ValueError(f"Unknown sub-command: {args.subcmd}")
 
+    return 0
 
-def do_list_requires() -> None:
+def list_requires() -> None:
     """List all the requirements for the current OS."""
 
     requires = get_os_requirements()
@@ -35,7 +41,7 @@ def do_list_requires() -> None:
         print(f"  - {api}")
 
 
-def do_check_requires() -> None:
+def check_requires() -> None:
     """Check if the current OS meets the requirements."""
 
     requires = get_os_requirements()

@@ -1,17 +1,23 @@
+import logging
+import sys
+
+
 def panic(*args):
 	"""
 	Print a fatal error message and exit.
 	"""
-	import logging
-	import sys
+
 	log = logging.getLogger(__name__)
 	log.debug("stack trace:", exc_info=True, stack_info=True)
 	log.critical("FATAL: %s", " ".join(str(arg) for arg in args))
 	sys.exit(1)
+
+
 def _debug_var(var_name, var_value):
 	"""
 	Return a debug string representation of a variable.
 	"""
+
 	# TODO: change this to a match statement?
 	var_type = type(var_value)
 	if var_type is str:

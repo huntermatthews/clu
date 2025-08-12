@@ -5,7 +5,7 @@ import logging
 import sys
 
 # import clu
-from clu import __about__, config
+from clu import __about__
 import clu.cmd.report
 import clu.cmd.archive
 import clu.cmd.requires
@@ -36,13 +36,13 @@ def parse_cmdline(args=None):
     )
 
     subparsers = parser.add_subparsers(dest="cmd") #, required=True)
-    parser.set_defaults(cmd="report", func=clu.cmd.report.run)   # This WORKS!
+    parser.set_defaults(cmd="report", func=clu.cmd.report.report_facts)   # This WORKS!
 
     clu.cmd.archive.setup_args(subparsers)
     clu.cmd.report.setup_args(subparsers)
     clu.cmd.requires.setup_args(subparsers)
 
-    return parser.parse_args(namespace=config)
+    return parser.parse_args()
 
 
 def main() -> int:
@@ -50,34 +50,15 @@ def main() -> int:
         print(f"Must use at least python {__about__.__minimum_python__}", file=sys.stderr)
         sys.exit(1)
 
-    #parser.parse_args(namespace=config)
-    config = parse_cmdline()
-    print(config)
+    args = parse_cmdline()
 
-    if config.verbosity is not logging.WARNING:
-        logging.basicConfig(level=config.verbosity)
+    if args.verbosity is not logging.WARNING:
+        logging.basicargs(level=args.verbosity)
 
     log.info(f"Starting clu utility... {sys.argv=}")
-    # if config.mode == "list-requires":
-    #     do_list_requires()
-    # elif config.mode == "check-requires":
-    #     do_check_requires()
-    # elif config.mode == "archive":
-    #     do_archive()
-    # elif config.mode == "report":
-    #     do_report_facts()
+    log.debug(f"Command line: {args}")
 
-    # command_map = {
-    #     "archive": clu.cmd.archive.run,
-    #     "report": clu.cmd.report.run,
-    #     "requires": clu.cmd.requires.run,
-    # }
-
-    # Run the requested command
-    # command_map[config.cmd]()
-    print(config.cmd)
-    config.func()
-    return 0
+    return args.func(args)
 
 
 if __name__ == "__main__":
