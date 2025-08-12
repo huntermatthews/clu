@@ -12,7 +12,9 @@ def parse_args(subparsers):
     subp_report = subparsers.add_parser("report")
     subp_report.set_defaults(func=report_facts)
 
-    subp_report.add_argument("--test", action="store_true", help="Bypass uname checking and do whatever")
+    subp_report.add_argument(
+        "--test", action="store_true", help="Bypass uname checking and do whatever"
+    )
     subp_report.add_argument(
         "--output",
         choices=["dots", "shell", "json"],
@@ -43,8 +45,8 @@ def report_facts(args) -> None:
     elif not args.facts:
         args.facts = default_facts_fn()
 
-    # Loop through the facts that were requested on the command line and get a set of parsers that will
-    # obtain those facts (there's likely duplicates, so we use a set here)
+    # Loop through the facts that were requested on the command line and get a set of parsers that
+    # will obtain those facts (there's likely duplicates, so we use a set here)
     for fact_spec in args.facts:
         for key in provides_map:
             if key.startswith(fact_spec):

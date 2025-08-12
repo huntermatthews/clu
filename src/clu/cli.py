@@ -14,7 +14,6 @@ log = logging.getLogger(__name__)
 
 
 def parse_cmdline(args=None):
-
     parser = argparse.ArgumentParser(prog="clu", description="clu utility")
     parser.add_argument(
         "--version", action="version", version="%%(prog)s %s" % __about__.__version__

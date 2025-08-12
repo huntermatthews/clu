@@ -26,6 +26,7 @@ def run(args):
 
     return 0
 
+
 def list_requires() -> None:
     """List all the requirements for the current OS."""
 

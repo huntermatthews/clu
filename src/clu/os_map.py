@@ -1,4 +1,3 @@
-
 from clu.debug import panic
 from clu import Facts
 from clu.os_darwin import (
