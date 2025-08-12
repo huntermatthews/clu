@@ -8,7 +8,7 @@ from clu import Facts
 log = logging.getLogger(__name__)
 
 
-def setup_args(subparsers):
+def parse_args(subparsers):
     subp_report = subparsers.add_parser("report")
     subp_report.set_defaults(func=report_facts)
 

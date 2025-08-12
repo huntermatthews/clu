@@ -8,7 +8,7 @@ from clu import Requires
 log = logging.getLogger(__name__)
 
 
-def setup_args(subparsers):
+def parse_args(subparsers):
     subp_requires = subparsers.add_parser("requires")
     subp_requires.set_defaults(func=run)
 

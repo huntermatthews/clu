@@ -35,12 +35,12 @@ def parse_cmdline(args=None):
         help="Verbose mode -- slightly more information than a normal run.",
     )
 
-    subparsers = parser.add_subparsers(dest="cmd") #, required=True)
-    parser.set_defaults(cmd="report", func=clu.cmd.report.report_facts)   # This WORKS!
+    subparsers = parser.add_subparsers(dest="cmd")
+    parser.set_defaults(cmd="report", func=clu.cmd.report.report_facts)
 
-    clu.cmd.archive.setup_args(subparsers)
-    clu.cmd.report.setup_args(subparsers)
-    clu.cmd.requires.setup_args(subparsers)
+    clu.cmd.archive.parse_args(subparsers)
+    clu.cmd.report.parse_args(subparsers)
+    clu.cmd.requires.parse_args(subparsers)
 
     return parser.parse_args()
 
