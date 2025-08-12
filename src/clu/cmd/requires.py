@@ -1,6 +1,11 @@
+import logging
+
 from clu.os_map import get_os_functions
 from clu.input import check_file_exists, check_program_exists
 from clu import Requires
+
+
+log = logging.getLogger(__name__)
 
 
 def setup_args(subparsers):
@@ -11,7 +16,7 @@ def setup_args(subparsers):
 
 
 def run(args):
-    print(f"Running command {args.cmd} with args={args}")
+    log.debug(f"Running command {args.cmd} with args={args}")
     if args.subcmd == "list":
         list_requires()
     elif args.subcmd == "check":

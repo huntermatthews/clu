@@ -24,7 +24,7 @@ def setup_args(subparsers):
 def make_archive(args) -> None:
     """Create an archive of the current system state."""
 
-    print(f"Running command {args.cmd} with args={args}")
+    log.debug(f"Running command {args.cmd} with args={args}")
 
     (requires_fn, _, _, _) = get_os_functions()
     requires = requires_fn()

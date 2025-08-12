@@ -1,8 +1,11 @@
-
 import json
+import logging
 
 from clu.os_map import get_os_functions
 from clu import Facts
+
+
+log = logging.getLogger(__name__)
 
 
 def setup_args(subparsers):
@@ -28,8 +31,7 @@ def setup_args(subparsers):
 def report_facts(args) -> None:
     """Generate a report based on the current OS."""
 
-    print(f"Running command {args.cmd} with args={args}")
-#    return 0
+    log.debug(f"Running command {args.cmd} with args={args}")
 
     (_, parse_fn, provides_fn, default_facts_fn) = get_os_functions(args.test)
 
