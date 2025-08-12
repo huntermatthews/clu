@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from clu.facts import Facts
+from clu import Facts
 from clu.os_linux import parse_proc_uptime
 
 from tests import mock_read_file
@@ -19,7 +19,7 @@ from tests import mock_read_file
 def test_parse_proc_uptime(mock_host, expected_result):
     """Test parse_proc_uptime function with mock data from different hosts."""
 
-    with patch("clu.os_linux.read_file") as mrf:
+    with patch("clu.os_linux.text_file") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()

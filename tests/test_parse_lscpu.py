@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from clu.facts import Facts
+from clu import Facts
 from clu.os_linux import parse_lscpu
 
 from tests import mock_read_program
@@ -46,7 +46,7 @@ from tests import mock_read_program
 def test_parse_lscpu(mock_host, expected_result):
     """Test parse_lscpu function with mock data from different hosts."""
 
-    with patch("clu.os_linux.read_program") as mrf:
+    with patch("clu.os_linux.text_program") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()

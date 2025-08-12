@@ -1,6 +1,6 @@
 import pytest
 
-from clu.facts import Facts
+from clu import Facts
 from clu.os_darwin import parse_macos_name
 
 

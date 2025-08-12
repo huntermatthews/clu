@@ -1,8 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from clu import config
-from clu.facts import Facts
+from clu import Facts
 from clu.os_linux import parse_cpuinfo_flags
 
 from tests import mock_read_file
@@ -32,12 +31,8 @@ from tests import mock_read_file
 def test_parse_cpuinfo_flags(mock_host, input_facts, expected_result):
     """Test parse_cpuinfo_flags function with mock data from different hosts."""
 
-    def result_mocker(fname):
-        return mock_read_file(pytest.mock_dir / mock_host, fname)
-
-    with patch.object(config, "debug", 0, create=True), patch("clu.os_linux.read_file") as mrf:
-        # mrf.side_effect = lambda fname: mock_read_file(pytest.mock_dir / mock_host, fname)
-        mrf.side_effect = result_mocker
+    with patch("clu.os_linux.text_file") as mrf:
+        mrf.side_effect = lambda fname: mock_read_file(pytest.mock_dir / mock_host, fname)
 
         facts = Facts()
         facts.update(input_facts)
