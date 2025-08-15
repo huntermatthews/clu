@@ -1,6 +1,7 @@
 import logging
 
-from clu import Facts, Provides, Requires, panic
+from clu import Facts, Provides, Requires
+from clu.debug import panic
 from clu.input import text_file
 
 log = logging.getLogger(__name__)
@@ -31,9 +32,6 @@ def requires_sys_dmi(requires: Requires) -> None:
 
 
 def parse_sys_dmi(facts: Facts) -> None:
-    if "phy.platform" not in facts:
-        parse_virt_what(facts)
-
     if facts["phy.platform"] != "physical":
         log.info("Not a physical platform, skipping sys.dmi parsing")
         return

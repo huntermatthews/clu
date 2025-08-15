@@ -21,23 +21,19 @@ class Uname(Source):
         requires.programs.append("uname -snrm")
         return requires
 
-    def parse(self) -> Facts:
-        facts = Facts()
-
+    def parse(self, facts: Facts) -> Facts:
         keys = [
             "os.kernel.name",
             "os.hostname",
             "os.kernel.version",
             "phy.arch",
         ]
-
         data, rc = text_program("uname -snrm")
         log.debug(f"{data=}")
         log.debug(f"{rc=}")
         if data is None or rc != 0:
             panic("parse_uname: uname command failed")
-
-        for key, value in zip(keys, data.strip().split()):
-            facts[key] = value
-
+        if data is not None:
+            for key, value in zip(keys, data.strip().split()):
+                facts[key] = value
         return facts

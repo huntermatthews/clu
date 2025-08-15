@@ -52,7 +52,7 @@ def main() -> int:
     args = parse_cmdline()
 
     if args.verbosity is not logging.WARNING:
-        logging.basicargs(level=args.verbosity)
+        logging.basicConfig(level=args.verbosity)
 
     log.info(f"Starting clu utility... {sys.argv=}")
     log.debug(f"Command line: {args}")

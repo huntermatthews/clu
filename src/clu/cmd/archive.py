@@ -9,7 +9,8 @@ from pathlib import Path
 
 from clu import __about__
 from clu.debug import panic
-from clu.os_map import get_os_functions
+
+from clu.opsys.factory import opsys_factory
 from clu.input import transform_cmdline_to_filename, text_program
 
 
@@ -21,13 +22,12 @@ def parse_args(subparsers):
     subp_archive.set_defaults(func=make_archive)
 
 
-def make_archive(args) -> None:
+def make_archive(args) -> int:
     """Create an archive of the current system state."""
 
     log.debug(f"Running command {args.cmd} with args={args}")
 
-    (requires_fn, _, _, _) = get_os_functions()
-    requires = requires_fn()
+    requires = opsys_factory().requires()
 
     hostname = os.uname().nodename
     work_dir = setup_workdir(hostname)
@@ -36,8 +36,11 @@ def make_archive(args) -> None:
         collect_files(requires, work_dir)
         collect_programs(requires, work_dir)
         create_archive(hostname, work_dir)
+
     finally:
         cleanup_workdir(work_dir)
+
+    return 0
 
 
 def cleanup_workdir(work_dir):
@@ -84,6 +87,7 @@ def collect_programs(requires, work_dir):
         stdout, rc = text_program(prog)
 
         with open(data_path, "w") as f:
+            # BUG - cant write None
             f.write(stdout)
         # Save return code if nonzero
         if rc != 0:

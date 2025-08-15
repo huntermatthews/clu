@@ -9,16 +9,15 @@ log = logging.getLogger(__name__)
 class MacOSName(Source):
     def provides(self) -> Provides:
         provides = Provides()
-        provides["os.code_name"] = self.parse()
+        provides["os.code_name"] = self.parse
         return provides
 
     def requires(self) -> Requires:
-        # its just logic code - there are no external requirements for this
-        return Requires()
+        requires = Requires()
+        requires.facts.append("os.version")
+        return requires
 
-    def parse(self) -> Facts:
-        facts = Facts()
-
+    def parse(self, facts: Facts) -> Facts:
         version = facts["os.version"]
         if not version:
             panic("parse_macos_name: os.version is not set or empty")

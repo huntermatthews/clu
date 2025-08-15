@@ -23,9 +23,7 @@ class SwVers(Source):
 
         return requires
 
-    def parse(self) -> Facts:
-        facts = Facts()
-
+    def parse(self, facts: Facts) -> Facts:
         data, rc = text_program("sw_vers")
         log.debug(f"{data=}")
         if data is None or rc != 0:

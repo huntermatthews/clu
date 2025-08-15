@@ -36,9 +36,9 @@ class Clu(Source):
         now_utc = datetime.datetime.now(datetime.timezone.utc)
         return now_utc.isoformat(sep="T", timespec="seconds")
 
-    def parse(self) -> Facts:
+    def parse(self, facts: Facts) -> Facts:
         """Return info about CLU itself (mostly runtime)."""
-        facts = Facts()
+
         facts["clu.binary"] = sys.argv[0]
         facts["clu.version"] = __about__.__version__
         facts["clu.python.binary"] = sys.executable

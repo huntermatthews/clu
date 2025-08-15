@@ -48,11 +48,11 @@ class Linux(OpSys):
             "clu.version",
         ]
 
-    def parse(self) -> Facts:
-        """Parse the facts for macOS (Darwin)."""
-        facts = super().parse()
+    # def parse(self) -> Facts:
+    #     """Parse the facts for macOS (Darwin)."""
+    #     facts = super().parse()
 
-        # Nothing explicitly says Apple, but we know its apple because Darwin is the OS
-        facts["os.name"] = "Linux"
+    #     # Nothing explicitly says Apple, but we know its apple because Darwin is the OS
+    #     facts["os.name"] = "Linux"
 
-        return facts
+    #     return facts

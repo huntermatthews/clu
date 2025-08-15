@@ -19,8 +19,7 @@ class Uptime(Source):
         requires.programs.append("uptime")
         return requires
 
-    def parse(self) -> Facts:
-        facts = Facts()
+    def parse(self, facts: Facts) -> Facts:
         data, rc = text_program("uptime")
         if data is None or rc != 0:
             panic("parse_uptime: uptime command failed")

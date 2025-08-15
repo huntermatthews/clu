@@ -1,5 +1,5 @@
-
-from clu import Provides, Requires, Facts
+from clu import Provides, Requires
+from clu.debug import panic
 
 
 class OpSys:
@@ -10,30 +10,31 @@ class OpSys:
 
     def provides(self) -> Provides:
         """Define the provider map for macOS (Darwin)."""
-        provides = Provides()
+        provs = Provides()
 
         for source in self._sources:
-            provides.update(source.provides())
+            print(source)
+            provs.update(source.provides())
 
-        return provides
+        return provs
 
     def requires(self) -> Requires:
         """Define the requirements for macOS (Darwin)."""
-        requires = Requires()
+        reqs = Requires()
 
         for source in self._sources:
-            requires.update(source.requires())
+            reqs.update(source.requires())
 
-        return requires
+        return reqs
 
-    def parse(self) -> Facts:
-        """Parse the facts for macOS (Darwin)."""
-        facts = Facts()
+    def parse(self):
+        panic("Should not call parse on OpSys objects")
 
-        for source in self._sources:
-            facts.update(source.parse())
+    # def parse(self) -> Facts:
+    #     """Parse the facts for macOS (Darwin)."""
+    #     facts = Facts()
 
-        return facts
+    #     for source in self._sources:
+    #         facts.update(source.parse())
 
-
-
+    #     return facts
