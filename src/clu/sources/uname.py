@@ -10,10 +10,10 @@ log = logging.getLogger(__name__)
 class Uname(Source):
     def provides(self) -> Provides:
         provides = Provides()
-        provides["os.kernel.name"] = self.parse
-        provides["os.hostname"] = self.parse
-        provides["os.kernel.version"] = self.parse
-        provides["phy.arch"] = self.parse
+        provides["os.kernel.name"] = self
+        provides["os.hostname"] = self
+        provides["os.kernel.version"] = self
+        provides["phy.arch"] = self
         return provides
 
     def requires(self) -> Requires:

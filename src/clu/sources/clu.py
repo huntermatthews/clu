@@ -24,7 +24,7 @@ class Clu(Source):
             "clu.user",
             "clu.date",
         ]:
-            provides[key] = self.parse
+            provides[key] = self
         return provides
 
     def requires(self) -> Requires:

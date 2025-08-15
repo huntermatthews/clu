@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 def text_file(fname) -> Optional[str]:
     """Read a file and return its contents.
 
-    We [will] do checks for existance, size, perms and such thus the wrapper.
+    We [will] do checks for existence, size, perms and such thus the wrapper.
     """
     log.debug(f"text_file: {fname=}")
 

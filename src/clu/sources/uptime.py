@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 class Uptime(Source):
     def provides(self) -> Provides:
         provides = Provides()
-        provides["run.uptime"] = self.parse
+        provides["run.uptime"] = self
         return provides
 
     def requires(self) -> Requires:

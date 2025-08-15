@@ -1,6 +1,5 @@
 import logging
 
-from clu import Facts
 from clu.opsys import OpSys
 
 from clu.sources import uname, sw_vers, macos_name, uptime, clu

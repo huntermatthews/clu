@@ -1,9 +1,9 @@
-from clu import Provides, Requires
+from clu import Provides, Requires, Source
 from clu.debug import panic
 
 
 class OpSys:
-    _sources: list = []
+    _sources: list[Source] = []
 
     def default_facts(self) -> list[str]:
         return []

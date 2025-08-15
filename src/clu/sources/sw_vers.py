@@ -10,9 +10,12 @@ class SwVers(Source):
     def provides(self) -> Provides:
         provides = Provides()
 
-        provides["os.name"] = self.parse
-        provides["os.version"] = self.parse
-        provides["os.build"] = self.parse
+        for key in [
+            "os.name",
+            "os.version",
+            "os.build",
+        ]:
+            provides[key] = self
 
         return provides
 
@@ -24,6 +27,9 @@ class SwVers(Source):
         return requires
 
     def parse(self, facts: Facts) -> Facts:
+        if "os.version" in facts:
+            return facts
+
         data, rc = text_program("sw_vers")
         log.debug(f"{data=}")
         if data is None or rc != 0:

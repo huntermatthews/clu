@@ -1,9 +1,8 @@
 import os
 
-from clu.debug import panic
 from clu.opsys import OpSys
 from clu.opsys.darwin import Darwin
-# from clu.opsys.linux import Linux
+from clu.opsys.linux import Linux
 
 
 class Unknown(OpSys):
@@ -19,7 +18,7 @@ def opsys_factory() -> OpSys:
     os_name = os.uname().sysname
     if os_name == "Darwin":
         return Darwin()
-    # elif os_name == "Linux":
-    #     return Linux()
+    elif os_name == "Linux":
+        return Linux()
     else:
         return Unknown()

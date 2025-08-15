@@ -1,29 +1,33 @@
 import logging
 
-from clu import Facts, Provides, Requires
+from clu import Facts, Provides, Requires, Source
 from clu.input import text_program
 
 log = logging.getLogger(__name__)
 
 
-def provides_virt_what(provides: Provides) -> None:
-    provides["phy.platform"] = parse_virt_what
+class VirtWhat(Source):
+    def provides(self) -> Provides:
+        provides = Provides()
+        provides["phy.platform"] = self
+        return provides
 
+    def requires(self) -> Requires:
+        requires = Requires()
+        requires.programs.append("virt-what")
+        return requires
 
-def requires_virt_what(requires: Requires) -> None:
-    requires.programs.append("virt-what")
+    def parse(self, facts: Facts) -> Facts:
+        if "phy.platform" in facts:
+            return facts
 
-
-def parse_virt_what(facts: Facts) -> None:
-    if "phy.platform" in facts:
-        return
-
-    data, rc = text_program("virt-what")
-    if data is None or rc != 0:
-        facts["phy.platform"] = "Unknown/Error"
-        return
-    data = data.strip()
-    log.debug(f"{data=}")
-    if not data:
-        data = "physical"
-    facts["phy.platform"] = data
+        data, rc = text_program("virt-what")
+        if data is None or rc != 0:
+            facts["phy.platform"] = "Unknown/Error"
+            return facts
+        data = data.strip()
+        log.debug(f"{data=}")
+        if not data:
+            data = "physical"
+        facts["phy.platform"] = data
+        return facts

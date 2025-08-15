@@ -1,7 +1,6 @@
 import logging
 
 from clu.opsys import OpSys
-from clu import Facts
 from clu.sources import (
     clu,
     proc_cpuinfo,
@@ -22,18 +21,18 @@ log = logging.getLogger(__name__)
 
 class Linux(OpSys):
     _sources = [
-        clu.Clu,
-        proc_cpuinfo.ProcCpuinfo,
-        ipmitool.Ipmitool,
-        lscpu.Lscpu,
-        no_salt.NoSalt,
-        os_release.OsRelease,
-        proc_uptime.ProcUptime,
-        selinux.Selinux,
-        sys_dmi.SysDmi,
-        udevadm_ram.UdevadmRam,
-        uname.Uname,
-        virt_what.VirtWhat,
+        clu.Clu(),
+        ipmitool.Ipmitool(),
+        lscpu.Lscpu(),
+        no_salt.NoSalt(),
+        os_release.OsRelease(),
+        proc_cpuinfo.ProcCpuinfo(),
+        proc_uptime.ProcUptime(),
+        selinux.Selinux(),
+        sys_dmi.SysDmi(),
+        udevadm_ram.UdevadmRam(),
+        uname.Uname(),
+        virt_what.VirtWhat(),
     ]
 
     def default_facts(self) -> list:
@@ -47,12 +46,3 @@ class Linux(OpSys):
             "run.uptime",
             "clu.version",
         ]
-
-    # def parse(self) -> Facts:
-    #     """Parse the facts for macOS (Darwin)."""
-    #     facts = super().parse()
-
-    #     # Nothing explicitly says Apple, but we know its apple because Darwin is the OS
-    #     facts["os.name"] = "Linux"
-
-    #     return facts

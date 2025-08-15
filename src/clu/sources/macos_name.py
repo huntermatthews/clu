@@ -1,6 +1,7 @@
 import logging
 
 from clu import Facts, Provides, Requires, Source
+from clu.sources.sw_vers import SwVers
 from clu.debug import panic
 
 log = logging.getLogger(__name__)
@@ -9,7 +10,7 @@ log = logging.getLogger(__name__)
 class MacOSName(Source):
     def provides(self) -> Provides:
         provides = Provides()
-        provides["os.code_name"] = self.parse
+        provides["os.code_name"] = self
         return provides
 
     def requires(self) -> Requires:
@@ -18,6 +19,10 @@ class MacOSName(Source):
         return requires
 
     def parse(self, facts: Facts) -> Facts:
+        # FIXME: need better dependency management
+        sw_vers = SwVers()
+        sw_vers.parse(facts)
+
         version = facts["os.version"]
         if not version:
             panic("parse_macos_name: os.version is not set or empty")
