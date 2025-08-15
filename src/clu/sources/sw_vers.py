@@ -1,41 +1,49 @@
 import logging
 
-from clu import Facts, Provides, Requires
+from clu import Facts, Provides, Requires, Source
 from clu.input import text_program
 
 log = logging.getLogger(__name__)
 
 
-def provides_sw_vers(provides: Provides) -> None:
-    provides["os.name"] = parse_sw_vers
-    provides["os.version"] = parse_sw_vers
-    provides["os.build"] = parse_sw_vers
+class SwVers(Source):
+    def provides(self) -> Provides:
+        provides = Provides()
 
+        provides["os.name"] = self.parse
+        provides["os.version"] = self.parse
+        provides["os.build"] = self.parse
 
-def requires_sw_vers(requires: Requires) -> None:
-    requires.programs.append("sw_vers")
+        return provides
 
+    def requires(self) -> Requires:
+        requires = Requires()
 
-def parse_sw_vers(facts: Facts) -> None:
-    if "os.version" in facts:
-        # we already ran...
-        return
-    data, rc = text_program("sw_vers")
-    log.debug(f"{data=}")
-    if data is None or rc != 0:
-        return
-    for line in data.splitlines():
-        if ":" not in line:
-            continue
-        key, value = line.split(":", 1)
-        key = key.strip()
-        value = value.strip()
-        log.debug(f"{key=}")
-        log.debug(f"{value=}")
+        requires.programs.append("sw_vers")
 
-        if key == "ProductName":
-            facts["os.name"] = value
-        elif key == "ProductVersion":
-            facts["os.version"] = value
-        elif key == "BuildVersion":
-            facts["os.build"] = value
+        return requires
+
+    def parse(self) -> Facts:
+        facts = Facts()
+
+        data, rc = text_program("sw_vers")
+        log.debug(f"{data=}")
+        if data is None or rc != 0:
+            return facts
+        for line in data.splitlines():
+            if ":" not in line:
+                continue
+            key, value = line.split(":", 1)
+            key = key.strip()
+            value = value.strip()
+            log.debug(f"{key=}")
+            log.debug(f"{value=}")
+
+            if key == "ProductName":
+                facts["os.name"] = value
+            elif key == "ProductVersion":
+                facts["os.version"] = value
+            elif key == "BuildVersion":
+                facts["os.build"] = value
+
+        return facts

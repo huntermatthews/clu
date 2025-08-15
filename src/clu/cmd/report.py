@@ -35,6 +35,7 @@ def report_facts(args) -> None:
 
     log.debug(f"Running command {args.cmd} with args={args}")
 
+    # opsys = os_factory()
     (_, parse_fn, provides_fn, default_facts_fn) = get_os_functions(args.test)
 
     provides_map = provides_fn()

@@ -1,44 +1,43 @@
 import logging
 
-from clu import Facts, Provides, Requires, panic
+from clu import Facts, Provides, Requires, Source
+from clu.debug import panic
 from clu.input import text_program
 
 log = logging.getLogger(__name__)
 
 
-def provides_uname(provides: Provides) -> None:
-    provides["os.kernel.name"] = parse_uname
-    provides["os.hostname"] = parse_uname
-    provides["os.kernel.version"] = parse_uname
-    provides["phy.arch"] = parse_uname
+class Uname(Source):
+    def provides(self) -> Provides:
+        provides = Provides()
+        provides["os.kernel.name"] = self.parse
+        provides["os.hostname"] = self.parse
+        provides["os.kernel.version"] = self.parse
+        provides["phy.arch"] = self.parse
+        return provides
 
+    def requires(self) -> Requires:
+        requires = Requires()
+        requires.programs.append("uname -snrm")
+        return requires
 
-def requires_uname(requires: Requires) -> None:
-    requires.programs.append("uname -snrm")
+    def parse(self) -> Facts:
+        facts = Facts()
 
+        keys = [
+            "os.kernel.name",
+            "os.hostname",
+            "os.kernel.version",
+            "phy.arch",
+        ]
 
-def parse_uname(facts: Facts) -> None:
-    if "phy.arch" in facts:
-        return
-
-    keys = [
-        "os.kernel.name",
-        "os.hostname",
-        "os.kernel.version",
-        "phy.arch",
-    ]
-    data, rc = text_program("uname -snrm")
-    log.debug(f"{data=}")
-    log.debug(f"{rc=}")
-    if data is None or rc != 0:
-        panic("parse_uname: uname command failed")
-    data = data.strip().split()
-    if len(keys) != len(data):
-        log.debug(f"{keys=}")
+        data, rc = text_program("uname -snrm")
         log.debug(f"{data=}")
-        panic("parse_uname: keys and data length don't match: You can't count")
+        log.debug(f"{rc=}")
+        if data is None or rc != 0:
+            panic("parse_uname: uname command failed")
 
-    for idx in range(len(data)):
-        log.debug(f"{keys[idx]=}")
-        log.debug(f"{data[idx]=}")
-        facts[keys[idx]] = data[idx]
+        for key, value in zip(keys, data.strip().split()):
+            facts[key] = value
+
+        return facts

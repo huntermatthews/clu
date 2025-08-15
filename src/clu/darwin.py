@@ -2,8 +2,6 @@
 
 import logging
 
-from clu import Provides
-from clu import Requires
 from clu import Facts
 from clu.opsys import OpSys
 

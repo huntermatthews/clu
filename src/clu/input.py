@@ -9,7 +9,7 @@ from pathlib import Path
 log = logging.getLogger(__name__)
 
 
-def text_file(fname):
+def text_file(fname) -> str | None:
     """Read a file and return its contents.
 
     We [will] do checks for existance, size, perms and such thus the wrapper.
@@ -36,7 +36,7 @@ def transform_cmdline_to_filename(cmdline):
     return cmdline, cmdline + "_rc"
 
 
-def text_program(cmdline):
+def text_program(cmdline) -> tuple[str | None, int]:
     log.debug(f"text_program: {cmdline}")
 
     try:
