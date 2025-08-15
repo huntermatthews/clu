@@ -1,5 +1,3 @@
-"""Doc Incomplete."""
-
 import logging
 
 from clu import Facts

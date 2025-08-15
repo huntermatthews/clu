@@ -1,7 +1,7 @@
 import json
 import logging
 
-from clu.os_map import get_os_functions
+from clu.opsys.factory import opsys_factory
 from clu import Facts
 
 
@@ -35,16 +35,15 @@ def report_facts(args) -> None:
 
     log.debug(f"Running command {args.cmd} with args={args}")
 
-    # opsys = os_factory()
-    (_, parse_fn, provides_fn, default_facts_fn) = get_os_functions(args.test)
+    opsys = opsys_factory()
 
-    provides_map = provides_fn()
+    provides_map = opsys.provides()
     parsers_to_call = set()
 
     if args.all:
         args.facts = "os sys phy run salt clu"
     elif not args.facts:
-        args.facts = default_facts_fn()
+        args.facts = opsys.default_facts()
 
     # Loop through the facts that were requested on the command line and get a set of parsers that
     # will obtain those facts (there's likely duplicates, so we use a set here)

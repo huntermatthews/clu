@@ -1,8 +1,14 @@
+import os
+
+from clu.opsys import OpSys
 from clu.darwin import Darwin
+from clu.linux import Linux
 
 
-def OsFactory() -> Darwin | None:
+def opsys_factory() -> OpSys:
     """Factory function to get the OS class based on the OS name."""
+
+    os_name = os.uname().sysname
     if os_name == "Darwin":
         return Darwin()
     elif os_name == "Linux":
