@@ -1,4 +1,4 @@
-from clu import Provides, Requires, Facts, Source
+from clu import Provides, Requires, Facts
 
 
 class OpSys:

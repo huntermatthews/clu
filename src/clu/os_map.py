@@ -1,5 +1,3 @@
-from clu.debug import panic
-from clu import Facts
 from clu.darwin import Darwin
 
 
