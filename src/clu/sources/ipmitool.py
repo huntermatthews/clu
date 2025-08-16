@@ -2,7 +2,6 @@ import logging
 import re
 
 from clu import Facts, Provides, Requires, Source
-from clu.sources.virt_what import VirtWhat
 from clu.input import text_program
 
 log = logging.getLogger(__name__)
@@ -25,10 +24,6 @@ class Ipmitool(Source):
         requires.programs.append("ipmitool")
 
     def parse(self, facts: Facts) -> None:
-        if "phy.platform" not in facts:
-            virtwhat = VirtWhat()
-            virtwhat.parse(facts)
-
         if facts["phy.platform"] != "physical":
             log.info("Not a physical platform, skipping bmc. parsing")
             return

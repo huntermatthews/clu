@@ -1,7 +1,6 @@
 import logging
 
 from clu import Facts, Provides, Requires, Source
-from clu.sources.virt_what import VirtWhat
 from clu.debug import panic
 from clu.input import text_file
 
@@ -32,10 +31,6 @@ class SysDmi(Source):
         )
 
     def parse(self, facts: Facts) -> None:
-        if "phy.platform" not in facts:
-            virtwhat = VirtWhat()
-            virtwhat.parse(facts)
-
         if facts["phy.platform"] != "physical":
             log.info("Not a physical platform, skipping sys.dmi parsing")
             return

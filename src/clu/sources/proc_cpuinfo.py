@@ -2,7 +2,6 @@ import logging
 
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_file
-from clu.sources.uname import Uname
 
 log = logging.getLogger(__name__)
 
@@ -27,10 +26,6 @@ class ProcCpuinfo(Source):
         requires.files.append("/proc/cpuinfo")
 
     def parse(self, facts: Facts) -> None:
-        if "phy.arch" not in facts:
-            uname = Uname()
-            uname.parse(facts)
-
         if facts["phy.arch"] not in ("x86_64", "amd64"):
             log.info("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
             return
