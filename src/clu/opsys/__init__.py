@@ -34,6 +34,3 @@ class OpSys:
             source.requires(reqs)
 
         return reqs
-
-    def parse(self):
-        panic("Should not call parse on OpSys objects")

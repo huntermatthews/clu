@@ -39,11 +39,11 @@ def set_report_defaults(opsys: OpSys, args: argparse.Namespace) -> None:
     if "all" in args and args.all:
         # BUG: this does not include the bmc facts..
         args.facts = "os sys phy run salt clu"
-    elif "facts" not in args:
+    elif "facts" not in args or not args.facts:
         args.facts = opsys.default_facts()
 
 
-def parse_facts_from_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
+def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
     sources_to_parse = set()
 
     # Loop through the facts that were requested on the command line and get a set of parsers that
@@ -65,10 +65,12 @@ def filter_facts(requested_fact_specs, parsed_facts: Facts) -> Facts:
     # Loop through the facts that were requested on the command line (again) and make a new
     # facts list/dict that has JUST those matching facts
     output_facts = Facts()
+
     for fact_spec in requested_fact_specs:
         for key in parsed_facts:
             if key.startswith(fact_spec):
                 output_facts[key] = parsed_facts[key]
+
     return output_facts
 
 
@@ -92,7 +94,8 @@ def report_facts(args) -> int:
 
     set_report_defaults(opsys, args)
 
-    parse_facts_from_specs(provides_map, parsed_facts, args.facts)
+    parse_facts_by_specs(provides_map, parsed_facts, opsys.early_facts())
+    parse_facts_by_specs(provides_map, parsed_facts, args.facts)
 
     output_facts = filter_facts(args.facts, parsed_facts)
 
