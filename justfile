@@ -63,6 +63,6 @@ reformat:
 lint *args:
     uv run ruff check {{args}}
 
-# uv build
-# uv pip install dist/clu-0.1.0-py3-none-any.whl --target=build/
-# uv run python -m zipapp build -m "clu.cli:main" -o dist/clu -p "/usr/bin/env python3"
+# [group('dev')]
+# tag *args:
+#     git tag --annotate --sign {{args}}

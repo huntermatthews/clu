@@ -4,7 +4,6 @@ import logging
 
 from clu.opsys.factory import opsys_factory
 from clu import Facts
-from clu.opsys import OpSys
 
 
 log = logging.getLogger(__name__)
@@ -29,18 +28,24 @@ def parse_args(subparsers):
     subp_report.add_argument("facts", nargs="*", help="Facts to report on")
 
 
-def set_report_defaults(opsys: OpSys, args: argparse.Namespace) -> None:
-    """This is written defensively because if the user didn't say "report" explicitly on the command
-    line, we want to make sure we still have a valid set of facts to report on.
+def set_report_defaults(
+    args: argparse.Namespace, default_facts: list[str], all_facts: list[str]
+) -> None:
+    """If the user didn't say "report" explicitly on the command
+    line, we want to make sure we still have a valid set of args to control our reporting.
     """
+
+    # handle completely missing args
     if "output" not in args:
         args.output = "dots"
+    if "all" not in args:
+        args.all = False
 
-    if "all" in args and args.all:
-        # BUG: this does not include the bmc facts..
-        args.facts = "os sys phy run salt clu"
-    elif "facts" not in args or not args.facts:
-        args.facts = opsys.default_facts()
+    # Handle what the args mean
+    if "facts" not in args or not args.facts:
+        args.facts = default_facts
+    elif "all" in args and args.all:
+        args.facts = all_facts
 
 
 def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
@@ -92,9 +97,13 @@ def report_facts(args) -> int:
     provides_map = opsys.provides()
     parsed_facts = Facts()
 
-    set_report_defaults(opsys, args)
+    set_report_defaults(args, opsys.default_facts(), list(provides_map.keys()))
 
     parse_facts_by_specs(provides_map, parsed_facts, opsys.early_facts())
+
+    if args.all:
+        args.facts = list(provides_map.keys())
+
     parse_facts_by_specs(provides_map, parsed_facts, args.facts)
 
     output_facts = filter_facts(args.facts, parsed_facts)
@@ -105,13 +114,13 @@ def report_facts(args) -> int:
 
 
 def output_dots(facts: Facts) -> None:
-    for key in facts:
+    for key in sorted(facts):
         value = facts[key]
         print(f"{key}: {value}")
 
 
 def output_shell(facts: Facts) -> None:
-    for key in facts:
+    for key in sorted(facts):
         value = facts[key]
         key_var = key.upper().replace(".", "_")
         print(f'{key_var}="{value}"')
