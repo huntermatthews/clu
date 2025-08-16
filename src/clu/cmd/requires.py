@@ -1,8 +1,8 @@
 import logging
 
-from clu.os_map import get_os_functions
+# from clu.os_map import get_os_functions
 from clu.input import check_file_exists, check_program_exists
-from clu import Requires
+from clu.opsys.factory import opsys_factory
 
 
 log = logging.getLogger(__name__)
@@ -18,21 +18,20 @@ def parse_args(subparsers):
 def run(args):
     log.debug(f"Running command {args.cmd} with args={args}")
     if args.subcmd == "list":
-        list_requires()
+        return list_requires()
     elif args.subcmd == "check":
-        check_requires()
+        return check_requires()
     else:
         raise ValueError(f"Unknown sub-command: {args.subcmd}")
 
-    return 0
 
-
-def list_requires() -> None:
+def list_requires() -> int:
     """List all the requirements for the current OS."""
 
-    requires = get_os_requirements()
+    requires = opsys_factory().requires()
 
-    print("Requirements: ")
+    print("Listing Requirements: ")
+    print("----------------------")
 
     print("Files:")
     for file in requires.files:
@@ -46,12 +45,15 @@ def list_requires() -> None:
     for api in requires.apis:
         print(f"  - {api}")
 
+    return 0
 
-def check_requires() -> None:
+
+def check_requires() -> int:
     """Check if the current OS meets the requirements."""
 
-    requires = get_os_requirements()
+    requires = opsys_factory().requires()
     print("Checking requirements:")
+    print("----------------------")
 
     print("Files:")
     for file in requires.files:
@@ -74,12 +76,4 @@ def check_requires() -> None:
     #     # what would go here?
     #     pass
 
-
-def get_os_requirements() -> Requires:
-    """Get the requirements for the current OS."""
-
-    (requires_fn, _, _, _) = get_os_functions()
-    requires = requires_fn()
-
-    requires.sort()
-    return requires
+    return 0
