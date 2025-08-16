@@ -9,8 +9,7 @@ log = logging.getLogger(__name__)
 
 
 class Ipmitool(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         for key in [
             "bmc.ipv4_source",
             "bmc.ipv4_address",
@@ -21,25 +20,21 @@ class Ipmitool(Source):
             "bmc.manufacturer_name",
         ]:
             provides[key] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.programs.append("ipmitool")
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         if "phy.platform" not in facts:
             virtwhat = VirtWhat()
             virtwhat.parse(facts)
 
         if facts["phy.platform"] != "physical":
             log.info("Not a physical platform, skipping bmc. parsing")
-            return facts
+            return
 
         self._parse_ipmitool_mc_info(facts)
         self._parse_ipmitool_lan_print(facts)
-        return facts
 
     def _parse_ipmitool_lan_print(self, facts: Facts) -> None:
         regexes = {

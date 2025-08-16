@@ -46,3 +46,6 @@ class Linux(OpSys):
             "run.uptime",
             "clu.version",
         ]
+
+    def early_facts(self) -> list:
+        return ["phy.arch", "phy.platform"]

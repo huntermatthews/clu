@@ -37,15 +37,14 @@ class Requires:
 
 
 class Source:
-    def provides(self) -> Provides:
+    def provides(self, provides: Provides):
         """Define the provider map for this source."""
-        return Provides()
+        pass
 
-    def requires(self) -> Requires:
+    def requires(self, requires: Requires):
         """Define the requirements for this source."""
-        return Requires()
+        pass
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts):
         """Parse the facts for this source."""
-        print("im being parsed!", __class__)
-        return facts
+        pass

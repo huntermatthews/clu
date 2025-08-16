@@ -15,6 +15,9 @@ class Darwin(OpSys):
     def default_facts(self) -> list:
         return ["os.name", "os.hostname", "os.version", "os.code_name", "run.uptime", "clu.version"]
 
+    def early_facts(self) -> list:
+        return ["os.version"]
+
     # def parse(self, facts):
     #     """Parse the facts for macOS (Darwin)."""
     #     facts = super().parse(facts)

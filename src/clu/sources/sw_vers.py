@@ -7,9 +7,7 @@ log = logging.getLogger(__name__)
 
 
 class SwVers(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
-
+    def provides(self, provides: Provides) -> None:
         for key in [
             "os.name",
             "os.version",
@@ -17,23 +15,17 @@ class SwVers(Source):
         ]:
             provides[key] = self
 
-        return provides
-
-    def requires(self) -> Requires:
-        requires = Requires()
-
+    def requires(self, requires: Requires) -> None:
         requires.programs.append("sw_vers")
 
-        return requires
-
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         if "os.version" in facts:
-            return facts
+            return
 
         data, rc = text_program("sw_vers")
         log.debug(f"{data=}")
         if data is None or rc != 0:
-            return facts
+            return
         for line in data.splitlines():
             if ":" not in line:
                 continue
@@ -49,5 +41,3 @@ class SwVers(Source):
                 facts["os.version"] = value
             elif key == "BuildVersion":
                 facts["os.build"] = value
-
-        return facts

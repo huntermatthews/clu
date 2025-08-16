@@ -9,8 +9,7 @@ log = logging.getLogger(__name__)
 
 
 class SysDmi(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["sys.vendor"] = self
         provides["sys.model.family"] = self
         provides["sys.model.name"] = self
@@ -18,10 +17,8 @@ class SysDmi(Source):
         provides["sys.uuid"] = self
         provides["sys.oem"] = self
         provides["sys.asset_no"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.files.extend(
             [
                 "/sys/devices/virtual/dmi/id/sys_vendor",
@@ -33,16 +30,15 @@ class SysDmi(Source):
                 "/sys/devices/virtual/dmi/id/chassis_asset_tag",
             ]
         )
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         if "phy.platform" not in facts:
             virtwhat = VirtWhat()
             virtwhat.parse(facts)
 
         if facts["phy.platform"] != "physical":
             log.info("Not a physical platform, skipping sys.dmi parsing")
-            return facts
+            return
 
         keys = [
             "sys.vendor",
@@ -73,5 +69,3 @@ class SysDmi(Source):
             log.debug(f"{data=}")
             log.debug(f"{key=}")
             facts[key] = data.strip() if data else ""
-
-        return facts

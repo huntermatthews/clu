@@ -8,22 +8,17 @@ log = logging.getLogger(__name__)
 
 
 class ProcUptime(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["run.uptime"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.files.append("/proc/uptime")
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         data = text_file("/proc/uptime")
         log.debug(f"{data=}")
         if not data:
-            return facts
+            return
         uptime_secs = int(float(data.split()[0]))
         log.debug(f"{uptime_secs=}")
         facts["run.uptime"] = seconds_to_text(uptime_secs)
-        return facts

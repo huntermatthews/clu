@@ -9,20 +9,16 @@ log = logging.getLogger(__name__)
 
 
 class UdevadmRam(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["phy.ram"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.programs.append("udevadm info --path /devices/virtual/dmi/id")
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         data, rc = text_program("udevadm info --path /devices/virtual/dmi/id")
         if data is None or rc != 0:
-            return facts
+            return
 
         # Find all MEMORY_DEVICE_x_SIZE=number
         raw_sizes = re.findall(r"MEMORY_DEVICE_\d+_SIZE=(\d+)", data)
@@ -38,5 +34,3 @@ class UdevadmRam(Source):
         log.debug(f"{bytes_str=}")
 
         facts["phy.ram"] = bytes_str
-
-        return facts

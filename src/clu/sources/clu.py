@@ -10,10 +10,8 @@ log = logging.getLogger(__name__)
 
 
 class Clu(Source):
-    def provides(self) -> Provides:
+    def provides(self, provides: Provides) -> None:
         """Define the provider map for CLU."""
-
-        provides = Provides()
         for key in [
             "clu.binary",
             "clu.version",
@@ -25,20 +23,18 @@ class Clu(Source):
             "clu.date",
         ]:
             provides[key] = self
-        return provides
 
-    def requires(self) -> Requires:
+    def requires(self, requires: Requires) -> None:
         # No specific requirements for clu group
-        return Requires()
+        pass
 
     def _get_rfc3339_timestamp(self) -> str:
         """Get the current time in RFC 3339 format."""
         now_utc = datetime.datetime.now(datetime.timezone.utc)
         return now_utc.isoformat(sep="T", timespec="seconds")
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         """Return info about CLU itself (mostly runtime)."""
-
         facts["clu.binary"] = sys.argv[0]
         facts["clu.version"] = __about__.__version__
         facts["clu.python.binary"] = sys.executable
@@ -47,4 +43,3 @@ class Clu(Source):
         facts["clu.cwd"] = os.getcwd()
         facts["clu.user"] = getpass.getuser()
         facts["clu.date"] = self._get_rfc3339_timestamp()
-        return facts

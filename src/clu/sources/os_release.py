@@ -7,24 +7,20 @@ log = logging.getLogger(__name__)
 
 
 class OsRelease(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["os.distro.name"] = self
         provides["os.distro.version"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.files.append("/etc/os-release")
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         data = text_file("/etc/os-release")
         log.debug(f"{data=}")
         if not data:
             facts["os.distro.name"] = "Unknown/Error"
             facts["os.distro.version"] = "Unknown/Error"
-            return facts
+            return
         for line in data.splitlines():
             if "=" not in line:
                 continue
@@ -38,5 +34,3 @@ class OsRelease(Source):
                 facts["os.distro.name"] = value
             elif key == "VERSION_ID":
                 facts["os.distro.version"] = value
-
-        return facts

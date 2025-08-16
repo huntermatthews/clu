@@ -1,5 +1,9 @@
+import logging
+
 from clu import Provides, Requires, Source
 from clu.debug import panic
+
+log = logging.getLogger(__name__)
 
 
 class OpSys:
@@ -8,13 +12,17 @@ class OpSys:
     def default_facts(self) -> list[str]:
         return []
 
+    def early_facts(self) -> list[str]:
+        return []
+
     def provides(self) -> Provides:
         """Define the provider map for macOS (Darwin)."""
         provs = Provides()
 
         for source in self._sources:
-            print(source)
-            provs.update(source.provides())
+            log.debug(source)
+            log.debug(type(source))
+            source.provides(provs)
 
         return provs
 
@@ -23,18 +31,9 @@ class OpSys:
         reqs = Requires()
 
         for source in self._sources:
-            reqs.update(source.requires())
+            source.requires(reqs)
 
         return reqs
 
     def parse(self):
         panic("Should not call parse on OpSys objects")
-
-    # def parse(self) -> Facts:
-    #     """Parse the facts for macOS (Darwin)."""
-    #     facts = Facts()
-
-    #     for source in self._sources:
-    #         facts.update(source.parse())
-
-    #     return facts

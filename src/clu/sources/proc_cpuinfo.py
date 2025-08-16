@@ -20,24 +20,20 @@ class ProcCpuinfo(Source):
                 return False
         return True
 
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["phy.cpu.arch_version"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.files.append("/proc/cpuinfo")
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         if "phy.arch" not in facts:
             uname = Uname()
             uname.parse(facts)
 
         if facts["phy.arch"] not in ("x86_64", "amd64"):
             log.info("Not an x86_64/amd64 architecture, skipping cpuinfo flags parsing")
-            return facts
+            return
 
         vers = [
             "lm cmov cx8 fpu fxsr mmx syscall sse2",
@@ -61,5 +57,3 @@ class ProcCpuinfo(Source):
             else:
                 break
         facts["phy.cpu.arch_version"] = f"x86_64_v{cpu_version}"
-
-        return facts

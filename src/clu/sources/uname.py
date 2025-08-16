@@ -8,20 +8,16 @@ log = logging.getLogger(__name__)
 
 
 class Uname(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["os.kernel.name"] = self
         provides["os.hostname"] = self
         provides["os.kernel.version"] = self
         provides["phy.arch"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.programs.append("uname -snrm")
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         keys = [
             "os.kernel.name",
             "os.hostname",
@@ -36,4 +32,3 @@ class Uname(Source):
         if data is not None:
             for key, value in zip(keys, data.strip().split()):
                 facts[key] = value
-        return facts

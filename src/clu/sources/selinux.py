@@ -7,18 +7,14 @@ log = logging.getLogger(__name__)
 
 
 class Selinux(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["os.selinux.enable"] = self
         provides["os.selinux.mode"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.programs.extend(["selinuxenabled", "getenforce"])
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         _, rc = text_program("selinuxenabled")
         # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
         log.debug(f"rc is {rc}")
@@ -32,4 +28,3 @@ class Selinux(Source):
         data, rc = text_program("getenforce")
         log.debug(f"{data=}")
         facts["os.selinux.mode"] = data.strip() if data else "Unknown/Error"
-        return facts

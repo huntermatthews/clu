@@ -9,17 +9,13 @@ log = logging.getLogger(__name__)
 
 
 class Uptime(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["run.uptime"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.programs.append("uptime")
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         data, rc = text_program("uptime")
         if data is None or rc != 0:
             panic("parse_uptime: uptime command failed")
@@ -28,4 +24,3 @@ class Uptime(Source):
         uptime = match.group(1).rstrip(",") if match else "unknown / error"
         log.debug(f"{uptime=}")
         facts["run.uptime"] = uptime
-        return facts

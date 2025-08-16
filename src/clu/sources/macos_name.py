@@ -8,17 +8,13 @@ log = logging.getLogger(__name__)
 
 
 class MacOSName(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["os.code_name"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.facts.append("os.version")
-        return requires
 
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         # FIXME: need better dependency management
         sw_vers = SwVers()
         sw_vers.parse(facts)
@@ -48,5 +44,3 @@ class MacOSName(Source):
             # and thats WAY out of support for us
             code_name = f"Unknown-{major_ver}"
         facts["os.code_name"] = code_name
-
-        return facts

@@ -8,22 +8,18 @@ log = logging.getLogger(__name__)
 
 
 class Lscpu(Source):
-    def provides(self) -> Provides:
-        provides = Provides()
+    def provides(self, provides: Provides) -> None:
         provides["phy.cpu.model"] = self
         provides["phy.cpu.vendor"] = self
         provides["phy.cpu.cores"] = self
         provides["phy.cpu.threads"] = self
         provides["phy.cpu.sockets"] = self
-        return provides
 
-    def requires(self) -> Requires:
-        requires = Requires()
+    def requires(self, requires: Requires) -> None:
         requires.programs.append("lscpu")
-        return requires
 
     # TODO: clean this up, it is a mess because it didn't translate from the original code well
-    def parse(self, facts: Facts) -> Facts:
+    def parse(self, facts: Facts) -> None:
         regexes = {
             r"^ *Model name: *(.+)": "model",
             r"^ *Vendor ID: *(.+)": "vendor",
@@ -36,7 +32,7 @@ class Lscpu(Source):
         attr_keys = ["model", "vendor", "cores", "threads", "sockets"]
         data, rc = text_program("lscpu")
         if data is None or rc != 0:
-            return facts
+            return
 
         for regex, field in regexes.items():
             match = re.search(regex, data, re.MULTILINE)
@@ -56,5 +52,3 @@ class Lscpu(Source):
             log.debug(f"{key=}")
             log.debug(f"{value=}")
             facts[f"phy.cpu.{key}"] = value
-
-        return facts
