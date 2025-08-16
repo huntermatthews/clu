@@ -1,10 +1,10 @@
 import pytest
 from unittest.mock import patch
 
-from clu.os_darwin import parse_os_darwin
+# from clu.op import parse_os_darwin
 
 from tests import mock_read_program
-import tests.test_parse_clu
+import tests.sources.test_clu
 
 
 @pytest.mark.parametrize(
@@ -27,10 +27,12 @@ import tests.test_parse_clu
         ),
     ],
 )
+@pytest.mark.skip(reason="os's dont do their own parsing anymore")
+# ruff: noqa
 def test_parse_os_darwin(mock_host, expected_result):
     """Test parse_os_darwin function with mock data from different hosts."""
 
-    expected_result.update(tests.test_parse_clu.expected_result)
+    expected_result.update(tests.sources.test_clu.expected_result)
 
     # patch out parse_clu() because we test it elsewhere and its output varies too much.
     with patch("clu.os_darwin.text_program") as drp, patch(
@@ -38,7 +40,7 @@ def test_parse_os_darwin(mock_host, expected_result):
     ) as grp, patch("clu.os_darwin.parse_clu") as cpc:
         drp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
         grp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
-        cpc.side_effect = lambda facts: facts.update(tests.test_parse_clu.expected_result)
+        cpc.side_effect = lambda facts: facts.update(tests.sources.test_clu.expected_result)
 
         facts = parse_os_darwin()
 

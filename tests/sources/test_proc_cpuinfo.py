@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 from clu import Facts
-from clu.os_linux import parse_cpuinfo_flags
+from clu.sources.proc_cpuinfo import ProcCpuinfo
 
 from tests import mock_read_file
 
@@ -28,15 +28,16 @@ from tests import mock_read_file
         ("macos", {"phy.arch": "arm64"}, {"phy.arch": "arm64"}),
     ],
 )
-def test_parse_cpuinfo_flags(mock_host, input_facts, expected_result):
+def test_proc_cpuinfo_parse(mock_host, input_facts, expected_result):
     """Test parse_cpuinfo_flags function with mock data from different hosts."""
 
-    with patch("clu.os_linux.text_file") as mrf:
+    with patch("clu.sources.proc_cpuinfo.text_file") as mrf:
         mrf.side_effect = lambda fname: mock_read_file(pytest.mock_dir / mock_host, fname)
 
         facts = Facts()
         facts.update(input_facts)
-        parse_cpuinfo_flags(facts)
+        proc_cpuinfo = ProcCpuinfo()
+        proc_cpuinfo.parse(facts)
 
         # Assert the expected results
         assert facts == expected_result, mock_host

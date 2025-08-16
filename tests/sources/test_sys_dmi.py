@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 from clu import Facts
-from clu.os_linux import parse_sys_dmi
+from clu.sources.sys_dmi import SysDmi
 
 from tests import mock_read_file
 
@@ -28,15 +28,16 @@ from tests import mock_read_file
         ),
     ],
 )
-def test_parse_sys_dmi(mock_host, input_facts, expected_result):
+def test_sys_dmi_parse(mock_host, input_facts, expected_result):
     """Test parse_sys_dmi function with mock data from different hosts."""
 
-    with patch("clu.os_linux.text_file") as mrf:
+    with patch("clu.sources.sys_dmi.text_file") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
         facts.update(input_facts)
-        parse_sys_dmi(facts)
+        sys_dmi = SysDmi()
+        sys_dmi.parse(facts)
 
         # Assert the expected results
         assert facts == expected_result, mock_host

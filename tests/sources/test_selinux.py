@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 from clu import Facts
-from clu.os_linux import parse_selinux
+from clu.sources.selinux import Selinux
 
 from tests import mock_read_program
 
@@ -16,14 +16,15 @@ from tests import mock_read_program
         ("macos", {"os.selinux.enable": "Unknown/Error", "os.selinux.mode": "Unknown/Error"}),
     ],
 )
-def test_parse_selinux(mock_host, expected_result):
+def test_selinux_parse(mock_host, expected_result):
     """Test parse_selinux function with mock data from different hosts."""
 
-    with patch("clu.os_linux.text_program") as mrf:
+    with patch("clu.sources.selinux.text_program") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
-        parse_selinux(facts)
+        selinux = Selinux()
+        selinux.parse(facts)
 
         # Assert the expected results
         assert facts == expected_result, mock_host

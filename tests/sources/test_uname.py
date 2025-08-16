@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 from clu import Facts
-from clu.os_linux import parse_uname
+from clu.sources.uname import Uname
 
 from tests import mock_read_program
 
@@ -48,14 +48,15 @@ from tests import mock_read_program
         ),
     ],
 )
-def test_parse_uname(mock_host, expected_result):
+def test_uname_parse(mock_host, expected_result):
     """Test parse_uname function with mock data from different hosts."""
 
-    with patch("clu.os_generic.text_program") as mrf:
+    with patch("clu.sources.uname.text_program") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
-        parse_uname(facts)
+        uname = Uname()
+        uname.parse(facts)
 
         # Assert the expected results
         assert facts == expected_result, mock_host

@@ -1,10 +1,10 @@
 import pytest
 from unittest.mock import patch
 
-from clu.os_linux import parse_os_linux
+# from clu.os_linux import parse_os_linux
 
 from tests import mock_read_program, mock_read_file
-import tests.test_parse_clu
+import tests.sources.test_clu
 
 
 @pytest.mark.parametrize(
@@ -99,10 +99,12 @@ import tests.test_parse_clu
         ),
     ],
 )
-def test_parse_os_linux(mock_host, expected_result):
+@pytest.mark.skip(reason="os's dont do their own parsing anymore")
+# ruff: noqa
+def test_linux(mock_host, expected_result):
     """Test parse_os_linux function with mock data from different hosts."""
 
-    expected_result.update(tests.test_parse_clu.expected_result)
+    expected_result.update(tests.test_clu.expected_result)
 
     # patch out parse_clu() because we test it elsewhere and its output varies too much.
     with patch("clu.os_linux.text_program") as lmrp, patch("clu.os_linux.text_file") as lmrf, patch(
@@ -111,7 +113,7 @@ def test_parse_os_linux(mock_host, expected_result):
         lmrp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
         lmrf.side_effect = lambda filepath: mock_read_file(pytest.mock_dir / mock_host, filepath)
         gmrp.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
-        cpc.side_effect = lambda facts: facts.update(tests.test_parse_clu.expected_result)
+        cpc.side_effect = lambda facts: facts.update(tests.test_clu.expected_result)
 
         facts = parse_os_linux()
 

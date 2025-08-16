@@ -1,7 +1,7 @@
 import pytest
 
 from clu import Facts
-from clu.os_darwin import parse_macos_name
+from clu.sources.macos_name import MacOSName
 
 
 @pytest.mark.parametrize(
@@ -23,8 +23,9 @@ def test_parse_macos_name(input_facts, expected_result):
     """Test parse_macos_name function with mock data from various versions."""
 
     facts = Facts()
+    macos_name = MacOSName()
     facts.update(input_facts)
-    parse_macos_name(facts)
+    macos_name.parse(facts)
 
     # Assert the expected results
     assert facts == expected_result, input_facts

@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 from clu import Facts
-from clu.os_generic import parse_uptime
+from clu.sources.uptime import Uptime
 
 
 from tests import mock_read_program
@@ -17,14 +17,15 @@ from tests import mock_read_program
         ("macos", {"run.uptime": "1:03"}),
     ],
 )
-def test_parse_uptime(mock_host, expected_result):
+def test_uptime_parse(mock_host, expected_result):
     """Test parse_uptime function with mock data from different hosts."""
 
-    with patch("clu.os_generic.text_program") as mrf:
+    with patch("clu.sources.uptime.text_program") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
 
         facts = Facts()
-        parse_uptime(facts)
+        uptime = Uptime()
+        uptime.parse(facts)
 
         # Assert the expected results
         assert facts == expected_result, mock_host
