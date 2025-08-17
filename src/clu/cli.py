@@ -5,6 +5,7 @@ import logging
 import sys
 
 from clu import __about__
+from clu.logs import setup_logging
 import clu.cmd.report
 import clu.cmd.archive
 import clu.cmd.requires
@@ -17,22 +18,15 @@ def parse_cmdline(args=None):
     parser.add_argument(
         "--version", action="version", version="%%(prog)s %s" % __about__.__version__
     )
-    parser.add_argument(
-        "--debug",
-        action="store_const",
-        const=logging.DEBUG,
-        default=logging.WARNING,
-        dest="verbosity",
-        help="Debug mode -- boring nerdy details.",
-    )
+
     parser.add_argument(
         "--verbose",
-        action="store_const",
-        const=logging.INFO,
+        "-v",
+        action="count",
+        default=0,
         dest="verbosity",
-        help="Verbose mode -- slightly more information than a normal run.",
+        help="Increase verbosity of output (can be used multiple times).",
     )
-
     subparsers = parser.add_subparsers(dest="cmd")
     parser.set_defaults(cmd="report", func=clu.cmd.report.report_facts)
 
@@ -49,12 +43,11 @@ def main() -> int:
         sys.exit(1)
 
     args = parse_cmdline()
+    setup_logging(args)
 
-    if args.verbosity is not logging.WARNING:
-        logging.basicConfig(level=args.verbosity)
-
-    log.info(f"Starting clu utility... {sys.argv=}")
+    log.info("Starting clu utility...")
     log.debug(f"Command line: {args}")
+    log.trace(f"tracing is on and working: {args}")
 
     return args.func(args)
 
