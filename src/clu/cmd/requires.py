@@ -1,9 +1,7 @@
 import logging
 
-# from clu.os_map import get_os_functions
 from clu.input import check_file_exists, check_program_exists
 from clu.opsys.factory import opsys_factory
-
 
 log = logging.getLogger(__name__)
 

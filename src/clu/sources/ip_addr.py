@@ -1,7 +1,6 @@
 import logging
 
 from clu import Facts, Provides, Requires, Source
-
 from clu.input import text_program
 
 log = logging.getLogger(__name__)

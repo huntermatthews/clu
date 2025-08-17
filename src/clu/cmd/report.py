@@ -5,7 +5,6 @@ import logging
 from clu.opsys.factory import opsys_factory
 from clu import Facts
 
-
 log = logging.getLogger(__name__)
 
 

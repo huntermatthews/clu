@@ -28,13 +28,6 @@ class Requires:
         self.facts.extend(other.facts)
         return self
 
-    def sort(self):
-        self.files.sort()
-        self.programs.sort()
-        self.apis.sort()
-        self.facts.sort()
-        return self
-
 
 class Source:
     def provides(self, provides: Provides):

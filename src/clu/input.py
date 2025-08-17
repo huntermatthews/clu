@@ -1,11 +1,11 @@
 """Doc Incomplete."""
 
 import logging
+from pathlib import Path
 import shlex
 import shutil
 import subprocess
 from typing import Optional
-from pathlib import Path
 
 log = logging.getLogger(__name__)
 

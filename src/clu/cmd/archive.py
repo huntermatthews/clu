@@ -13,7 +13,6 @@ from clu.debug import panic
 from clu.opsys.factory import opsys_factory
 from clu.input import transform_cmdline_to_filename, text_program
 
-
 log = logging.getLogger(__name__)
 
 

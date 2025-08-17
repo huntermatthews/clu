@@ -4,7 +4,6 @@ import argparse
 import logging
 import sys
 
-# import clu
 from clu import __about__
 import clu.cmd.report
 import clu.cmd.archive
