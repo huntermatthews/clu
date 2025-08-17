@@ -1,5 +1,5 @@
 # Justfile for Python projects (manage common tasks)
-
+# -*- mode: makefile -*-
 
 # Justfile settings
 _default: help
