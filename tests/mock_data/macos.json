@@ -1,0 +1,12 @@
+{
+    "sys.vendor": "Apple",
+    "os.kernel.name": "Darwin",
+    "os.hostname": "<hostname2>",
+    "os.kernel.version": "24.3.0",
+    "phy.arch": "arm64",
+    "os.name": "macOS",
+    "os.version": "15.5",
+    "os.build": "24F74",
+    "os.code_name": "Sequoia",
+    "run.uptime": "1:03"
+}

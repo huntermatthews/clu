@@ -1,0 +1,21 @@
+{
+    "os.name": "Linux",
+    "os.kernel.name": "Linux",
+    "os.hostname": "<hostname2>",
+    "os.kernel.version": "6.4.0-150600.23.47-default",
+    "os.distro.name": "opensuse-leap",
+    "os.distro.version": "15.6",
+    "phy.arch": "x86_64",
+    "phy.platform": "vmware",
+    "phy.cpu.arch_version": "x86_64_v4",
+    "phy.ram": "4.0 GB",
+    "phy.cpu.model": "Intel(R) Xeon(R) Gold 6342 CPU @ 2.80GHz",
+    "phy.cpu.vendor": "GenuineIntel",
+    "phy.cpu.cores": "2",
+    "phy.cpu.threads": "2",
+    "phy.cpu.sockets": "1",
+    "os.selinux.enable": "Unknown/Error",
+    "os.selinux.mode": "Unknown/Error",
+    "salt.no_salt.exists": "False",
+    "run.uptime": "28 days, 6 hours, 37 minutes, 24 seconds"
+}
