@@ -5,6 +5,8 @@ from pathlib import Path
 
 from clu.input import text_file, transform_cmdline_to_filename
 
+mock_data_dir: Path = Path()
+
 
 def get_file_mock_path(mock_dir, fname):
     """Get the mock file path for a given file name."""
@@ -40,6 +42,13 @@ def mock_read_program(mock_dir: Path, cmdline):
         rc = 0
 
     return data, rc
+
+
+def dict_subset(input_dict: dict, keys: list[str]) -> dict:
+    """Return a new dictionary containing only the specified keys from the input dictionary."""
+    # {k: bigdict.get(k, "") for k in ('l', 'm', 'n')}   # to synthesize missing keys
+
+    return {key: input_dict[key] for key in keys if key in input_dict}
 
 
 # For later tests
