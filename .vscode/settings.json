@@ -8,6 +8,7 @@
         "opsys",
         "pycache",
         "pytest",
+        "rootdir",
         "zipapp"
     ],
     "editor.formatOnSave": true,
