@@ -12,7 +12,7 @@ import tests
 
 @pytest.hookimpl
 def pytest_configure(config: pytest.Config) -> None:
-    pytest.mock_dir = config.rootdir / "tests" / "mock_data"
+    pytest.mock_dir = config.rootdir / "tests" / "mock_data"  # type: ignore reportAttributeAccessIssue
     setattr(tests, "mock_data_dir", Path(config.rootdir / "tests" / "mock_data"))  # type: ignore reportAttributeAccessIssue
 
 

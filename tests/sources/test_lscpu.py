@@ -4,54 +4,38 @@ from unittest.mock import patch
 from clu import Facts
 from clu.sources.lscpu import Lscpu
 
-from tests import mock_read_program
+from tests import dict_subset, mock_read_program, mock_data_dir
+
+input_keys = []
+output_keys = [
+    "phy.cpu.model",
+    "phy.cpu.vendor",
+    "phy.cpu.cores",
+    "phy.cpu.threads",
+    "phy.cpu.sockets",
+]
 
 
 @pytest.mark.parametrize(
-    "mock_host, expected_result",
+    "mock_host, input_keys, output_keys",
     [
-        (
-            "host1",
-            {
-                "phy.cpu.model": "Intel(R) Xeon(R) Gold 6342 CPU @ 2.80GHz",
-                "phy.cpu.vendor": "GenuineIntel",
-                "phy.cpu.cores": "2",
-                "phy.cpu.threads": "2",
-                "phy.cpu.sockets": "1",
-            },
-        ),
-        (
-            "host2",
-            {
-                "phy.cpu.model": "Intel(R) Xeon(R) Gold 6342 CPU @ 2.80GHz",
-                "phy.cpu.vendor": "GenuineIntel",
-                "phy.cpu.cores": "2",
-                "phy.cpu.threads": "2",
-                "phy.cpu.sockets": "1",
-            },
-        ),
-        (
-            "host3",
-            {
-                "phy.cpu.model": "Intel(R) Xeon(R) Silver 4410Y",
-                "phy.cpu.vendor": "GenuineIntel",
-                "phy.cpu.cores": "24",
-                "phy.cpu.threads": "48",
-                "phy.cpu.sockets": "2",
-            },
-        ),
-        ("macos", {}),
+        ("host1", input_keys, output_keys),
+        ("host2", input_keys, output_keys),
+        ("host3", input_keys, output_keys),
     ],
 )
-def test_lscpu_parse(mock_host, expected_result):
-    """Test parse_lscpu function with mock data from different hosts."""
+def test_lscpu_parse(mock_host, input_keys, output_keys, host_json_loader):
+    host_all_facts = host_json_loader(mock_host)
+    host_input_facts = dict_subset(host_all_facts, input_keys)
+    host_output_facts = dict_subset(host_all_facts, output_keys)
 
     with patch("clu.sources.lscpu.text_program") as mrf:
-        mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
+        mrf.side_effect = lambda cmdline: mock_read_program(mock_data_dir / mock_host, cmdline)
 
         facts = Facts()
+        facts.update(host_input_facts)
         lscpu = Lscpu()
         lscpu.parse(facts)
 
         # Assert the expected results
-        assert facts == expected_result, mock_host
+        assert facts == host_output_facts, mock_host

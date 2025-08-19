@@ -14,7 +14,7 @@ def get_file_mock_path(mock_dir, fname):
     return x
 
 
-def mock_read_file(mock_dir: Path, fname: str) -> str:
+def mock_read_file(mock_dir: Path, fname: Path) -> str:
     fname = get_file_mock_path(mock_dir, fname)
     data = text_file(fname)
     return data
@@ -32,10 +32,10 @@ def mock_read_program(mock_dir: Path, cmdline):
     """Read a program's output from the mock directory."""
 
     (dname, rc_name) = get_program_mock_path(mock_dir, cmdline)
-    data = text_file(dname)
+    data = text_file(Path(dname))
 
     if os.path.isfile(rc_name):
-        rc = int(text_file(rc_name))
+        rc = int(text_file(Path(rc_name)))
     elif data is None:
         rc = 127  # command not found (fish/bash/zsh/sh all consistent = 127)
     else:
@@ -46,7 +46,7 @@ def mock_read_program(mock_dir: Path, cmdline):
 
 def dict_subset(input_dict: dict, keys: list[str]) -> dict:
     """Return a new dictionary containing only the specified keys from the input dictionary."""
-    # {k: bigdict.get(k, "") for k in ('l', 'm', 'n')}   # to synthesize missing keys
+    # {k: input_dict.get(k, "") for k in ('l', 'm', 'n')}   # to synthesize missing keys
 
     return {key: input_dict[key] for key in keys if key in input_dict}
 
