@@ -1,3 +1,4 @@
+import json
 import logging
 
 from clu import Facts, Provides, Requires, Source
@@ -5,21 +6,33 @@ from clu.input import text_program
 
 log = logging.getLogger(__name__)
 
+primary_keys = ["net.macs", "net.ipv4", "net.ipv6", "net.devs"]
+
 
 class IpAddr(Source):
     def provides(self, provides: Provides) -> None:
-        for key in [
-            "ip.addr",
-            "ip.mask",
-            "ip.gateway",
-        ]:
+        for key in primary_keys:
             provides[key] = self
 
     def requires(self, requires: Requires) -> None:
         requires.programs.append("ip")
 
     def parse(self, facts: Facts) -> None:
-        data, rc = text_program("ip addr")
-        if data is None or rc != 0:
-            return
-        log.debug(f"{data=}")
+        output, rc = text_program("ip --json addr")
+        if output is None or rc != 0:
+            for key in primary_keys:
+                facts[key] = "Error/Unknown"
+        else:
+            for key in primary_keys:
+                facts[key] = ""
+        log.trace(f"{output=}")  # type: ignore reportAttributeAccessIssue
+
+        data = json.loads(output)
+        for iface in data:
+            facts["net.devs"] += iface["ifname"] + " "
+            for addr in iface["addr_info"]:
+                if addr["family"] == "inet":
+                    facts["net.ipv4"] += addr["local"] + " "
+                elif addr["family"] == "inet6":
+                    facts["net.ipv6"] += addr["local"] + " "
+            facts["net.macs"] += iface["address"] + " "

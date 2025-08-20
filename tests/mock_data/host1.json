@@ -18,5 +18,9 @@
     "os.selinux.mode": "Permissive",
     "salt.no_salt.exists": "True",
     "salt.no_salt.reason": "matthewsht - 2025-05-04 - This server is full of sadness.",
-    "run.uptime": "1 hour, 1 second"
+    "run.uptime": "1 hour, 1 second",
+    "net.devs": "lo ens33 ",
+    "net.ipv4": "127.0.0.1 10.136.128.216 ",
+    "net.ipv6": "::1 2607:f220:404:2101::42 fe80::250:56ff:fea0:c37 ",
+    "net.macs": "00:00:00:00:00:00 00:50:56:a0:0c:37 "
 }

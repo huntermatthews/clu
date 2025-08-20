@@ -4,6 +4,7 @@ from clu.opsys import OpSys
 from clu.sources import (
     clu,
     proc_cpuinfo,
+    ip_addr,
     ipmitool,
     lscpu,
     no_salt,
@@ -22,6 +23,7 @@ log = logging.getLogger(__name__)
 class Linux(OpSys):
     _sources = [
         clu.Clu(),
+        ip_addr.IpAddr(),
         ipmitool.Ipmitool(),
         lscpu.Lscpu(),
         no_salt.NoSalt(),
