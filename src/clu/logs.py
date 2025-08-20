@@ -10,13 +10,13 @@ VERBOSITY_MAP = {
 }
 
 
-def setup_logging(args) -> None:
+def setup_logging(verbosity) -> None:
     """Set up the logging configuration based on command line arguments."""
 
     add_logging_level("TRACE", logging.DEBUG - 5)
 
-    if args.verbosity in VERBOSITY_MAP:
-        level = VERBOSITY_MAP[args.verbosity]
+    if verbosity in VERBOSITY_MAP:
+        level = VERBOSITY_MAP[verbosity]
     else:
         print("ERROR: verbosity levels wrong, using 2", file=sys.stderr)
         level = VERBOSITY_MAP[2]

@@ -39,11 +39,12 @@ def parse_cmdline(args=None):
 
 def main() -> int:
     if sys.version_info < __about__.__minimum_python_info__:
-        print(f"Must use at least python {__about__.__minimum_python__}", file=sys.stderr)
+        # Can't use logging here
+        print(f"ERROR: Must use at least python {__about__.__minimum_python__}", file=sys.stderr)
         sys.exit(1)
 
     args = parse_cmdline()
-    setup_logging(args)
+    setup_logging(args.verbosity)
 
     log.info("Starting clu utility...")
     log.debug(f"Command line: {args}")
