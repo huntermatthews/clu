@@ -3,12 +3,9 @@ from unittest.mock import patch
 
 from clu.sources.ip_addr import IpAddr
 from clu import Facts
-from clu.logs import setup_logging
 
 from tests import dict_subset, mock_read_program, mock_data_dir
 
-
-setup_logging(3)
 
 input_keys = []
 output_keys = ["net.macs", "net.ipv4", "net.ipv6", "net.devs"]

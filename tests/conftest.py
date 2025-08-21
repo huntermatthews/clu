@@ -8,12 +8,15 @@ from pathlib import Path
 import pytest
 
 import tests
+from clu.logs import setup_logging
 
 
 @pytest.hookimpl
 def pytest_configure(config: pytest.Config) -> None:
     pytest.mock_dir = config.rootdir / "tests" / "mock_data"  # type: ignore reportAttributeAccessIssue
     setattr(tests, "mock_data_dir", Path(config.rootdir / "tests" / "mock_data"))  # type: ignore reportAttributeAccessIssue
+
+    setup_logging(3)
 
 
 @pytest.fixture
