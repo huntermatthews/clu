@@ -25,6 +25,7 @@
     "os.selinux.mode": "Disabled",
     "salt.no_salt.exists": "False",
     "run.uptime": "4 days, 1 hour, 25 minutes, 35 seconds",
+    "run.update_required": "Unknown/Error",
     "bmc.ipv4_source": "DHCP Address",
     "bmc.ipv4_address": "10.136.28.96",
     "bmc.ipv4_mask": "255.255.255.0",
