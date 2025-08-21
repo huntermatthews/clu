@@ -48,6 +48,17 @@ def text_program(cmdline) -> tuple[Optional[str], int]:
         return None, 1
 
 
+def rc_program(cmdline) -> int:
+    log.debug(f"rc_program: {cmdline}")
+
+    try:
+        result = subprocess.run(shlex.split(cmdline), capture_output=False)
+        return result.returncode
+    except Exception as e:
+        log.debug(f"Error running program {cmdline}: {e}")
+        return 1
+
+
 def check_program_exists(program):
     log.debug(f"check_program_exists: {program}")
 

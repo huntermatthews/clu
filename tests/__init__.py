@@ -44,6 +44,19 @@ def mock_read_program(mock_dir: Path, cmdline):
     return data, rc
 
 
+def mock_rc_program(mock_dir: Path, cmdline) -> int:
+    """Read a program's RC from the mock directory."""
+
+    (_, rc_name) = get_program_mock_path(mock_dir, cmdline)
+
+    if os.path.isfile(rc_name):
+        rc = int(text_file(Path(rc_name)))
+    else:
+        rc = 127  # command not found (fish/bash/zsh/sh all consistent = 127)
+
+    return rc
+
+
 def dict_subset(input_dict: dict, keys: list[str]) -> dict:
     """Return a new dictionary containing only the specified keys from the input dictionary."""
     # {k: input_dict.get(k, "") for k in ('l', 'm', 'n')}   # to synthesize missing keys
