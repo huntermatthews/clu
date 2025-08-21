@@ -3,12 +3,13 @@ import logging
 from clu.opsys import OpSys
 from clu.sources import (
     clu,
-    proc_cpuinfo,
+    dnf_checkupdate,
     ip_addr,
     ipmitool,
     lscpu,
     no_salt,
     os_release,
+    proc_cpuinfo,
     proc_uptime,
     selinux,
     sys_dmi,
@@ -23,6 +24,7 @@ log = logging.getLogger(__name__)
 class Linux(OpSys):
     _sources = [
         clu.Clu(),
+        dnf_checkupdate.DnfCheckUpdate(),
         ip_addr.IpAddr(),
         ipmitool.Ipmitool(),
         lscpu.Lscpu(),
