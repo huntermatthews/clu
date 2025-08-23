@@ -1,0 +1,97 @@
+.Dd Jan 6, 2011
+.Os Unix
+.Dt CLU 1
+.Sh NAME
+.Nm clu
+.Nd Describes the os and hardware of a system.
+.Sh SYNOPSIS
+.Nm
+.Op Cm --help | -h
+.Op Cm --version | -V
+
+.Sh DESCRIPTION
+.Tn NHGRI
+uses a file named
+.Pa /no_salt
+to indicate that the salt highstate must
+.Em not
+run on a given host (where the file exists). The file should contain a standardized
+first line indicating who created the file, the data it was created and a message saying
+why. Subsequent lines can contain longer commentary on why the host is
+.Pa /no_salt
+at this time.
+.Pp
+In the past, creation and deletion of this critical file was left to documented convention. This
+script enforces the convention of contents and adds the
+.Op --project functionality to seperate hosts which are no_salt'd for one reason or another from
+hosts that are no_salt'd as part of a single project (salt upgrades, system upgrades, etc.)
+.Pp
+.Bl -tag -width ".Cm activate"
+.It Cm --help -h
+List the help screen for the command.
+.It Cm --project | -p Ar project_name
+Specify a project marker to be added to the message, or required during a
+.Ar --remove
+operation.
+.It Cm --remove | -R
+Remove the /no_salt file, making various error checks (as opposed to a simple rm).
+.It Cm --version | -V
+Print the version of the command.
+.El
+.Sh FILES
+.Bl
+.It /no_salt
+A flag file controlled by this command.
+.El
+.Sh EXAMPLES
+Put some examples here please.
+.Sh DIAGNOSTICS
+.Nm
+is at its heart a simple wrapper around echo and rm. Therefore its main value is the error checking
+it does to try and prevent simple mistakes.
+.Bl -bullet
+.It
+Checks for an existing /no_file when creating a new one.
+.It
+Checks for no /no_salt file when removing one.
+.It
+If the /no_salt file contains a project, you must specify that same project when removing it.
+.El
+
+.Sh CONFORMING TO
+
+.Sh AUTHORS
+.An Hunter Matthews Aq hunter.matthews@nih.gov is to blame on this one.
+.Sh BUGS
+.Bl -enum
+.It
+Another shell script that should probably have been python.
+.El
+
+
+
+.Sh SYNOPSIS
+.Nm
+.Op Fl C
+.Op Fl o Ar output
+.Op Ar prefix
+
+.Sh DESCRIPTION
+
+.Sh ENVIRONMENT
+
+.Sh FILES
+
+.Sh EXAMPLES
+
+.Sh DIAGNOSTICS
+
+.Sh SEE ALSO
+
+.Sh CONFORMING TO
+
+.Sh HISTORY
+
+.Sh AUTHORS
+
+.Sh BUGS
