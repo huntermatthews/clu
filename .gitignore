@@ -14,5 +14,8 @@ wheels/
 dist/
 build/
 
+# Caching dirs
+.*_cache
+
 # Test creds
 notes/d42/creds.py
