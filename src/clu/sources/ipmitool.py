@@ -25,7 +25,7 @@ class Ipmitool(Source):
 
     def parse(self, facts: Facts) -> None:
         if facts["phy.platform"] != "physical":
-            log.info("Not a physical platform, skipping bmc. parsing")
+            log.info("Not a physical platform, skipping bmc parsing")
             return
 
         self._parse_ipmitool_mc_info(facts)
@@ -40,16 +40,16 @@ class Ipmitool(Source):
         }
         fields = {}
         data, rc = text_program("ipmitool lan print")
-        if data is None or rc != 0:
+        if data == "" or rc != 0:
             return
 
         for regex, field in regexes.items():
             match = re.search(regex, data, re.MULTILINE)
             value = match.group(1).strip() if match else None
-            log.debug(f"{value=}")
+            log.trace(f"{value=}")
             if value is not None:
                 fields[field] = value
-        log.debug(f"{fields=}")
+        log.trace(f"{fields=}")
 
         facts.update(fields)
 
@@ -61,15 +61,15 @@ class Ipmitool(Source):
         }
         fields = {}
         data, rc = text_program("ipmitool mc info")
-        if data is None or rc != 0:
+        if data == "" or rc != 0:
             return
 
         for regex, field in regexes.items():
             match = re.search(regex, data, re.MULTILINE)
             value = match.group(1).strip() if match else None
-            log.debug(f"{value=}")
+            log.trace(f"{value=}")
             if value is not None:
                 fields[field] = value
-        log.debug(f"{fields=}")
+        log.trace(f"{fields=}")
 
         facts.update(fields)

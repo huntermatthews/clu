@@ -15,17 +15,18 @@ class IpAddr(Source):
             provides[key] = self
 
     def requires(self, requires: Requires) -> None:
-        requires.programs.append("ip")
+        requires.programs.append("ip --json addr")
 
     def parse(self, facts: Facts) -> None:
         output, rc = text_program("ip --json addr")
-        if output is None or rc != 0:
+        log.trace(f"{output=}")
+        if output == "" or rc != 0:
             for key in primary_keys:
                 facts[key] = "Error/Unknown"
+            return
         else:
             for key in primary_keys:
                 facts[key] = ""
-        log.trace(f"{output=}")  # type: ignore reportAttributeAccessIssue
 
         data = json.loads(output)
         for iface in data:

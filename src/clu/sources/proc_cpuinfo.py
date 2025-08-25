@@ -36,8 +36,9 @@ class ProcCpuinfo(Source):
             "avx avx2 bmi1 bmi2 f16c fma abm movbe xsave",
             "avx512f avx512bw avx512cd avx512dq avx512vl",
         ]
+
         data = text_file("/proc/cpuinfo")
-        log.debug(f"data={data.splitlines() if data else []}")
+        log.trace(f"data={data.splitlines() if data else []}")
         cpu_flags = ""
         if data:
             for line in data.splitlines():

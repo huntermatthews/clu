@@ -1,6 +1,5 @@
 """Common code for all unit tests."""
 
-import os
 from pathlib import Path
 
 from clu.input import text_file, transform_cmdline_to_filename
@@ -23,8 +22,8 @@ def mock_read_file(mock_dir: Path, fname: Path) -> str:
 def get_program_mock_path(mock_dir, cmdline):
     cmd_name, rc_name = transform_cmdline_to_filename(cmdline)
 
-    data_path = os.path.join(mock_dir, "_programs", cmd_name)
-    rc_path = os.path.join(mock_dir, "_programs", rc_name)
+    data_path = mock_dir / "_programs" / cmd_name
+    rc_path = mock_dir / "_programs" / rc_name
     return (data_path, rc_path)
 
 
@@ -32,13 +31,19 @@ def mock_read_program(mock_dir: Path, cmdline):
     """Read a program's output from the mock directory."""
 
     (dname, rc_name) = get_program_mock_path(mock_dir, cmdline)
+    dname = Path(dname)
+    rc_name = Path(rc_name)  # why pytest, why?
+
     data = text_file(Path(dname))
 
-    if os.path.isfile(rc_name):
-        rc = int(text_file(Path(rc_name)))
-    elif data == "":
+    # First is simple - no file, its command not found
+    if not dname.is_file():
         rc = 127  # command not found (fish/bash/zsh/sh all consistent = 127)
+    elif rc_name.is_file():
+        # if we have a rc file, thats our RC by definition
+        rc = int(text_file(Path(rc_name)))
     else:
+        # otherwise, we can safely assume 0
         rc = 0
 
     return data, rc

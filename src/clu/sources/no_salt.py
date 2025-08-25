@@ -15,7 +15,7 @@ class NoSalt(Source):
         requires.files.append("/no_salt")
 
     def parse(self, facts: Facts) -> None:
-        data = text_file("/no_salt")
+        data = text_file("/no_salt", optional=True)
         if data == "":
             facts["salt.no_salt.exists"] = "False"
             return

@@ -31,24 +31,27 @@ class Lscpu(Source):
         fields = {}
         attr_keys = ["model", "vendor", "cores", "threads", "sockets"]
         data, rc = text_program("lscpu")
-        if data is None or rc != 0:
+        if data == "" or rc != 0:
             return
 
         for regex, field in regexes.items():
             match = re.search(regex, data, re.MULTILINE)
             value = match.group(1).strip() if match else None
-            log.debug(f"{value=}")
+            log.trace(f"{value=}")
             if value is not None:
                 fields[field] = value
-        log.debug(f"{fields=}")
+
+        log.trace(f"{fields=}")
         try:
             fields["cores"] = str(int(fields["cores_per_socket"]) * int(fields["sockets"]))
             fields["threads"] = str(int(fields["threads_per_core"]) * int(fields["cores"]))
         except Exception:
-            pass
-        log.debug(f"{fields=}")
+            fields["cores"] = "Error/Unknown"
+            fields["threads"] = "Error/Unknown"
+
+        log.trace(f"{fields=}")
         for key in attr_keys:
             value = fields.get(key)
-            log.debug(f"{key=}")
-            log.debug(f"{value=}")
+            log.trace(f"{key=}")
+            log.trace(f"{value=}")
             facts[f"phy.cpu.{key}"] = value
