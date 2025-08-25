@@ -16,12 +16,11 @@ class NoSalt(Source):
 
     def parse(self, facts: Facts) -> None:
         data = text_file("/no_salt")
-        if data is None:
+        if data == "":
             facts["salt.no_salt.exists"] = "False"
             return
         else:
-            log.debug(f"{data=}")
+            log.trace(f"{data=}")
             facts["salt.no_salt.exists"] = "True"
-        if not data.strip():
-            data = "UNKNOWN"
+
         facts["salt.no_salt.reason"] = data.strip()

@@ -10,7 +10,7 @@ from typing import Optional
 log = logging.getLogger(__name__)
 
 
-def text_file(fname) -> Optional[str]:
+def text_file(fname) -> str:
     """Read a file and return its contents.
 
     We [will] do checks for existence, size, perms and such thus the wrapper.
@@ -18,8 +18,8 @@ def text_file(fname) -> Optional[str]:
     log.debug(f"text_file: {fname=}")
 
     if not Path(fname).is_file():
-        log.info(f"File not found: {fname}")
-        return None
+        log.error(f"File not found: {fname}")
+        return ""
     with open(fname, "r") as f:
         return f.read()
 
@@ -44,19 +44,8 @@ def text_program(cmdline) -> tuple[Optional[str], int]:
         result = subprocess.run(shlex.split(cmdline), capture_output=True, text=True)
         return result.stdout, result.returncode
     except Exception as e:
-        log.debug(f"Error running program {cmdline}: {e}")
-        return None, 1
-
-
-def rc_program(cmdline) -> int:
-    log.debug(f"rc_program: {cmdline}")
-
-    try:
-        result = subprocess.run(shlex.split(cmdline), capture_output=False)
-        return result.returncode
-    except Exception as e:
-        log.debug(f"Error running program {cmdline}: {e}")
-        return 1
+        log.error(f"Error running program {cmdline}: {e}")
+        return "", 1
 
 
 def check_program_exists(program):

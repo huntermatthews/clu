@@ -17,7 +17,7 @@ class Selinux(Source):
     def parse(self, facts: Facts) -> None:
         _, rc = text_program("selinuxenabled")
         # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
-        log.debug(f"rc is {rc}")
+        log.trace(f"rc is {rc}")
         if rc == 0:
             facts["os.selinux.enable"] = "True"
         elif rc == 1:
@@ -26,5 +26,5 @@ class Selinux(Source):
             facts["os.selinux.enable"] = "Unknown/Error"
 
         data, rc = text_program("getenforce")
-        log.debug(f"{data=}")
+        log.trace(f"{data=}")
         facts["os.selinux.mode"] = data.strip() if data else "Unknown/Error"
