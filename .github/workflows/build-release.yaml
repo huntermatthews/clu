@@ -8,6 +8,9 @@ on:
     tags:
       - "v*" # Triggers on pushes to tags starting with 'v' (e.g., v1.0.0)
 
+permissions:
+  contents: write
+
 jobs:
   build_zipapp:
     runs-on: ubuntu-latest
