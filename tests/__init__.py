@@ -13,9 +13,9 @@ def get_file_mock_path(mock_dir, fname):
     return x
 
 
-def mock_read_file(mock_dir: Path, fname: Path) -> str:
+def mock_read_file(mock_dir: Path, fname: Path, optional: bool = False) -> str:
     fname = get_file_mock_path(mock_dir, fname)
-    data = text_file(fname)
+    data = text_file(fname, optional=optional)
     return data
 
 

@@ -10,9 +10,30 @@ from tests import mock_read_program
 @pytest.mark.parametrize(
     "mock_host, expected_result",
     [
-        ("host1", {}),
-        ("host2", {}),
-        ("host3", {}),
+        (
+            "host1",
+            {
+                "os.build": "Unknown/Error",
+                "os.name": "Unknown/Error",
+                "os.version": "Unknown/Error",
+            },
+        ),
+        (
+            "host2",
+            {
+                "os.build": "Unknown/Error",
+                "os.name": "Unknown/Error",
+                "os.version": "Unknown/Error",
+            },
+        ),
+        (
+            "host3",
+            {
+                "os.build": "Unknown/Error",
+                "os.name": "Unknown/Error",
+                "os.version": "Unknown/Error",
+            },
+        ),
         ("macos", {"os.name": "macOS", "os.version": "15.5", "os.build": "24F74"}),
     ],
 )

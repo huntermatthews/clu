@@ -9,7 +9,7 @@ from typing import Optional, Union
 
 log = logging.getLogger(__name__)
 
-FILE_SIZE_LIMIT = 65536  # 64KB - arbitrary limit - seems reasonable
+FILE_SIZE_LIMIT = 1 * 1024 * 1024  # 1MB - arbitrary limit - seems reasonable
 
 
 def text_file(fname: Union[str, Path], optional: bool = False) -> str:

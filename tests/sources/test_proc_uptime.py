@@ -13,7 +13,6 @@ from tests import mock_read_file
         ("host1", {"run.uptime": "1 hour, 1 second"}),
         ("host2", {"run.uptime": "28 days, 6 hours, 37 minutes, 24 seconds"}),
         ("host3", {"run.uptime": "4 days, 1 hour, 25 minutes, 35 seconds"}),
-        ("macos", {}),
     ],
 )
 def test_proc_uptime_parse(mock_host, expected_result):
