@@ -14,15 +14,13 @@ class VirtWhat(Source):
         requires.programs.append("virt-what")
 
     def parse(self, facts: Facts) -> None:
-        if "phy.platform" in facts:
-            return
-
         data, rc = text_program("virt-what")
-        if data is None or rc != 0:
+        log.trace(f"{rc=}")
+        if rc != 0:
             facts["phy.platform"] = "Unknown/Error"
             return
         data = data.strip()
-        log.debug(f"{data=}")
+        log.trace(f"{data=}")
         if not data:
             data = "physical"
         facts["phy.platform"] = data

@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "v*" # Triggers on pushes to tags starting with 'v' (e.g., v1.0.0)
 
 jobs:
   build_zipapp:
@@ -38,40 +40,7 @@ jobs:
       - name: Create Release and Upload Artifacts
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "dist/clu" 
-          tag: ${{ github.ref }}
-          name: Release ${{ github.ref }}
-          body: |
-            This is a new release!
-            See the attached artifact.
-          token: ${{ secrets.GITHUB_TOKEN }}
-
----
-name: Create Release with Artifacts
-
-on:
-  push:
-    tags:
-      - "v*" # Triggers on pushes to tags starting with 'v' (e.g., v1.0.0)
-
-jobs:
-  build_and_release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build artifacts
-        run: |
-          # Replace with your actual build commands
-          mkdir -p dist
-          echo "Hello, Release!" > dist/artifact.txt
-          zip -r release-artifact.zip dist/
-
-      - name: Create Release and Upload Artifacts
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "release-artifact.zip" # Path to the artifact(s) to upload
+          artifacts: "dist/clu"
           tag: ${{ github.ref }}
           name: Release ${{ github.ref }}
           body: |

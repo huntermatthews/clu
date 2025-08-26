@@ -19,7 +19,7 @@ class MacOSName(Source):
             panic("parse_macos_name: os.version is not set or empty")
 
         major_ver = version.split(".")[0]
-        log.debug(f"{major_ver=}")
+        log.trace(f"{major_ver=}")
 
         if major_ver == "26":
             code_name = "Tahoe"
@@ -37,5 +37,5 @@ class MacOSName(Source):
         else:
             # Note that for older than 11, the logic of the code name changes
             # and thats WAY out of support for us
-            code_name = f"Unknown-{major_ver}"
+            code_name = "Error/Unknown"
         facts["os.code_name"] = code_name

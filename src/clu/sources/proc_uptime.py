@@ -16,9 +16,10 @@ class ProcUptime(Source):
 
     def parse(self, facts: Facts) -> None:
         data = text_file("/proc/uptime")
-        log.debug(f"{data=}")
+        log.trace(f"{data=}")
         if not data:
+            facts["run.uptime"] = "Unknown/Error"
             return
         uptime_secs = int(float(data.split()[0]))
-        log.debug(f"{uptime_secs=}")
+        log.trace(f"{uptime_secs=}")
         facts["run.uptime"] = seconds_to_text(uptime_secs)

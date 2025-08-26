@@ -2,7 +2,6 @@ import logging
 import re
 
 from clu import Facts, Provides, Requires, Source
-from clu.debug import panic
 from clu.input import text_program
 
 log = logging.getLogger(__name__)
@@ -17,10 +16,12 @@ class Uptime(Source):
 
     def parse(self, facts: Facts) -> None:
         data, rc = text_program("uptime")
-        if data is None or rc != 0:
-            panic("parse_uptime: uptime command failed")
-        log.debug(f"{data=}")
+        log.trace(f"{data=}")
+        if data == "" or rc != 0:
+            facts["run.uptime"] = "Unknown/Error"
+            return
+
         match = re.match(r".*up *(.*) \d+ user.*", data)
-        uptime = match.group(1).rstrip(",") if match else "unknown / error"
-        log.debug(f"{uptime=}")
+        uptime = match.group(1).rstrip(",") if match else "Error/Unknown"
+        log.trace(f"{uptime=}")
         facts["run.uptime"] = uptime

@@ -13,7 +13,7 @@ from tests import mock_read_program
         ("host1", {"phy.ram": "4.0 GB"}),
         ("host2", {"phy.ram": "4.0 GB"}),
         ("host3", {"phy.ram": "64.0 GB"}),
-        ("macos", {}),
+        ("macos", {"phy.ram": "Unknown/Error"}),
     ],
 )
 def test_udevadm_ram_parse(mock_host, expected_result):
