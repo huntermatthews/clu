@@ -21,6 +21,9 @@ jobs:
         with:
           python-version: "3.8" # Specify your desired Python version
 
+      - name: Set up uv and Python
+        uses: astral-sh/setup-uv@v6
+
       - name: Setup Just
         uses: extractions/setup-just@v3
         with:
