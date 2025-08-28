@@ -24,7 +24,7 @@ def parse_args(subparsers):
 def make_archive(args) -> int:
     """Create an archive of the current system state."""
 
-    log.debug(f"Running command {args.cmd} with args={args}")
+    log.info(f"Running command {args.cmd} with args={args}")
 
     requires = opsys_factory().requires()
 

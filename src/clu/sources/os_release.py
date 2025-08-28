@@ -16,20 +16,20 @@ class OsRelease(Source):
 
     def parse(self, facts: Facts) -> None:
         data = text_file("/etc/os-release")
-        log.trace(f"{data=}")
+        log.debug(f"{data=}")
         if not data:
             facts["os.distro.name"] = "Unknown/Error"
             facts["os.distro.version"] = "Unknown/Error"
             return
-        
+
         for line in data.splitlines():
             if "=" not in line:
                 continue
             key, value = line.split("=", 1)
             key = key.strip().strip('"')
             value = value.strip().strip('"')
-            log.trace(f"{key=}")
-            log.trace(f"{value=}")
+            log.debug(f"{key=}")
+            log.debug(f"{value=}")
 
             if key == "ID":
                 facts["os.distro.name"] = value

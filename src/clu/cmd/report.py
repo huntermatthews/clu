@@ -59,7 +59,7 @@ def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
 
     # Call the parsers that we found in the previous loop
     for source in sources_to_parse:
-        log.debug(f"Calling parser function {source}")
+        log.info(f"Calling parser function {source}")
         source.parse(parsed_facts)
 
 
@@ -90,7 +90,7 @@ def do_output(output_facts: Facts, output_arg: str) -> None:
 def report_facts(args) -> int:
     """Generate a report based on the current OS."""
 
-    log.debug(f"Running command {args.cmd} with args={args}")
+    log.info(f"Running command {args.cmd} with args={args}")
 
     opsys = opsys_factory()
     provides_map = opsys.provides()

@@ -23,15 +23,15 @@ class UdevadmRam(Source):
 
         # Find all MEMORY_DEVICE_x_SIZE=number
         raw_sizes = re.findall(r"MEMORY_DEVICE_\d+_SIZE=(\d+)", data)
-        log.trace(f"{raw_sizes=}")
+        log.debug(f"{raw_sizes=}")
 
         sizes = [int(size) for size in raw_sizes]
-        log.trace(f"{sizes=}")
+        log.debug(f"{sizes=}")
 
         total = sum(sizes)
-        log.trace(f"{total=}")
+        log.debug(f"{total=}")
 
         bytes_str = bytes_to_si(total)
-        log.trace(f"{bytes_str=}")
+        log.debug(f"{bytes_str=}")
 
         facts["phy.ram"] = bytes_str

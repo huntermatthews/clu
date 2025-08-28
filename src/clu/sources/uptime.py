@@ -16,12 +16,12 @@ class Uptime(Source):
 
     def parse(self, facts: Facts) -> None:
         data, rc = text_program("uptime")
-        log.trace(f"{data=}")
+        log.debug(f"{data=}")
         if data == "" or rc != 0:
             facts["run.uptime"] = "Unknown/Error"
             return
 
         match = re.match(r".*up *(.*) \d+ user.*", data)
         uptime = match.group(1).rstrip(",") if match else "Error/Unknown"
-        log.trace(f"{uptime=}")
+        log.debug(f"{uptime=}")
         facts["run.uptime"] = uptime

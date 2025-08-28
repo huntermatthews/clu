@@ -54,13 +54,13 @@ class SysDmi(Source):
             "chassis_asset_tag",
         ]
         if len(keys) != len(entries):
-            log.trace(f"{keys=}")
-            log.trace(f"{entries=}")
+            log.debug(f"{keys=}")
+            log.debug(f"{entries=}")
             panic("parse_sys_dmi: keys and entries length don't match: You can't count")
         for idx in range(len(keys)):
             key = keys[idx]
             entry = entries[idx]
             data = text_file(f"/sys/devices/virtual/dmi/id/{entry}")
-            log.trace(f"{data=}")
-            log.trace(f"{key=}")
+            log.debug(f"{data=}")
+            log.debug(f"{key=}")
             facts[key] = data.strip() if data else ""

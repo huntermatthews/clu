@@ -19,7 +19,7 @@ class IpAddr(Source):
 
     def parse(self, facts: Facts) -> None:
         output, rc = text_program("ip --json addr")
-        log.trace(f"{output=}")
+        log.debug(f"{output=}")
         if output == "" or rc != 0:
             for key in primary_keys:
                 facts[key] = "Error/Unknown"

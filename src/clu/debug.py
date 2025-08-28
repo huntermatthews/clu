@@ -9,7 +9,7 @@ def panic(*args):
 
     log = logging.getLogger(__name__)
     log.debug("stack trace:", exc_info=True, stack_info=True)
-    log.critical("FATAL: %s", " ".join(str(arg) for arg in args))
+    log.fatal(" ".join(str(arg) for arg in args))
     sys.exit(1)
 
 

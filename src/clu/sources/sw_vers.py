@@ -22,7 +22,7 @@ class SwVers(Source):
 
     def parse(self, facts: Facts) -> None:
         data, rc = text_program("sw_vers")
-        log.trace(f"{data=}")
+        log.debug(f"{data=}")
         if data == "" or rc != 0:
             for key in self._keys:
                 facts[key] = "Unknown/Error"
@@ -33,8 +33,8 @@ class SwVers(Source):
             key, value = line.split(":", 1)
             key = key.strip()
             value = value.strip()
-            log.trace(f"{key=}")
-            log.trace(f"{value=}")
+            log.debug(f"{key=}")
+            log.debug(f"{value=}")
 
             if key == "ProductName":
                 facts["os.name"] = value

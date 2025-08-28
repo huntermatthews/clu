@@ -14,7 +14,7 @@ def parse_args(subparsers):
 
 
 def run(args):
-    log.debug(f"Running command {args.cmd} with args={args}")
+    log.info(f"Running command {args.cmd} with args={args}")
     if args.subcmd == "list":
         return list_requires()
     elif args.subcmd == "check":
@@ -39,9 +39,9 @@ def list_requires() -> int:
     for program in requires.programs:
         print(f"  - {program}")
 
-    print("APIs:")
-    for api in requires.apis:
-        print(f"  - {api}")
+    # print("APIs:")
+    # for api in requires.apis:
+    #     print(f"  - {api}")
 
     return 0
 

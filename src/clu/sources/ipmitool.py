@@ -46,10 +46,10 @@ class Ipmitool(Source):
         for regex, field in regexes.items():
             match = re.search(regex, data, re.MULTILINE)
             value = match.group(1).strip() if match else None
-            log.trace(f"{value=}")
+            log.debug(f"{value=}")
             if value is not None:
                 fields[field] = value
-        log.trace(f"{fields=}")
+        log.debug(f"{fields=}")
 
         facts.update(fields)
 
@@ -67,9 +67,9 @@ class Ipmitool(Source):
         for regex, field in regexes.items():
             match = re.search(regex, data, re.MULTILINE)
             value = match.group(1).strip() if match else None
-            log.trace(f"{value=}")
+            log.debug(f"{value=}")
             if value is not None:
                 fields[field] = value
-        log.trace(f"{fields=}")
+        log.debug(f"{fields=}")
 
         facts.update(fields)

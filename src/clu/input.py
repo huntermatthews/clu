@@ -14,7 +14,7 @@ FILE_SIZE_LIMIT = 1 * 1024 * 1024  # 1MB - arbitrary limit - seems reasonable
 
 def text_file(fname: Union[str, Path], optional: bool = False) -> str:
     """Read a file and return its contents."""
-    log.trace(f"text_file: {fname=}")
+    log.debug(f"text_file: {fname=}")
 
     fname = Path(fname)
     if not fname.is_file():
@@ -25,7 +25,7 @@ def text_file(fname: Union[str, Path], optional: bool = False) -> str:
         return ""
 
     file_size = fname.stat().st_size
-    log.trace(f"File size is for {fname}: {file_size}")
+    log.debug(f"File size is for {fname}: {file_size}")
     if file_size > FILE_SIZE_LIMIT:
         log.error(f"File size exceeds limit: {file_size} > {FILE_SIZE_LIMIT}")
         return ""
@@ -63,18 +63,18 @@ def transform_cmdline_to_filename(cmdline: str) -> tuple[str, str]:
     # udevadm info uses path like things that are not really paths - get rid of slashes
     cmdline = cmdline.replace("/", "%")
 
-    log.trace(f"transformed {cmdline=}")
+    log.debug(f"transformed {cmdline=}")
     return cmdline, cmdline + "_rc"
 
 
 def check_program_exists(program: str) -> Optional[str]:
-    log.trace(f"check_program_exists: {program}")
+    log.debug(f"check_program_exists: {program}")
 
     return shutil.which(program.split()[0])  # Only check the actual command, not its arguments
 
 
 def check_file_exists(fname: Union[str, Path]) -> Optional[str]:
-    log.trace(f"check_file_exists: {fname}")
+    log.debug(f"check_file_exists: {fname}")
 
     fname = Path(fname)
     exists = fname.is_file()

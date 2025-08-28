@@ -5,12 +5,31 @@ import logging
 import sys
 
 from clu import __about__
-from clu.logs import setup_logging
+
 import clu.cmd.report
 import clu.cmd.archive
 import clu.cmd.requires
 
+
 log = logging.getLogger(__name__)
+
+
+def setup_logging(debug_level) -> None:
+    DEBUG_MAP = {
+        0: logging.WARNING,  # This is the default debug_level, IE none.
+        1: logging.INFO,
+        2: logging.DEBUG,
+    }
+
+    """Set up the logging configuration based on command line arguments."""
+
+    if debug_level in DEBUG_MAP:
+        level = DEBUG_MAP[debug_level]
+    else:
+        print("ERROR: verbosity levels wrong, using 2", file=sys.stderr)
+        level = DEBUG_MAP[2]
+
+    logging.basicConfig(level=level)
 
 
 def parse_cmdline(args=None):
@@ -20,12 +39,11 @@ def parse_cmdline(args=None):
     )
 
     parser.add_argument(
-        "--verbose",
-        "-v",
+        "--debug",
         action="count",
         default=0,
-        dest="verbosity",
-        help="Increase verbosity of output (can be used multiple times).",
+        dest="debug_level",
+        help="Increase debugging output (can be used twice).",
     )
     subparsers = parser.add_subparsers(dest="cmd")
     parser.set_defaults(cmd="report", func=clu.cmd.report.report_facts)
@@ -44,11 +62,10 @@ def main() -> int:
         sys.exit(1)
 
     args = parse_cmdline()
-    setup_logging(args.verbosity)
+    setup_logging(args.debug_level)
 
     log.info("Starting clu utility...")
     log.debug(f"Command line: {args}")
-    log.trace(f"tracing is on and working: {args}")
 
     return args.func(args)
 

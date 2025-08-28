@@ -23,8 +23,8 @@ class Uname(Source):
 
     def parse(self, facts: Facts) -> None:
         data, rc = text_program("uname -snrm")
-        log.trace(f"{data=}")
-        log.trace(f"{rc=}")
+        log.debug(f"{data=}")
+        log.debug(f"{rc=}")
         if data == "" or rc != 0:
             for key in self._keys:
                 facts[key] = "Unknown/Error"

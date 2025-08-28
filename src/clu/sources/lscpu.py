@@ -37,11 +37,11 @@ class Lscpu(Source):
         for regex, field in regexes.items():
             match = re.search(regex, data, re.MULTILINE)
             value = match.group(1).strip() if match else None
-            log.trace(f"{value=}")
+            log.debug(f"{value=}")
             if value is not None:
                 fields[field] = value
 
-        log.trace(f"{fields=}")
+        log.debug(f"{fields=}")
         try:
             fields["cores"] = str(int(fields["cores_per_socket"]) * int(fields["sockets"]))
             fields["threads"] = str(int(fields["threads_per_core"]) * int(fields["cores"]))
@@ -49,9 +49,9 @@ class Lscpu(Source):
             fields["cores"] = "Error/Unknown"
             fields["threads"] = "Error/Unknown"
 
-        log.trace(f"{fields=}")
+        log.debug(f"{fields=}")
         for key in attr_keys:
             value = fields.get(key)
-            log.trace(f"{key=}")
-            log.trace(f"{value=}")
+            log.debug(f"{key=}")
+            log.debug(f"{value=}")
             facts[f"phy.cpu.{key}"] = value

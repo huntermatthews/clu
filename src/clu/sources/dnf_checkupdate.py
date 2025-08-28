@@ -15,7 +15,7 @@ class DnfCheckUpdate(Source):
 
     def parse(self, facts: Facts) -> None:
         _, rc = text_program("dnf check-update")
-        log.trace(f"rc is {rc}")
+        log.debug(f"rc is {rc}")
         if rc == 0:
             facts["run.update_required"] = "False"
         elif rc == 100:

@@ -19,7 +19,7 @@ class MacOSName(Source):
             panic("parse_macos_name: os.version is not set or empty")
 
         major_ver = version.split(".")[0]
-        log.trace(f"{major_ver=}")
+        log.debug(f"{major_ver=}")
 
         if major_ver == "26":
             code_name = "Tahoe"

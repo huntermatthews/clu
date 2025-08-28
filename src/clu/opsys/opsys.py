@@ -19,8 +19,8 @@ class OpSys:
         provs = Provides()
 
         for source in self._sources:
-            log.debug(source)
-            log.debug(type(source))
+            log.info(f"Source: {source}")
+            log.debug(f"Source type: {type(source)}")
             source.provides(provs)
 
         return provs

@@ -20,7 +20,7 @@ class NoSalt(Source):
             facts["salt.no_salt.exists"] = "False"
             return
         else:
-            log.trace(f"{data=}")
+            log.debug(f"{data=}")
             facts["salt.no_salt.exists"] = "True"
 
         facts["salt.no_salt.reason"] = data.strip()
