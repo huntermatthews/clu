@@ -8,14 +8,15 @@ log = logging.getLogger(__name__)
 
 class NoSalt(Source):
     def provides(self, provides: Provides) -> None:
-        provides["os.no_salt.exists"] = self
-        provides["os.no_salt.reason"] = self
+        provides["salt.no_salt.exists"] = self
+        provides["salt.no_salt.reason"] = self
 
     def requires(self, requires: Requires) -> None:
         requires.files.append("/no_salt")
 
     def parse(self, facts: Facts) -> None:
         data = text_file("/no_salt", optional=True)
+        log.debug(f"{data=}")
         if data == "":
             facts["salt.no_salt.exists"] = "False"
             return
