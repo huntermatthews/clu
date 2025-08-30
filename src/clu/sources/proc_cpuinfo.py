@@ -38,7 +38,7 @@ class ProcCpuinfo(Source):
         ]
 
         data = text_file("/proc/cpuinfo")
-        log.debug(f"data={data.splitlines() if data else []}")
+        # log.debug(f"data={data.splitlines() if data else []}") This can be HUGE
         cpu_flags = ""
         if data:
             for line in data.splitlines():
