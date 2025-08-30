@@ -4,7 +4,8 @@ name: Create Zipapp
 on:
   push:
     tags:
-      - "v*" # Triggers on pushes to tags starting with 'v' (e.g., v1.0.0)
+      - "v[0-9]+.[0-9]+.[0-9]+" # v1.0.0
+      - "v[0-9]+.[0-9]+" # v1.0
 
 permissions:
   contents: write
@@ -35,14 +36,16 @@ jobs:
           # Build the application as a zipapp
           just zipapp
 
-      # - name: Upload zipapp artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: python-zipapp
-      #     path: dist/clu
-
       - name: Release
         uses: softprops/action-gh-release@v2
-        if: github.ref_type == 'tag'
         with:
+          body: |
+            Release ${{ github.ref }}.
+            Download / deploy with
+            `curl -fsSL -o clu.pyz ${{ github.artifact_url }}`
+            `python clu.pyz`
+            or
+            `chmod +x clu.pyz`
+            `./clu.pyz`
           files: dist/clu
+          fail_on_unmatched_files: true
