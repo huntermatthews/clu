@@ -3,6 +3,7 @@ import logging
 
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_program
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ class IpAddr(Source):
         log.debug(f"{output=}")
         if output == "" or rc != 0:
             for key in primary_keys:
-                facts[key] = "Error/Unknown"
+                facts[key] = PARSE_FAIL_MSG
             return
         else:
             for key in primary_keys:

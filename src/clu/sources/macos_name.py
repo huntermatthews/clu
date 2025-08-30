@@ -2,6 +2,7 @@ import logging
 
 from clu import Facts, Provides, Requires, Source
 from clu.debug import panic
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -37,5 +38,5 @@ class MacOSName(Source):
         else:
             # Note that for older than 11, the logic of the code name changes
             # and thats WAY out of support for us
-            code_name = "Error/Unknown"
+            code_name = PARSE_FAIL_MSG
         facts["os.code_name"] = code_name

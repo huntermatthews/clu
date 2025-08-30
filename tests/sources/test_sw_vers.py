@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from clu import Facts
 from clu.sources.sw_vers import SwVers
+from clu.sources import PARSE_FAIL_MSG
 
 from tests import mock_read_program
 
@@ -13,25 +14,25 @@ from tests import mock_read_program
         (
             "host1",
             {
-                "os.build": "Unknown/Error",
-                "os.name": "Unknown/Error",
-                "os.version": "Unknown/Error",
+                "os.build": PARSE_FAIL_MSG,
+                "os.name": PARSE_FAIL_MSG,
+                "os.version": PARSE_FAIL_MSG,
             },
         ),
         (
             "host2",
             {
-                "os.build": "Unknown/Error",
-                "os.name": "Unknown/Error",
-                "os.version": "Unknown/Error",
+                "os.build": PARSE_FAIL_MSG,
+                "os.name": PARSE_FAIL_MSG,
+                "os.version": PARSE_FAIL_MSG,
             },
         ),
         (
             "host3",
             {
-                "os.build": "Unknown/Error",
-                "os.name": "Unknown/Error",
-                "os.version": "Unknown/Error",
+                "os.build": PARSE_FAIL_MSG,
+                "os.name": PARSE_FAIL_MSG,
+                "os.version": PARSE_FAIL_MSG,
             },
         ),
         ("macos", {"os.name": "macOS", "os.version": "15.5", "os.build": "24F74"}),

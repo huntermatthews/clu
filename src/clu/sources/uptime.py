@@ -3,6 +3,7 @@ import re
 
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_program
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -18,10 +19,10 @@ class Uptime(Source):
         data, rc = text_program("uptime")
         log.debug(f"{data=}")
         if data == "" or rc != 0:
-            facts["run.uptime"] = "Unknown/Error"
+            facts["run.uptime"] = PARSE_FAIL_MSG
             return
 
         match = re.match(r".*up *(.*) \d+ user.*", data)
-        uptime = match.group(1).rstrip(",") if match else "Error/Unknown"
+        uptime = match.group(1).rstrip(",") if match else PARSE_FAIL_MSG
         log.debug(f"{uptime=}")
         facts["run.uptime"] = uptime

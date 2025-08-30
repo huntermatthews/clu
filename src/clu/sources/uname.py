@@ -2,6 +2,7 @@ import logging
 
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_program
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -27,7 +28,7 @@ class Uname(Source):
         log.debug(f"{rc=}")
         if data == "" or rc != 0:
             for key in self._keys:
-                facts[key] = "Unknown/Error"
+                facts[key] = PARSE_FAIL_MSG
             return
 
         if data:

@@ -4,6 +4,7 @@ import re
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_program
 from clu.conversions import bytes_to_si
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ class UdevadmRam(Source):
     def parse(self, facts: Facts) -> None:
         data, rc = text_program("udevadm info --path /devices/virtual/dmi/id")
         if data == "" or rc != 0:
-            facts["phy.ram"] = "Unknown/Error"
+            facts["phy.ram"] = PARSE_FAIL_MSG
             return
 
         # Find all MEMORY_DEVICE_x_SIZE=number

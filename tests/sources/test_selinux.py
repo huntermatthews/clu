@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from clu import Facts
 from clu.sources.selinux import Selinux
+from clu.sources import PARSE_FAIL_MSG
 
 from tests import mock_read_program
 
@@ -11,9 +12,9 @@ from tests import mock_read_program
     "mock_host, expected_result",
     [
         ("host1", {"os.selinux.enable": "True", "os.selinux.mode": "Permissive"}),
-        ("host2", {"os.selinux.enable": "Unknown/Error", "os.selinux.mode": "Unknown/Error"}),
+        ("host2", {"os.selinux.enable": PARSE_FAIL_MSG, "os.selinux.mode": PARSE_FAIL_MSG}),
         ("host3", {"os.selinux.enable": "False", "os.selinux.mode": "Disabled"}),
-        ("macos", {"os.selinux.enable": "Unknown/Error", "os.selinux.mode": "Unknown/Error"}),
+        ("macos", {"os.selinux.enable": PARSE_FAIL_MSG, "os.selinux.mode": PARSE_FAIL_MSG}),
     ],
 )
 def test_selinux_parse(mock_host, expected_result):

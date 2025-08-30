@@ -2,6 +2,7 @@ import logging
 
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_file
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -18,8 +19,8 @@ class OsRelease(Source):
         data = text_file("/etc/os-release")
         log.debug(f"{data=}")
         if not data:
-            facts["os.distro.name"] = "Unknown/Error"
-            facts["os.distro.version"] = "Unknown/Error"
+            facts["os.distro.name"] = PARSE_FAIL_MSG
+            facts["os.distro.version"] = PARSE_FAIL_MSG
             return
 
         for line in data.splitlines():

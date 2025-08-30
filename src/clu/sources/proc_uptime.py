@@ -3,6 +3,7 @@ import logging
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_file
 from clu.conversions import seconds_to_text
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ class ProcUptime(Source):
         data = text_file("/proc/uptime")
         log.debug(f"{data=}")
         if not data:
-            facts["run.uptime"] = "Unknown/Error"
+            facts["run.uptime"] = PARSE_FAIL_MSG
             return
         uptime_secs = int(float(data.split()[0]))
         log.debug(f"{uptime_secs=}")

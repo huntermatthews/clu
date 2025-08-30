@@ -2,6 +2,7 @@ import logging
 
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_program
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ class VirtWhat(Source):
         data, rc = text_program("virt-what")
         log.debug(f"{rc=}")
         if rc != 0:
-            facts["phy.platform"] = "Unknown/Error"
+            facts["phy.platform"] = PARSE_FAIL_MSG
             return
         data = data.strip()
         log.debug(f"{data=}")

@@ -28,6 +28,7 @@ class Ipmitool(Source):
             log.info("Not a physical platform, skipping bmc parsing")
             return
 
+        # TODO: put in parse_fail_msg if the parse fails
         self._parse_ipmitool_mc_info(facts)
         self._parse_ipmitool_lan_print(facts)
 

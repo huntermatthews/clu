@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from clu import Facts
 from clu.sources.virt_what import VirtWhat
+from clu.sources import PARSE_FAIL_MSG
 
 from tests import mock_read_program
 
@@ -14,7 +15,7 @@ from tests import mock_read_program
         ("host1", {"phy.platform": "vmware"}),
         ("host2", {"phy.platform": "vmware"}),
         ("host3", {"phy.platform": "physical"}),
-        ("macos", {"phy.platform": "Unknown/Error"}),
+        ("macos", {"phy.platform": PARSE_FAIL_MSG}),
     ],
 )
 def test_virt_what_parse(mock_host, expected_result):

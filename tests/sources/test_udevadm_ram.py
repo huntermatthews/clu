@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from clu import Facts
 from clu.sources.udevadm_ram import UdevadmRam
+from clu.sources import PARSE_FAIL_MSG
 
 from tests import mock_read_program
 
@@ -13,7 +14,7 @@ from tests import mock_read_program
         ("host1", {"phy.ram": "4.0 GB"}),
         ("host2", {"phy.ram": "4.0 GB"}),
         ("host3", {"phy.ram": "64.0 GB"}),
-        ("macos", {"phy.ram": "Unknown/Error"}),
+        ("macos", {"phy.ram": PARSE_FAIL_MSG}),
     ],
 )
 def test_udevadm_ram_parse(mock_host, expected_result):

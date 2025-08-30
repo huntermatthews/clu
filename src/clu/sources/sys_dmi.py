@@ -1,7 +1,6 @@
 import logging
 
 from clu import Facts, Provides, Requires, Source
-from clu.debug import panic
 from clu.input import text_file
 
 log = logging.getLogger(__name__)

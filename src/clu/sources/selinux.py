@@ -2,6 +2,7 @@ import logging
 
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_program
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -23,8 +24,8 @@ class Selinux(Source):
         elif rc == 1:
             facts["os.selinux.enable"] = "False"
         else:
-            facts["os.selinux.enable"] = "Unknown/Error"
+            facts["os.selinux.enable"] = PARSE_FAIL_MSG
 
         data, rc = text_program("getenforce")
         log.debug(f"{data=}")
-        facts["os.selinux.mode"] = data.strip() if data else "Unknown/Error"
+        facts["os.selinux.mode"] = data.strip() if data else PARSE_FAIL_MSG

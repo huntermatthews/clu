@@ -2,6 +2,7 @@ import logging
 
 from clu import Facts, Provides, Requires, Source
 from clu.input import text_program
+from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -21,4 +22,4 @@ class DnfCheckUpdate(Source):
         elif rc == 100:
             facts["run.update_required"] = "True"
         else:
-            facts["run.update_required"] = "Unknown/Error"
+            facts["run.update_required"] = PARSE_FAIL_MSG
