@@ -22,7 +22,7 @@ class SysDmi(Source):
             provides[key] = self
 
     def requires(self, requires: Requires) -> None:
-        requires.files.append(self._dmap.values())
+        requires.files.extend(self._dmap.values())
 
     def parse(self, facts: Facts) -> None:
         if facts["phy.platform"] != "physical":
