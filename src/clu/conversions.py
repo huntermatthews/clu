@@ -19,7 +19,21 @@ def si_to_bytes(size_str: str) -> float:
     """
     Convert a human-readable SI string (e.g., '1.5 KB') to bytes (int).
     """
-    units = {"B": 0, "KB": 1, "MB": 2, "GB": 3, "TB": 4, "PB": 5, "EB": 6}
+    units = {
+        "B": 0,
+        "K": 1,
+        "KB": 1,
+        "M": 2,
+        "MB": 2,
+        "G": 3,
+        "GB": 3,
+        "T": 4,
+        "TB": 4,
+        "P": 5,
+        "PB": 5,
+        "E": 6,
+        "EB": 6,
+    }
     size_str = size_str.strip().upper()
     number = ""
     unit = ""
