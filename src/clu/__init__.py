@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 from typing import List
 
 
@@ -29,15 +30,18 @@ class Requires:
         return self
 
 
-class Source:
+class Source(ABC):
+    @abstractmethod
     def provides(self, provides: Provides):
         """Define the provider map for this source."""
         pass
 
+    @abstractmethod
     def requires(self, requires: Requires):
         """Define the requirements for this source."""
         pass
 
+    @abstractmethod
     def parse(self, facts: Facts):
         """Parse the facts for this source."""
         pass
