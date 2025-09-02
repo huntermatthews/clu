@@ -32,6 +32,7 @@ jobs:
           just-version: "1.40.0"
 
       - name: Create zipapp
+        id: create_zipapp
         run: |
           # Build the application as a zipapp
           just zipapp
@@ -42,7 +43,8 @@ jobs:
           body: |
             Release ${{ github.ref }}.
             Download / deploy with
-            `curl -fsSL -o clu.pyz ${{ github.artifact_url }}`
+            `curl -fsSL -o clu.pyz ${{ fromJSON(steps.create_zipapp.outputs.assets)[0].browser_download_url }}`
+
             `python clu.pyz`
             or
             `chmod +x clu.pyz`
