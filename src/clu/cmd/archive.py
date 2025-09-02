@@ -17,6 +17,7 @@ from clu.input import transform_cmdline_to_filename, text_program
 log = logging.getLogger(__name__)
 cfg = get_config()
 
+
 def parse_args(subparsers):
     subp_archive = subparsers.add_parser("archive")
     subp_archive.set_defaults(func=make_archive)

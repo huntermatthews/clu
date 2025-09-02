@@ -10,10 +10,12 @@ from tests import dict_subset, mock_read_program, mock_data_dir
 input_keys = []
 output_keys = ["run.update_required"]
 
+
 def set_config_for_tests():
     args = Namespace()
     args.net = True
     set_config(args)
+
 
 @pytest.mark.parametrize(
     "mock_host, input_keys, output_keys",

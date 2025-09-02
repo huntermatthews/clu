@@ -8,6 +8,7 @@ from clu.config import get_config
 log = logging.getLogger(__name__)
 cfg = get_config()
 
+
 class DnfCheckUpdate(Source):
     def provides(self, provides: Provides) -> None:
         provides["run.update_required"] = self
