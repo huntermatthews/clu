@@ -11,7 +11,7 @@ help:
 
 # build it all
 [group('build')]
-build: _dirs wheel zipapp
+build: zipapp
 
 # Create the required build / dist dirs
 [group('build')]
@@ -20,12 +20,12 @@ _dirs:
 
 # Build a proper python package (wheel)
 [group('build')]
-wheel: _dirs
+wheel: clean _dirs
     uv build --wheel
 
 # build the program as a single file executable (zipapp)
 [group('build')]
-zipapp: _dirs wheel
+zipapp: wheel
     uv pip install --target=build dist/clu-*-any.whl
     uv run python -m zipapp build -m "clu.cli:main" -o dist/clu -p "/usr/bin/env python3" -c
 
