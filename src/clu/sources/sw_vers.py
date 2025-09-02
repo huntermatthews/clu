@@ -22,6 +22,9 @@ class SwVers(Source):
         requires.programs.append("sw_vers")
 
     def parse(self, facts: Facts) -> None:
+        if "os.name" in facts:
+            return
+
         data, rc = text_program("sw_vers")
         log.debug(f"{data=}")
         if data == "" or rc != 0:

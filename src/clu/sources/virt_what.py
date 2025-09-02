@@ -15,6 +15,9 @@ class VirtWhat(Source):
         requires.programs.append("virt-what")
 
     def parse(self, facts: Facts) -> None:
+        if "phy.platform" in facts:
+            return
+
         data, rc = text_program("virt-what")
         log.debug(f"{rc=}")
         if rc != 0:

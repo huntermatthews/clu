@@ -23,6 +23,9 @@ class Uname(Source):
         requires.programs.append("uname -snrm")
 
     def parse(self, facts: Facts) -> None:
+        if "os.kernel.name" in facts:
+            return
+
         data, rc = text_program("uname -snrm")
         log.debug(f"{data=}")
         log.debug(f"{rc=}")
