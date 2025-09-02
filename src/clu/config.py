@@ -9,5 +9,6 @@ def set_config(cfg: Namespace):
     for key, value in vars(cfg).items():
         setattr(_config, key, value)
 
+
 def get_config() -> Namespace:
     return _config

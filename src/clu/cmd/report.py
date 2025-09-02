@@ -4,8 +4,10 @@ import logging
 
 from clu.opsys.factory import opsys_factory
 from clu import Facts
+from clu.config import get_config
 
 log = logging.getLogger(__name__)
+cfg = get_config()
 
 
 def parse_args(subparsers):
@@ -27,24 +29,22 @@ def parse_args(subparsers):
     subp_report.add_argument("facts", nargs="*", help="Facts to report on")
 
 
-def set_report_defaults(
-    args: argparse.Namespace, default_facts: list[str], all_facts: list[str]
-) -> None:
+def set_report_defaults(default_facts: list[str], all_facts: list[str]) -> None:
     """If the user didn't say "report" explicitly on the command
-    line, we want to make sure we still have a valid set of args to control our reporting.
+    line, we want to make sure we still have a valid set of cfg to control our reporting.
     """
 
-    # handle completely missing args
-    if "output" not in args:
-        args.output = "dots"
-    if "all" not in args:
-        args.all = False
+    # handle completely missing cfg
+    if "output" not in cfg:
+        cfg.output = "dots"
+    if "all" not in cfg:
+        cfg.all = False
 
-    # Handle what the args mean
-    if "facts" not in args or not args.facts:
-        args.facts = default_facts
-    elif "all" in args and args.all:
-        args.facts = all_facts
+    # Handle what the cfg mean
+    if "facts" not in cfg or not cfg.facts:
+        cfg.facts = default_facts
+    elif "all" in cfg and cfg.all:
+        cfg.facts = all_facts
 
 
 def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
@@ -87,27 +87,27 @@ def do_output(output_facts: Facts, output_arg: str) -> None:
         output_dots(output_facts)
 
 
-def report_facts(args) -> int:
+def report_facts() -> int:
     """Generate a report based on the current OS."""
 
-    log.info(f"Running command {args.cmd} with args={args}")
+    log.info(f"Running command {cfg.cmd} with cfg={cfg}")
 
     opsys = opsys_factory()
     provides_map = opsys.provides()
     parsed_facts = Facts()
 
-    set_report_defaults(args, opsys.default_facts(), list(provides_map.keys()))
+    set_report_defaults(opsys.default_facts(), list(provides_map.keys()))
 
     parse_facts_by_specs(provides_map, parsed_facts, opsys.early_facts())
 
-    if args.all:
-        args.facts = list(provides_map.keys())
+    if cfg.all:
+        cfg.facts = list(provides_map.keys())
 
-    parse_facts_by_specs(provides_map, parsed_facts, args.facts)
+    parse_facts_by_specs(provides_map, parsed_facts, cfg.facts)
 
-    output_facts = filter_facts(args.facts, parsed_facts)
+    output_facts = filter_facts(cfg.facts, parsed_facts)
 
-    do_output(output_facts, args.output)
+    do_output(output_facts, cfg.output)
 
     return 0
 

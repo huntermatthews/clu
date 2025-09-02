@@ -4,6 +4,7 @@ from clu import Facts
 from clu.sources.macos_name import MacOSName
 from clu.sources import PARSE_FAIL_MSG
 
+
 @pytest.mark.parametrize(
     "input_facts, expected_result",
     [

@@ -1,9 +1,11 @@
 import logging
 
+from clu.config import get_config
 from clu.input import check_file_exists, check_program_exists
 from clu.opsys.factory import opsys_factory
 
 log = logging.getLogger(__name__)
+cfg = get_config()
 
 
 def parse_args(subparsers):
@@ -13,14 +15,14 @@ def parse_args(subparsers):
     subp_requires.add_argument("subcmd", choices=["list", "check"], help="Sub-Command to run")
 
 
-def run(args):
-    log.info(f"Running command {args.cmd} with args={args}")
-    if args.subcmd == "list":
+def run():
+    log.info(f"Running command {cfg.cmd} with cfg={cfg}")
+    if cfg.subcmd == "list":
         return list_requires()
-    elif args.subcmd == "check":
+    elif cfg.subcmd == "check":
         return check_requires()
     else:
-        raise ValueError(f"Unknown sub-command: {args.subcmd}")
+        raise ValueError(f"Unknown sub-command: {cfg.subcmd}")
 
 
 def list_requires() -> int:

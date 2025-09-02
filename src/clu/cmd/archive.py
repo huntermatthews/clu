@@ -9,22 +9,23 @@ from pathlib import Path
 
 from clu import __about__
 from clu.debug import panic
-
+from clu.config import get_config
 from clu.opsys.factory import opsys_factory
 from clu.input import transform_cmdline_to_filename, text_program
 
-log = logging.getLogger(__name__)
 
+log = logging.getLogger(__name__)
+cfg = get_config()
 
 def parse_args(subparsers):
     subp_archive = subparsers.add_parser("archive")
     subp_archive.set_defaults(func=make_archive)
 
 
-def make_archive(args) -> int:
+def make_archive() -> int:
     """Create an archive of the current system state."""
 
-    log.info(f"Running command {args.cmd} with args={args}")
+    log.info(f"Running command {cfg.cmd} with cfg={cfg}")
 
     requires = opsys_factory().requires()
 
