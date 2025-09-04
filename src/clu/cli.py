@@ -45,12 +45,7 @@ def parse_cmdline() -> argparse.Namespace:
         dest="debug_level",
         help="Increase debugging output (can be used twice).",
     )
-    parser.add_argument(
-        "--net",
-        action="store_true",
-        default=False,
-        help="Enable network access - required for certain operations.",
-    )
+
     subparsers = parser.add_subparsers(dest="cmd")
     parser.set_defaults(cmd="report", func=clu.cmd.report.report_facts)
 

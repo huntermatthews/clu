@@ -25,6 +25,12 @@ def parse_args(subparsers):
         action="store_true",
         help="Output all facts",
     )
+    subp_report.add_argument(
+        "--net",
+        action="store_true",
+        default=False,
+        help="Enable network access - required for certain operations.",
+    )
     subp_report.add_argument("facts", nargs="*", help="Facts to report on")
 
 
