@@ -12,6 +12,25 @@ This project versioning [Semantic Versioning](https://semver.org) but formatted 
 
 ## [Unreleased]
 
+
+## [v1.2] - 2025-09-04
+
+### Added
+
+- Noted that man page was incomplete - its a WIP.
+- Added a `--net` command line option to the report command - required now for any network queries.
+  `dnf checkupdate` was too slow.
+- Implement a first cut of a parser for the AWS IMDSv2 service.
+  IMDS has a slightly complicated data model and this needs improvements, but this works for now.
+
+### Fixed
+
+- Due to dependency handling, some parsers were being called twice.
+- Fixed one of the tests - strange editor cut-paste error maybe.
+- Fix the default argument handling when ./clu is run without the `report` command being explicitly
+  given.
+
+
 ## [v1.1] - 2025-09-01
 
 ### Added

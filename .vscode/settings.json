@@ -3,6 +3,8 @@
         "**/__pycache__": true
     },
     "cSpell.words": [
+        "checkupdate",
+        "IMDS",
         "Justfile",
         "mypy",
         "opsys",
