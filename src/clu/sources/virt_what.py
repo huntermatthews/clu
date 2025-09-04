@@ -24,6 +24,7 @@ class VirtWhat(Source):
             facts["phy.platform"] = PARSE_FAIL_MSG
             return
         data = data.strip()
+        data = data.replace("\n", ", ")
         log.debug(f"{data=}")
         if not data:
             data = "physical"
