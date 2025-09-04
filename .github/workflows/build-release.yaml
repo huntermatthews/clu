@@ -43,11 +43,11 @@ jobs:
           body: |
             Release ${{ github.ref }}.
             Download / deploy with
-            `curl -fsSL -o clu.pyz ${{ fromJSON(steps.create_zipapp.outputs.assets)[0].browser_download_url }}`
+            `curl -fsSL -o clu https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu`
 
-            `python clu.pyz`
+            `python clu`
             or
-            `chmod +x clu.pyz`
-            `./clu.pyz`
+            `chmod +x clu`
+            `./clu`
           files: dist/clu
           fail_on_unmatched_files: true
