@@ -2,6 +2,7 @@ import logging
 
 from clu.opsys import OpSys
 from clu.sources import (
+    aws_imds,
     clu,
     dnf_checkupdate,
     ip_addr,
@@ -23,6 +24,7 @@ log = logging.getLogger(__name__)
 
 class Linux(OpSys):
     _sources = [
+        aws_imds.AwsImds(),
         clu.Clu(),
         dnf_checkupdate.DnfCheckUpdate(),
         ip_addr.IpAddr(),
@@ -46,6 +48,7 @@ class Linux(OpSys):
             "os.hostname",
             "os.distro.name",
             "os.distro.version",
+            "phy.platform",
             "phy.ram",
             "run.uptime",
             "clu.version",
