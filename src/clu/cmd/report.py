@@ -36,20 +36,23 @@ def parse_args(subparsers):
 
 def set_report_defaults(default_facts: list[str], all_facts: list[str]) -> None:
     """If the user didn't say "report" explicitly on the command
-    line, we want to make sure we still have a valid set of cfg to control our reporting.
+    line, we want to make sure we still have a valid set of configs to control our reporting.
     """
 
-    # handle completely missing cfg
+    # handle completely missing config
+    # print('handling completely missing config', cfg)
     if "output" not in cfg:
         cfg.output = "dots"
     if "all" not in cfg:
         cfg.all = False
 
     # Handle what the cfg mean
-    if "facts" not in cfg or not cfg.facts:
-        cfg.facts = default_facts
-    elif "all" in cfg and cfg.all:
+    if cfg.all == True:
+        # print('setting all facts')
         cfg.facts = all_facts
+    elif "facts" not in cfg or cfg.facts == []:
+        # print('setting default facts')
+        cfg.facts = default_facts
 
 
 def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
