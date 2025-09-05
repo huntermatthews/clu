@@ -36,7 +36,7 @@ class AwsImds(Source):
 
     def requires(self, requires: Requires) -> None:
         return
-        # requires.programs.extend(["aws ec2 describe-instances"])
+        # requires.apis.extend(["not sure what goes here"])
 
     def parse(self, facts: Facts) -> None:
         if not cfg.net:
