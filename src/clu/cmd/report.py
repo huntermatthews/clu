@@ -34,7 +34,7 @@ def parse_args(subparsers):
     subp_report.add_argument("facts", nargs="*", help="Facts to report on")
 
 
-def set_report_defaults(default_facts: list[str], all_facts: list[str]) -> None:
+def set_report_defaults(default_facts: list[str]) -> None:
     """If the user didn't say "report" explicitly on the command
     line, we want to make sure we still have a valid set of configs to control our reporting.
     """
@@ -46,11 +46,7 @@ def set_report_defaults(default_facts: list[str], all_facts: list[str]) -> None:
     if "all" not in cfg:
         cfg.all = False
 
-    # Handle what the cfg mean
-    if cfg.all == True:
-        # print('setting all facts')
-        cfg.facts = all_facts
-    elif "facts" not in cfg or cfg.facts == []:
+    if "facts" not in cfg or cfg.facts == []:
         # print('setting default facts')
         cfg.facts = default_facts
 
@@ -104,7 +100,7 @@ def report_facts() -> int:
     provides_map = opsys.provides()
     parsed_facts = Facts()
 
-    set_report_defaults(opsys.default_facts(), list(provides_map.keys()))
+    set_report_defaults(opsys.default_facts())
 
     parse_facts_by_specs(provides_map, parsed_facts, opsys.early_facts())
 
