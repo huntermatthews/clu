@@ -9,7 +9,11 @@ cfg = get_config()
 
 
 def parse_args(subparsers):
-    subp_requires = subparsers.add_parser("requires")
+    subp_requires = subparsers.add_parser(
+        "requires",
+        help="Check or list requirements for the current OS adn this is soem really long text that should probably be wrapped or something"
+        "and here is some more text to make it even longer than before  because why not",
+    )
     subp_requires.set_defaults(func=run)
 
     subp_requires.add_argument("subcmd", choices=["list", "check"], help="Sub-Command to run")

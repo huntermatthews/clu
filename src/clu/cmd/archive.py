@@ -19,7 +19,9 @@ cfg = get_config()
 
 
 def parse_args(subparsers):
-    subp_archive = subparsers.add_parser("archive")
+    subp_archive = subparsers.add_parser(
+        "archive", help="Create an archive of the current system state"
+    )
     subp_archive.set_defaults(func=make_archive)
 
 

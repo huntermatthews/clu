@@ -33,9 +33,17 @@ def setup_logging(debug_level) -> None:
 
 
 def parse_cmdline() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(prog="clu", description="clu utility")
+    parser = argparse.ArgumentParser(
+        prog="clu",
+        description="clu utility",
+        epilog="end tezt here",
+        usage="%(prog)s [options] <subcommand> [<subcommmand args>]",
+    )
     parser.add_argument(
         "--version", action="version", version="%%(prog)s %s" % clu.__about__.__version__
+    )
+    parser._optionals.title = (
+        "options"  # yeah, it's a private member - should have a public way to do this
     )
 
     parser.add_argument(
@@ -46,7 +54,12 @@ def parse_cmdline() -> argparse.Namespace:
         help="Increase debugging output (can be used twice).",
     )
 
-    subparsers = parser.add_subparsers(dest="cmd")
+    subparsers = parser.add_subparsers(
+        dest="cmd",
+        description="valid subcommands and some other text here blah blah blah",
+        metavar="",  # setting this to empty string removes the "subcommands"
+        #        title="commands",
+    )
     parser.set_defaults(cmd="report", func=clu.cmd.report.report_facts)
 
     clu.cmd.archive.parse_args(subparsers)

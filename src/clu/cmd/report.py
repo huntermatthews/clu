@@ -10,7 +10,7 @@ cfg = get_config()
 
 
 def parse_args(subparsers):
-    subp_report = subparsers.add_parser("report")
+    subp_report = subparsers.add_parser("report", help="Report facts about this system")
     subp_report.set_defaults(func=report_facts)
 
     subp_report.add_argument(
