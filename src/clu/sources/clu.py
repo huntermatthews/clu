@@ -43,3 +43,21 @@ class Clu(Source):
         facts["clu.cwd"] = os.getcwd()
         facts["clu.user"] = getpass.getuser()
         facts["clu.date"] = self._get_rfc3339_timestamp()
+
+        facts["_primary"].extend(
+            [
+                "clu.version",
+                "clu.python.version",
+            ]
+        )
+
+        facts["_secondary"].extend(
+            [
+                "clu.binary",
+                "clu.python.binary",
+                "clu.cmdline",
+                "clu.cwd",
+                "clu.user",
+                "clu.date",
+            ]
+        )
