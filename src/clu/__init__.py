@@ -1,12 +1,10 @@
 from dataclasses import dataclass, field
-from abc import ABC, abstractmethod
 from typing import List
 
+from clu.facts import Facts, Tier
 
-class Facts(dict):
-    """A simple facts container that behaves like a dict."""
 
-    pass
+facts: Facts = Facts()
 
 
 class Provides(dict):
@@ -30,18 +28,10 @@ class Requires:
         return self
 
 
-class Source(ABC):
-    @abstractmethod
-    def provides(self, provides: Provides):
-        """Define the provider map for this source."""
-        pass
-
-    @abstractmethod
-    def requires(self, requires: Requires):
-        """Define the requirements for this source."""
-        pass
-
-    @abstractmethod
-    def parse(self, facts: Facts):
-        """Parse the facts for this source."""
-        pass
+__all__ = [
+    "Facts",
+    "facts",
+    "Provides",
+    "Requires",
+    "Tier",
+]

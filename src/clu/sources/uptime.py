@@ -1,9 +1,9 @@
 import logging
 import re
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Tier, Provides, Requires
 from clu.input import text_program
-from clu.sources import PARSE_FAIL_MSG
+from clu.sources import PARSE_FAIL_MSG, Source
 
 log = logging.getLogger(__name__)
 
@@ -15,14 +15,14 @@ class Uptime(Source):
     def requires(self, requires: Requires) -> None:
         requires.programs.append("uptime")
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         data, rc = text_program("uptime")
         log.debug(f"{data=}")
         if data == "" or rc != 0:
-            facts["run.uptime"] = PARSE_FAIL_MSG
+            facts.add(Tier.PRIMARY, "run.uptime", PARSE_FAIL_MSG)
             return
 
         match = re.match(r".*up *(.*) \d+ user.*", data)
         uptime = match.group(1).rstrip(",") if match else PARSE_FAIL_MSG
         log.debug(f"{uptime=}")
-        facts["run.uptime"] = uptime
+        facts.add(Tier.PRIMARY, "run.uptime", uptime)

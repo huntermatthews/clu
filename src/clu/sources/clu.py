@@ -4,7 +4,8 @@ import logging
 import os
 import sys
 
-from clu import Facts, Provides, Requires, Source, __about__
+from clu import facts, Tier, Provides, Requires, __about__
+from clu.sources import Source
 
 log = logging.getLogger(__name__)
 
@@ -33,31 +34,13 @@ class Clu(Source):
         now_utc = datetime.datetime.now(datetime.timezone.utc)
         return now_utc.isoformat(sep="T", timespec="seconds")
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         """Return info about CLU itself (mostly runtime)."""
-        facts["clu.binary"] = sys.argv[0]
-        facts["clu.version"] = __about__.__version__
-        facts["clu.python.binary"] = sys.executable
-        facts["clu.python.version"] = ".".join(map(str, sys.version_info[:3]))
-        facts["clu.cmdline"] = " ".join(sys.argv)
-        facts["clu.cwd"] = os.getcwd()
-        facts["clu.user"] = getpass.getuser()
-        facts["clu.date"] = self._get_rfc3339_timestamp()
-
-        facts["_primary"].extend(
-            [
-                "clu.version",
-                "clu.python.version",
-            ]
-        )
-
-        facts["_secondary"].extend(
-            [
-                "clu.binary",
-                "clu.python.binary",
-                "clu.cmdline",
-                "clu.cwd",
-                "clu.user",
-                "clu.date",
-            ]
-        )
+        facts.add(Tier.SECONDARY, "clu.binary", sys.argv[0])
+        facts.add(Tier.PRIMARY, "clu.version", __about__.__version__)
+        facts.add(Tier.SECONDARY, "clu.python.binary", sys.executable)
+        facts.add(Tier.PRIMARY, "clu.python.version", ".".join(map(str, sys.version_info[:3])))
+        facts.add(Tier.SECONDARY, "clu.cmdline", " ".join(sys.argv))
+        facts.add(Tier.SECONDARY, "clu.cwd", os.getcwd())
+        facts.add(Tier.SECONDARY, "clu.user", getpass.getuser())
+        facts.add(Tier.SECONDARY, "clu.date", self._get_rfc3339_timestamp())

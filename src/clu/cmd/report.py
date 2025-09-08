@@ -1,8 +1,9 @@
 import json
 import logging
+from typing import List
 
 from clu.opsys.factory import opsys_factory
-from clu import Facts
+from clu import facts
 from clu.config import get_config
 
 log = logging.getLogger(__name__)
@@ -51,44 +52,45 @@ def set_report_defaults(default_facts: list[str]) -> None:
         cfg.facts = default_facts
 
 
-def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
+def parse_sources_by_fact_names(provides_map, requested_fact_names) -> None:
     sources_to_parse = set()
 
-    # Loop through the facts that were requested on the command line and get a set of parsers that
-    # will obtain those facts (there's likely duplicates, so we use a set here)
-    for fact_spec in fact_specs:
+    # Loop through the fact names that were requested on the command line and get a set of
+    # parsers that will obtain those facts (there's likely duplicates, so we use a set here)
+    #    breakpoint()
+    for fact_name in requested_fact_names:
         for key in provides_map:
-            if key.startswith(fact_spec):
+            if key.startswith(fact_name):
                 sources_to_parse.add(provides_map[key])
 
     # Call the parsers that we found in the previous loop
     for source in sources_to_parse:
         log.info(f"Calling parser function {source}")
-        source.parse(parsed_facts)
+        source.parse()
 
 
-def filter_facts(requested_fact_specs, parsed_facts: Facts) -> Facts:
+def filter_facts(requested_fact_names) -> List[str]:
     """Filter the parsed facts based on the requested fact specifications."""
 
     # Loop through the facts that were requested on the command line (again) and make a new
     # facts list/dict that has JUST those matching facts
-    output_facts = Facts()
+    output_fact_names = []
 
-    for fact_spec in requested_fact_specs:
-        for key in parsed_facts:
-            if key.startswith(fact_spec):
-                output_facts[key] = parsed_facts[key]
+    for fact_name in requested_fact_names:
+        for name in facts:
+            if name.startswith(fact_name):
+                output_fact_names.append(name)
 
-    return output_facts
+    return output_fact_names
 
 
-def do_output(output_facts: Facts, output_arg: str) -> None:
+def do_output(output_fact_names, output_arg: str) -> None:
     if output_arg == "json":
-        output_json(output_facts)
+        output_json(output_fact_names)
     elif output_arg == "shell":
-        output_shell(output_facts)
+        output_shell(output_fact_names)
     elif output_arg == "dots":
-        output_dots(output_facts)
+        output_dots(output_fact_names)
 
 
 def report_facts() -> int:
@@ -96,38 +98,47 @@ def report_facts() -> int:
 
     log.info(f"Running command {cfg.cmd} with cfg={cfg}")
 
+    # Get the correct provides map and default facts for the current OS
     opsys = opsys_factory()
     provides_map = opsys.provides()
-    parsed_facts = Facts()
-
     set_report_defaults(opsys.default_facts())
 
-    parse_facts_by_specs(provides_map, parsed_facts, opsys.early_facts())
+    # Our crude inter-fact dependency code is just to hard-code which facts _might_ be depended on
+    # by other sources.  We parse the sources that give us those facts here.
+    parse_sources_by_fact_names(provides_map, opsys.early_facts())
 
     if cfg.all:
         cfg.facts = list(provides_map.keys())
 
-    parse_facts_by_specs(provides_map, parsed_facts, cfg.facts)
+    # Now that we have all the early facts, using the list of fact names the user requested (might
+    # be defaulted) parse the sources for that list - this is main parsing loop of the sub-command.
+    parse_sources_by_fact_names(provides_map, cfg.facts)
 
-    output_facts = filter_facts(cfg.facts, parsed_facts)
+    # the sources always parse all the facts it can out of a file/program/whatever.
+    # (its generally just as fast and FAR simpler for the Sources NOT to care)
+    # But the user might have requested less than that - filter out the extra stuff here.
+    output_facts = filter_facts(cfg.facts)
 
+    # Finally, out the filtered facts in the format the user requested (might be defaulted)
     do_output(output_facts, cfg.output)
 
+    # the sub-cmd return code will be the programs return code
     return 0
 
 
-def output_dots(facts: Facts) -> None:
-    for key in sorted(facts):
-        value = facts[key]
-        print(f"{key}: {value}")
+def output_dots(output_fact_names: list[str]) -> None:
+    for name in sorted(output_fact_names):
+        value = facts[name]
+        print(f"{name}: {value}")
 
 
-def output_shell(facts: Facts) -> None:
-    for key in sorted(facts):
-        value = facts[key]
-        key_var = key.upper().replace(".", "_")
+def output_shell(output_fact_names: list[str]) -> None:
+    for name in sorted(output_fact_names):
+        value = facts[name]
+        key_var = name.upper().replace(".", "_")
         print(f'{key_var}="{value}"')
 
 
-def output_json(facts: Facts) -> None:
-    print(json.dumps(facts, indent=2))
+def output_json(output_fact_names: list[str]) -> None:
+    partial_copy = {name: facts[name] for name in output_fact_names if name in facts}
+    print(json.dumps(partial_copy, indent=2))

@@ -1,8 +1,8 @@
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Tier, Provides, Requires
 from clu.debug import panic
-from clu.sources import PARSE_FAIL_MSG
+from clu.sources import Source, PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ class MacOSName(Source):
     def requires(self, requires: Requires) -> None:
         requires.facts.append("os.version")
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         version = facts["os.version"]
         if not version:
             panic("parse_macos_name: os.version is not set or empty")
@@ -39,4 +39,4 @@ class MacOSName(Source):
             # Note that for older than 11, the logic of the code name changes
             # and thats WAY out of support for us
             code_name = PARSE_FAIL_MSG
-        facts["os.code_name"] = code_name
+        facts.add(Tier.PRIMARY, "os.code_name", code_name)

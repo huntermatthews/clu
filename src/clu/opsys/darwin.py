@@ -1,7 +1,7 @@
 import logging
 
 from clu.opsys import OpSys
-from clu.sources import uname, sw_vers, macos_name, uptime, clu
+from clu.sources import clu, macos_name, sw_vers, uname, uptime
 
 log = logging.getLogger(__name__)
 
@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 class Darwin(OpSys):
     """macOS (Darwin) operating system class."""
 
-    _sources = [uname.Uname(), sw_vers.SwVers(), macos_name.MacOSName(), uptime.Uptime(), clu.Clu()]
+    _sources = [clu.Clu(), macos_name.MacOSName(), sw_vers.SwVers(), uname.Uname(), uptime.Uptime()]
 
     def default_facts(self) -> list:
         return ["os.name", "os.hostname", "os.version", "os.code_name", "run.uptime", "clu.version"]

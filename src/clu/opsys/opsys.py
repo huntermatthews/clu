@@ -1,6 +1,7 @@
 import logging
 
-from clu import Provides, Requires, Source
+from clu import Provides, Requires
+from clu.sources import Source
 
 log = logging.getLogger(__name__)
 
