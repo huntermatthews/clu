@@ -3,8 +3,8 @@ import logging
 import urllib.request
 import urllib.error
 
-from clu import Facts, Provides, Requires, Source
-from clu.sources import PARSE_FAIL_MSG, NET_DISABLED_MSG
+from clu import facts, Provides, Requires
+from clu.sources import Source, PARSE_FAIL_MSG, NET_DISABLED_MSG
 from clu.config import get_config
 
 log = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ class AwsImds(Source):
         return
         # requires.apis.extend(["not sure what goes here"])
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         if not cfg.net:
             facts["imds.ALL"] = NET_DISABLED_MSG
             return

@@ -1,10 +1,10 @@
 import logging
 import re
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Provides, Requires
 from clu.input import text_program
 from clu.conversions import bytes_to_si
-from clu.sources import PARSE_FAIL_MSG
+from clu.sources import Source, PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ class UdevadmRam(Source):
     def requires(self, requires: Requires) -> None:
         requires.programs.append("udevadm info --path /devices/virtual/dmi/id")
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         data, rc = text_program("udevadm info --path /devices/virtual/dmi/id")
         if data == "" or rc != 0:
             facts["phy.ram"] = PARSE_FAIL_MSG

@@ -1,8 +1,8 @@
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Provides, Requires
 from clu.input import text_program
-from clu.sources import PARSE_FAIL_MSG
+from clu.sources import Source, PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class Selinux(Source):
     def requires(self, requires: Requires) -> None:
         requires.programs.extend(["selinuxenabled", "getenforce"])
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         _, rc = text_program("selinuxenabled")
         # man page: "status 0 if SELinux is enabled and 1 if it is not enabled."
         log.debug(f"rc is {rc}")

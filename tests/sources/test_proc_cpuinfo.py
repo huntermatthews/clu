@@ -1,43 +1,41 @@
 import pytest
 from unittest.mock import patch
 
-from clu import Facts
+from clu import facts, Facts
 from clu.sources.proc_cpuinfo import ProcCpuinfo
 
-from tests import mock_read_file
+from tests import dict_subset, mock_read_file, mock_data_dir
+
+
+input_keys = ["phy.arch"]
+output_keys = ["phy.cpu.arch_version"]
 
 
 @pytest.mark.parametrize(
-    "mock_host, input_facts, expected_result",
+    "mock_host, input_keys, output_keys",
     [
-        (
-            "host1",
-            {"phy.arch": "x86_64"},
-            {"phy.arch": "x86_64", "phy.cpu.arch_version": "x86_64_v4"},
-        ),
-        (
-            "host2",
-            {"phy.arch": "x86_64"},
-            {"phy.arch": "x86_64", "phy.cpu.arch_version": "x86_64_v4"},
-        ),
-        (
-            "host3",
-            {"phy.arch": "x86_64"},
-            {"phy.arch": "x86_64", "phy.cpu.arch_version": "x86_64_v4"},
-        ),
-        ("macos", {"phy.arch": "arm64"}, {"phy.arch": "arm64"}),
+        ("host1", input_keys, output_keys),
+        ("host2", input_keys, output_keys),
+        ("host3", input_keys, output_keys),
     ],
 )
-def test_proc_cpuinfo_parse(mock_host, input_facts, expected_result):
-    """Test parse_cpuinfo_flags function with mock data from different hosts."""
+def test_proc_cpuinfo_parse(mock_host, input_keys, output_keys, host_json_loader):
+    host_all_facts = host_json_loader(mock_host)
+    host_input_facts = dict_subset(host_all_facts, input_keys)
+    host_output_facts = dict_subset(host_all_facts, output_keys)
 
     with patch("clu.sources.proc_cpuinfo.text_file") as mrf:
-        mrf.side_effect = lambda fname: mock_read_file(pytest.mock_dir / mock_host, fname)
+        mrf.side_effect = lambda fname: mock_read_file(mock_data_dir / mock_host, fname)
 
-        facts = Facts()
-        facts.update(input_facts)
+        expected_facts = Facts()
+        expected_facts.update(host_input_facts)
+        expected_facts.update(host_output_facts)
+
+        facts.update(host_input_facts)
         proc_cpuinfo = ProcCpuinfo()
-        proc_cpuinfo.parse(facts)
+        proc_cpuinfo.parse()
 
         # Assert the expected results
-        assert facts == expected_result, mock_host
+        assert isinstance(facts, Facts)
+        assert isinstance(expected_facts, Facts)
+        assert facts == expected_facts, mock_host

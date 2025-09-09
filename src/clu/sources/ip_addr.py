@@ -1,9 +1,9 @@
 import json
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Provides, Requires
 from clu.input import text_program
-from clu.sources import PARSE_FAIL_MSG
+from clu.sources import Source, PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ class IpAddr(Source):
     def requires(self, requires: Requires) -> None:
         requires.programs.append("ip --json addr")
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         output, rc = text_program("ip --json addr")
         log.debug(f"{output=}")
         if output == "" or rc != 0:

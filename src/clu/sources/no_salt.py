@@ -1,6 +1,7 @@
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Provides, Requires
+from clu.sources import Source
 from clu.input import text_file
 
 log = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ class NoSalt(Source):
     def requires(self, requires: Requires) -> None:
         requires.files.append("/no_salt")
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         data = text_file("/no_salt", optional=True)
         log.debug(f"{data=}")
         if data == "":

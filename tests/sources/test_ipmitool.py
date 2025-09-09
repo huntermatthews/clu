@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from clu import Facts
+from clu import facts, Facts
 from clu.sources.ipmitool import Ipmitool
 
 from tests import dict_subset, mock_read_program, mock_data_dir
@@ -36,10 +36,15 @@ def test_ipmitool_parse(mock_host, input_keys, output_keys, host_json_loader):
     with patch("clu.sources.ipmitool.text_program") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_program(mock_data_dir / mock_host, cmdline)
 
-        facts = Facts()
+        expected_facts = Facts()
+        expected_facts.update(host_input_facts)
+        expected_facts.update(host_output_facts)
+
         facts.update(host_input_facts)
         ipmitool = Ipmitool()
-        ipmitool.parse(facts)
+        ipmitool.parse()
 
         # Assert the expected results
-        assert facts == host_output_facts, mock_host
+        assert isinstance(facts, Facts)
+        assert isinstance(expected_facts, Facts)
+        assert facts == expected_facts, mock_host

@@ -3,7 +3,7 @@ import re
 
 from clu import facts, Tier, Provides, Requires
 from clu.input import text_program
-from clu.sources import PARSE_FAIL_MSG, Source
+from clu.sources import Source, PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 

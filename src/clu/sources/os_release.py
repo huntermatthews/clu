@@ -1,8 +1,8 @@
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Provides, Requires
 from clu.input import text_file
-from clu.sources import PARSE_FAIL_MSG
+from clu.sources import Source, PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ class OsRelease(Source):
     def requires(self, requires: Requires) -> None:
         requires.files.append("/etc/os-release")
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         data = text_file("/etc/os-release")
         log.debug(f"{data=}")
         if not data:

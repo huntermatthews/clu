@@ -1,11 +1,11 @@
 import pytest
 from unittest.mock import patch
 
-from clu import Facts
+from clu import facts, Facts
 from clu.sources.os_release import OsRelease
 from clu.sources import PARSE_FAIL_MSG
 
-from tests import mock_read_file
+from tests import mock_read_file, mock_data_dir
 
 
 @pytest.mark.parametrize(
@@ -21,11 +21,16 @@ def test_os_release_parse(mock_host, expected_result):
     """Test parse_os_release function with mock data from different hosts."""
 
     with patch("clu.sources.os_release.text_file") as mrf:
-        mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
+        print(mock_data_dir)
+        mrf.side_effect = lambda fname: mock_read_file(mock_data_dir / mock_host, fname)
 
-        facts = Facts()
+        expected_facts = Facts()
+        expected_facts.update(expected_result)
+
         os_release = OsRelease()
-        os_release.parse(facts)
+        os_release.parse()
 
         # Assert the expected results
-        assert facts == expected_result, mock_host
+        assert isinstance(facts, Facts)
+        assert isinstance(expected_facts, Facts)
+        assert facts == expected_facts, mock_host

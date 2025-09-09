@@ -4,8 +4,8 @@ import logging
 import urllib.request
 import urllib.error
 
-from clu import Facts, Provides, Requires, Source
-from clu.sources import PARSE_FAIL_MSG, NET_DISABLED_MSG
+from clu import facts, Provides, Requires
+from clu.sources import Source, PARSE_FAIL_MSG, NET_DISABLED_MSG
 from clu.auth import get_primary_credentials
 from clu.config import get_config
 
@@ -42,7 +42,7 @@ class Device42(Source):
         return
         # requires.apis.extend(["not sure what goes here"])
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         if not cfg.net:
             facts["d42.ALL"] = NET_DISABLED_MSG
             return

@@ -1,8 +1,8 @@
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Provides, Requires
 from clu.input import text_program
-from clu.sources import PARSE_FAIL_MSG
+from clu.sources import Source, PARSE_FAIL_MSG
 from clu.conversions import bytes_to_si
 
 log = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ class Lsmem(Source):
     def requires(self, requires: Requires) -> None:
         requires.programs.append("lsmem --summary --bytes")
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         data, rc = text_program("lsmem --summary --bytes")
         log.debug(f"{data=}")
         if not data or rc != 0:

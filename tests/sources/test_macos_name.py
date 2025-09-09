@@ -1,12 +1,12 @@
 import pytest
 
-from clu import Facts
+from clu import facts, Facts
 from clu.sources.macos_name import MacOSName
 from clu.sources import PARSE_FAIL_MSG
 
 
 @pytest.mark.parametrize(
-    "input_facts, expected_result",
+    "host_input_facts, host_output_facts",
     [
         ({"os.version": "26"}, {"os.version": "26", "os.code_name": "Tahoe"}),
         ({"os.version": "25"}, {"os.version": "25", "os.code_name": PARSE_FAIL_MSG}),
@@ -20,13 +20,18 @@ from clu.sources import PARSE_FAIL_MSG
         ({"os.version": "unknown"}, {"os.version": "unknown", "os.code_name": PARSE_FAIL_MSG}),
     ],
 )
-def test_parse_macos_name(input_facts, expected_result):
+def test_parse_macos_name(host_input_facts, host_output_facts):
     """Test parse_macos_name function with mock data from various versions."""
 
-    facts = Facts()
+    expected_facts = Facts()
+    expected_facts.update(host_input_facts)
+    expected_facts.update(host_output_facts)
+
+    facts.update(host_input_facts)
     macos_name = MacOSName()
-    facts.update(input_facts)
-    macos_name.parse(facts)
+    macos_name.parse()
 
     # Assert the expected results
-    assert facts == expected_result, input_facts
+    assert isinstance(facts, Facts)
+    assert isinstance(expected_facts, Facts)
+    assert facts == expected_facts

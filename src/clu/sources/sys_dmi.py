@@ -1,6 +1,7 @@
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Provides, Requires
+from clu.sources import Source, PARSE_FAIL_MSG
 from clu.input import text_file
 
 log = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class SysDmi(Source):
     def requires(self, requires: Requires) -> None:
         requires.files.extend(self._dmap.values())
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         if facts["phy.platform"] != "physical":
             log.info("Not a physical platform, skipping sys.dmi parsing")
             return
@@ -33,4 +34,4 @@ class SysDmi(Source):
             data = text_file(entry)
             log.debug(f"{data=}")
             log.debug(f"{key=}")
-            facts[key] = data.strip() if data else ""
+            facts[key] = data.strip() if data else PARSE_FAIL_MSG

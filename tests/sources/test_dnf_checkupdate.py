@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 from clu.sources.dnf_checkupdate import DnfCheckUpdate
-from clu import Facts
+from clu import Facts, facts
 from clu.config import set_config, Namespace
 
 from tests import dict_subset, mock_read_program, mock_data_dir
@@ -35,10 +35,14 @@ def test_dnf_checkupdate_parse(mock_host, input_keys, output_keys, host_json_loa
     with patch("clu.sources.dnf_checkupdate.text_program") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_program(mock_data_dir / mock_host, cmdline)
 
-        facts = Facts()
-        facts.update(host_input_facts)
+        expected_facts = Facts()
+        expected_facts.update(host_input_facts)
+        expected_facts.update(host_output_facts)
+
         dnf_checkupdate = DnfCheckUpdate()
-        dnf_checkupdate.parse(facts)
+        dnf_checkupdate.parse()
 
         # Assert the expected results
-        assert facts == host_output_facts, mock_host
+        assert isinstance(facts, Facts)
+        assert isinstance(expected_facts, Facts)
+        assert facts == expected_facts, mock_host

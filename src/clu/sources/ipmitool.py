@@ -1,7 +1,8 @@
 import logging
 import re
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Provides, Requires
+from clu.sources import Source
 from clu.input import text_program
 
 log = logging.getLogger(__name__)
@@ -23,16 +24,16 @@ class Ipmitool(Source):
     def requires(self, requires: Requires) -> None:
         requires.programs.append("ipmitool")
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         if facts["phy.platform"] != "physical":
             log.info("Not a physical platform, skipping bmc parsing")
             return
 
         # TODO: put in parse_fail_msg if the parse fails
-        self._parse_ipmitool_mc_info(facts)
-        self._parse_ipmitool_lan_print(facts)
+        self._parse_ipmitool_mc_info()
+        self._parse_ipmitool_lan_print()
 
-    def _parse_ipmitool_lan_print(self, facts: Facts) -> None:
+    def _parse_ipmitool_lan_print(self) -> None:
         regexes = {
             r"^IP Address Source *: (.+)": "bmc.ipv4_source",
             r"^IP Address *: (.+)": "bmc.ipv4_address",
@@ -54,7 +55,7 @@ class Ipmitool(Source):
 
         facts.update(fields)
 
-    def _parse_ipmitool_mc_info(self, facts: Facts) -> None:
+    def _parse_ipmitool_mc_info(self) -> None:
         regexes = {
             r"^Firmware Revision *: (.+)": "bmc.firmware_version",
             r"^Manufacturer ID *: (.+)": "bmc.manufacturer_id",

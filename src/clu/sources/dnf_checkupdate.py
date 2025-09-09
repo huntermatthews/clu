@@ -1,8 +1,8 @@
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu import facts, Provides, Requires
 from clu.input import text_program
-from clu.sources import PARSE_FAIL_MSG, NET_DISABLED_MSG
+from clu.sources import Source, PARSE_FAIL_MSG, NET_DISABLED_MSG
 from clu.config import get_config
 
 log = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ class DnfCheckUpdate(Source):
     def requires(self, requires: Requires) -> None:
         requires.programs.extend(["dnf check-update"])
 
-    def parse(self, facts: Facts) -> None:
+    def parse(self) -> None:
         if not cfg.net:
             facts["run.update_required"] = NET_DISABLED_MSG
             return
