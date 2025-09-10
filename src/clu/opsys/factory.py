@@ -5,13 +5,6 @@ from clu.opsys.darwin import Darwin
 from clu.opsys.linux import Linux
 
 
-class Unknown(OpSys):
-    """Unknown operating system class."""
-
-    # BUG: Implement parsing for unknown OS
-    pass
-
-
 def opsys_factory() -> OpSys:
     """Factory function to get the OS class based on the OS name."""
 
@@ -21,4 +14,4 @@ def opsys_factory() -> OpSys:
     elif os_name == "Linux":
         return Linux()
     else:
-        return Unknown()
+        raise NotImplementedError("This OS is unknown to us")

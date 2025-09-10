@@ -61,8 +61,6 @@ def check_requires() -> int:
 
     print("Files:")
     for file in requires.files:
-        # BUG: we run as root, so we theoretically can access all files
-        # but thats NOT always the case - see selinux and weird macos permissions
         if check_file_exists(file):
             print(f"  - [ok] {file}")
         else:

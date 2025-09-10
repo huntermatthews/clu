@@ -27,7 +27,6 @@ class MacOSName(Source):
 
         if major_ver == "26":
             code_name = "Tahoe"
-        # BUG: check for 16-25 and error out
         elif major_ver == "15":
             code_name = "Sequoia"
         elif major_ver == "14":

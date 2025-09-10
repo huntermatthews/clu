@@ -14,7 +14,6 @@ def bytes_to_si(size: float) -> str:
     return f"{size:.1f} {units[-1]}"
 
 
-# FIXME: mypy complains here because number is a str and then its a float
 def si_to_bytes(size_str: str) -> float:
     """
     Convert a human-readable SI string (e.g., '1.5 KB') to bytes (int).
@@ -35,14 +34,14 @@ def si_to_bytes(size_str: str) -> float:
         "EB": 6,
     }
     size_str = size_str.strip().upper()
-    number = ""
+    number_str = ""
     unit = ""
     for char in size_str:
         if char.isdigit() or char == "." or char == ",":
-            number += char
+            number_str += char
         elif char.isalpha():
             unit += char
-    number = float(number.replace(",", ""))
+    number = float(number_str.replace(",", ""))
     unit = unit.strip()
     if unit not in units:
         raise ValueError(f"Unknown unit: {unit}")
@@ -90,8 +89,3 @@ def seconds_to_text(secs: int) -> str:
         parts.append(f"{seconds} second{'s' if seconds != 1 else ''}")
 
     return ", ".join(parts)
-
-
-# TODO:
-# - Consider adding support for binary prefixes (KiB, MiB, etc.) if needed
-# - extend to ZB, YB, RB, QB -- and link to https://en.wikipedia.org/wiki/Binary_prefix

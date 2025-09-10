@@ -4,23 +4,27 @@ import re
 from clu.provides import Provides
 from clu.requires import Requires
 from clu.facts import Facts
-from clu.sources import Source
+from clu.sources import Source, PARSE_FAIL_MSG
 from clu.input import text_program
 
 log = logging.getLogger(__name__)
 
 
 class Ipmitool(Source):
+    _lan_print_keys = [
+        "bmc.ipv4_source",
+        "bmc.ipv4_address",
+        "bmc.ipv4_mask",
+        "bmc.mac_address",
+    ]
+    _mc_info_keys = [
+        "bmc.firmware_version",
+        "bmc.manufacturer_id",
+        "bmc.manufacturer_name",
+    ]
+
     def provides(self, provides: Provides) -> None:
-        for key in [
-            "bmc.ipv4_source",
-            "bmc.ipv4_address",
-            "bmc.ipv4_mask",
-            "bmc.mac_address",
-            "bmc.firmware_version",
-            "bmc.manufacturer_id",
-            "bmc.manufacturer_name",
-        ]:
+        for key in self._lan_print_keys + self._mc_info_keys:
             provides[key] = self
 
     def requires(self, requires: Requires) -> None:
@@ -31,7 +35,6 @@ class Ipmitool(Source):
             log.info("Not a physical platform, skipping bmc parsing")
             return
 
-        # TODO: put in parse_fail_msg if the parse fails
         self._parse_ipmitool_mc_info(facts)
         self._parse_ipmitool_lan_print(facts)
 
@@ -45,6 +48,9 @@ class Ipmitool(Source):
         fields = {}
         data, rc = text_program("ipmitool lan print")
         if data == "" or rc != 0:
+            log.warning("Failed to run ipmitool lan print")
+            for name in self._lan_print_keys:
+                facts[name] = PARSE_FAIL_MSG
             return
 
         for regex, field in regexes.items():
@@ -66,6 +72,9 @@ class Ipmitool(Source):
         fields = {}
         data, rc = text_program("ipmitool mc info")
         if data == "" or rc != 0:
+            log.warning("Failed to run ipmitool mc info")
+            for name in self._mc_info_keys:
+                facts[name] = PARSE_FAIL_MSG
             return
 
         for regex, field in regexes.items():

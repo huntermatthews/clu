@@ -4,7 +4,7 @@ import re
 from clu.provides import Provides
 from clu.requires import Requires
 from clu.facts import Facts
-from clu.sources import Source
+from clu.sources import Source, PARSE_FAIL_MSG
 from clu.input import text_program
 
 log = logging.getLogger(__name__)
@@ -49,8 +49,8 @@ class Lscpu(Source):
             fields["cores"] = str(int(fields["cores_per_socket"]) * int(fields["sockets"]))
             fields["threads"] = str(int(fields["threads_per_core"]) * int(fields["cores"]))
         except Exception:
-            fields["cores"] = "Error/Unknown"
-            fields["threads"] = "Error/Unknown"
+            fields["cores"] = PARSE_FAIL_MSG
+            fields["threads"] = PARSE_FAIL_MSG
 
         log.debug(f"{fields=}")
         for key in attr_keys:
