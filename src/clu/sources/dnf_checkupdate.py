@@ -26,9 +26,12 @@ class DnfCheckUpdate(Source):
 
         _, rc = text_program("dnf check-update")
         log.debug(f"rc is {rc}")
+
         if rc == 0:
-            facts["run.update_required"] = "False"
+            value = "False"
         elif rc == 100:
-            facts["run.update_required"] = "True"
+            value = "True"
         else:
-            facts["run.update_required"] = PARSE_FAIL_MSG
+            value = PARSE_FAIL_MSG
+
+        facts["run.update_required"] = value
