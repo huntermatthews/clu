@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from clu import Facts
+from clu.facts import Facts
 from clu.sources.ipmitool import Ipmitool
 
 from tests import dict_subset, mock_read_program, mock_data_dir

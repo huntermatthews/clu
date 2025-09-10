@@ -1,6 +1,9 @@
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu.provides import Provides
+from clu.requires import Requires
+from clu.facts import Facts
+from clu.sources import Source
 from clu.input import text_file
 
 log = logging.getLogger(__name__)

@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from clu import Facts
+from clu.facts import Facts
 from clu.sources.virt_what import VirtWhat
 from clu.sources import PARSE_FAIL_MSG
 

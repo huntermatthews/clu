@@ -3,8 +3,10 @@ import logging
 import urllib.request
 import urllib.error
 
-from clu import Facts, Provides, Requires, Source
-from clu.sources import PARSE_FAIL_MSG, NET_DISABLED_MSG
+from clu.provides import Provides
+from clu.requires import Requires
+from clu.facts import Facts
+from clu.sources import PARSE_FAIL_MSG, NET_DISABLED_MSG, Source
 from clu.config import get_config
 
 log = logging.getLogger(__name__)

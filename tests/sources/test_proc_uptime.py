@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from clu import Facts
+from clu.facts import Facts
 from clu.sources.proc_uptime import ProcUptime
 
 from tests import mock_read_file

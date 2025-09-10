@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from clu import Facts
+from clu.facts import Facts
 from clu.sources.selinux import Selinux
 from clu.sources import PARSE_FAIL_MSG
 

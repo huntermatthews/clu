@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from unittest import mock
 
-from clu import Facts
+from clu.facts import Facts
 from clu.sources.clu import Clu
 
 mock_sys = mock.MagicMock()

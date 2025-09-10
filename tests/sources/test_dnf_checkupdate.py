@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 from clu.sources.dnf_checkupdate import DnfCheckUpdate
-from clu import Facts
+from clu.facts import Facts
 from clu.config import set_config, Namespace
 
 from tests import dict_subset, mock_read_program, mock_data_dir

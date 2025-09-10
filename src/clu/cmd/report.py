@@ -2,7 +2,7 @@ import json
 import logging
 
 from clu.opsys.factory import opsys_factory
-from clu import Facts
+from clu.facts import Facts
 from clu.config import get_config
 
 log = logging.getLogger(__name__)

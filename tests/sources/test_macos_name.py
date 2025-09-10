@@ -1,6 +1,6 @@
 import pytest
 
-from clu import Facts
+from clu.facts import Facts
 from clu.sources.macos_name import MacOSName
 from clu.sources import PARSE_FAIL_MSG
 

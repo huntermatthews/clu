@@ -4,7 +4,11 @@ import logging
 import os
 import sys
 
-from clu import Facts, Provides, Requires, Source, __about__
+from clu import __about__
+from clu.provides import Provides
+from clu.requires import Requires
+from clu.facts import Facts
+from clu.sources import Source
 
 log = logging.getLogger(__name__)
 

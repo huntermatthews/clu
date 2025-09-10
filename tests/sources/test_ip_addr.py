@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 from clu.sources.ip_addr import IpAddr
-from clu import Facts
+from clu.facts import Facts
 
 from tests import dict_subset, mock_read_program, mock_data_dir
 

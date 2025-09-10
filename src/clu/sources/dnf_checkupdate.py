@@ -1,6 +1,9 @@
 import logging
 
-from clu import Facts, Provides, Requires, Source
+from clu.provides import Provides
+from clu.requires import Requires
+from clu.facts import Facts
+from clu.sources import Source
 from clu.input import text_program
 from clu.sources import PARSE_FAIL_MSG, NET_DISABLED_MSG
 from clu.config import get_config
