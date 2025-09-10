@@ -100,19 +100,32 @@ def report_facts() -> int:
     provides_map = opsys.provides()
     parsed_facts = Facts()
 
+    # User may not have explicity said "report" as the command name on command line - fill in the
+    # gaps of our config if so.
     set_report_defaults(opsys.default_facts())
 
+    # Our crude inter-fact dependency code is just to hard-code which facts _might_ be depended on
+    # by other sources.  We parse the sources that give us those facts here.
     parse_facts_by_specs(provides_map, parsed_facts, opsys.early_facts())
 
+    # BUG: not sure why we do this here but it works for now
+    # fix should be to move .all handling to avoiding the filter step?
     if cfg.all:
         cfg.facts = list(provides_map.keys())
 
+    # Now that we have all the early facts, using the list of fact names the user requested (might
+    # be defaulted) parse the sources for that list - this is main parsing loop of the sub-command.
     parse_facts_by_specs(provides_map, parsed_facts, cfg.facts)
 
+    # the sources always parse all the facts it can out of a file/program/whatever.
+    # (its generally just as fast and FAR simpler for the Sources NOT to care)
+    # But the user might have requested less than that - filter out the extra stuff here.
     output_facts = filter_facts(cfg.facts, parsed_facts)
 
+    # Finally, out the filtered facts in the format the user requested (might be defaulted)
     do_output(output_facts, cfg.output)
 
+    # the sub-cmd return code will be the programs return code
     return 0
 
 
