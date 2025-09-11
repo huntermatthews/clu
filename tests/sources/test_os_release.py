@@ -5,7 +5,7 @@ from clu.facts import Facts
 from clu.sources.os_release import OsRelease
 from clu.sources import PARSE_FAIL_MSG
 
-from tests import mock_read_file
+from tests import mock_read_file, mock_data_dir
 
 
 @pytest.mark.parametrize(
@@ -21,7 +21,7 @@ def test_os_release_parse(mock_host, expected_result):
     """Test parse_os_release function with mock data from different hosts."""
 
     with patch("clu.sources.os_release.text_file") as mrf:
-        mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
+        mrf.side_effect = lambda cmdline: mock_read_file(mock_data_dir / mock_host, cmdline)
 
         facts = Facts()
         os_release = OsRelease()

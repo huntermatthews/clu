@@ -4,7 +4,7 @@ from unittest.mock import patch
 from clu.facts import Facts
 from clu.sources.proc_cpuinfo import ProcCpuinfo
 
-from tests import mock_read_file
+from tests import mock_read_file, mock_data_dir
 
 
 @pytest.mark.parametrize(
@@ -32,7 +32,7 @@ def test_proc_cpuinfo_parse(mock_host, input_facts, expected_result):
     """Test parse_cpuinfo_flags function with mock data from different hosts."""
 
     with patch("clu.sources.proc_cpuinfo.text_file") as mrf:
-        mrf.side_effect = lambda fname: mock_read_file(pytest.mock_dir / mock_host, fname)
+        mrf.side_effect = lambda fname: mock_read_file(mock_data_dir / mock_host, fname)
 
         facts = Facts()
         facts.update(input_facts)

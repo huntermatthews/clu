@@ -5,7 +5,7 @@ from clu.facts import Facts
 from clu.sources.udevadm_ram import UdevadmRam
 from clu.sources import PARSE_FAIL_MSG
 
-from tests import mock_read_program
+from tests import mock_read_program, mock_data_dir
 
 
 @pytest.mark.parametrize(
@@ -21,7 +21,7 @@ def test_udevadm_ram_parse(mock_host, expected_result):
     """Test parse_udevadm_ram function with mock data from different hosts."""
 
     with patch("clu.sources.udevadm_ram.text_program") as mrf:
-        mrf.side_effect = lambda cmdline: mock_read_program(pytest.mock_dir / mock_host, cmdline)
+        mrf.side_effect = lambda cmdline: mock_read_program(mock_data_dir / mock_host, cmdline)
 
         facts = Facts()
         udevadm_ram = UdevadmRam()

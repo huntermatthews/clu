@@ -4,7 +4,7 @@ from unittest.mock import patch
 from clu.facts import Facts
 from clu.sources.sys_dmi import SysDmi
 
-from tests import mock_read_file
+from tests import mock_read_file, mock_data_dir
 
 
 @pytest.mark.parametrize(
@@ -32,7 +32,7 @@ def test_sys_dmi_parse(mock_host, input_facts, expected_result):
     """Test parse_sys_dmi function with mock data from different hosts."""
 
     with patch("clu.sources.sys_dmi.text_file") as mrf:
-        mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
+        mrf.side_effect = lambda cmdline: mock_read_file(mock_data_dir / mock_host, cmdline)
 
         facts = Facts()
         facts.update(input_facts)

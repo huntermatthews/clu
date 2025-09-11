@@ -4,7 +4,7 @@ from unittest.mock import patch
 from clu.facts import Facts
 from clu.sources.proc_uptime import ProcUptime
 
-from tests import mock_read_file
+from tests import mock_read_file, mock_data_dir
 
 
 @pytest.mark.parametrize(
@@ -19,7 +19,7 @@ def test_proc_uptime_parse(mock_host, expected_result):
     """Test parse_proc_uptime function with mock data from different hosts."""
 
     with patch("clu.sources.proc_uptime.text_file") as mrf:
-        mrf.side_effect = lambda cmdline: mock_read_file(pytest.mock_dir / mock_host, cmdline)
+        mrf.side_effect = lambda cmdline: mock_read_file(mock_data_dir / mock_host, cmdline)
 
         facts = Facts()
         proc_uptime = ProcUptime()

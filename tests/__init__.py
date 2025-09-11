@@ -7,7 +7,7 @@ from clu.input import text_file, transform_cmdline_to_filename
 mock_data_dir: Path = Path()
 
 
-def get_file_mock_path(mock_dir, fname):
+def get_file_mock_path(mock_dir: Path, fname: Path) -> Path:
     """Get the mock file path for a given file name."""
     x = mock_dir / fname
     return x
