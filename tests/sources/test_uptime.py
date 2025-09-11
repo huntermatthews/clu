@@ -4,10 +4,11 @@ from unittest.mock import patch
 from clu.facts import Facts
 from clu.sources.uptime import Uptime
 
-
 from tests import mock_read_program, mock_data_dir
 
 
+# CAUTION: linux hosts use /proc/uptime which was captured DIFFERENTLY than these
+# values. You can't update this to the host_json pattern...
 @pytest.mark.parametrize(
     "mock_host, expected_result",
     [
