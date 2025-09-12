@@ -1,14 +1,27 @@
+.\"
+.\" Copyright (c) 2011 Hunter Matthews <hunter@unix.haus>
+.\"
+.\" SPDX-License-Identifier: Apache-2.0
+.\"
 .Dd Jan 6, 2011
-.Os Unix
 .Dt CLU 1
+.Os Unix
 .Sh NAME
 .Nm clu
-.Nd Describes various interesting aspects (facts) about the current system. This man page is NOT complete yet.
+.Nd Describes various interesting aspects (facts) about the current system. !This man page is NOT complete yet!
 .Sh SYNOPSIS
 .Nm
-.Op Cm --help | -h
-.Op Cm --version
-.Op Cm --verbose | -v
+.Op Fl -help | -version
+.Nm
+.Cm archive
+.Nm
+.Cm report
+.Op Fl -output Brq Ar dots | Ar shell | Ar json
+.Op Fl -all | -A
+.Op Fl -net
+.Nm
+.Cm requires
+.Brq Ar list | Ar check
 .Sh DESCRIPTION
 .Bl -tag
 .It Cm --help -h
