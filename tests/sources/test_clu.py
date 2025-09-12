@@ -35,5 +35,8 @@ def test_clu_parse():
         facts = Facts()
         clu.parse(facts)
 
+        expected_facts = Facts()
+        expected_facts.update(expected_result)
+
         # Assert the expected results
-        assert facts == expected_result
+        assert facts == expected_facts

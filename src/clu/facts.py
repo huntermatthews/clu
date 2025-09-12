@@ -1,9 +1,3 @@
-class Facts(dict):
-    """A simple facts container that behaves like a dict."""
-
-    pass
-
-
 from enum import Enum
 from typing import Any
 
@@ -14,7 +8,7 @@ class Tier(Enum):
     OTHER = "other"
 
 
-class xFacts:
+class Facts:
     def __init__(self):
         self._priority = {Tier.PRIMARY: [], Tier.SECONDARY: [], Tier.OTHER: []}
         self._facts = {}
