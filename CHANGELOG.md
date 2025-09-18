@@ -12,6 +12,20 @@ This project versioning [Semantic Versioning](https://semver.org) but formatted 
 
 ## [Unreleased]
 
+## [v1.3] - 2025-09-18
+
+### Added
+
+- Added verbosity/tiers of facts. Allows easy selection of how much detail you want to see.
+- Added a full man page as our user documentation.
+- Better --help text.
+- Source for /System/Library/CoreServices/SystemVersion.plist on Darwin.
+
+### Fixed
+
+- Simplified program logic in number of areas, including more comments.
+- Improved testing code to be more pylance compliant.
+
 
 ## [v1.2] - 2025-09-04
 
