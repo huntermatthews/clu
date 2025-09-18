@@ -36,8 +36,8 @@ def parse_cmdline() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="clu",
         description="clu utility",
-        epilog="end tezt here",
-        usage="%(prog)s [options] <subcommand> [<subcommmand args>]",
+        #        epilog="end tezt here",
+        usage="%(prog)s [options] <command> [<commmand args>]",
     )
     parser.add_argument(
         "--version", action="version", version="%%(prog)s %s" % clu.__about__.__version__
@@ -64,7 +64,7 @@ def parse_cmdline() -> argparse.Namespace:
 
     subparsers = parser.add_subparsers(
         dest="cmd",
-        description="valid commands and some other text here blah blah blah",
+        description="Clu's functionality is dividedi into commands. Use 'clu <command> --help' or the man page for more info.",
         metavar="",  # setting this to empty string removes the ugly {foo,bar} from the help output
         title="commands",
     )
