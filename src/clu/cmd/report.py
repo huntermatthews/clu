@@ -2,7 +2,7 @@ import json
 import logging
 
 from clu.opsys.factory import opsys_factory
-from clu.facts import Facts
+from clu.facts import Facts, Tier
 from clu.config import get_config
 
 log = logging.getLogger(__name__)
@@ -20,46 +20,72 @@ def parse_args(subparsers):
         help="Output format: 'dots', 'shell', or 'json'",
     )
     subp_report.add_argument(
-        "--all",
-        "-A",
-        action="store_true",
-        help="Output all facts",
-    )
-    subp_report.add_argument(
         "--net",
         action="store_true",
         default=False,
         help="Enable network access - required for certain operations.",
     )
-    subp_report.add_argument("facts", nargs="*", help="Facts to report on")
+    subp_report.add_argument(
+        "facts", nargs="*", help="Specfic facts to report on, regardless of tier."
+    )
+
+    ex_group = subp_report.add_mutually_exclusive_group()
+    ex_group.add_argument(
+        "-1",
+        action="store_const",
+        const=1,
+        dest="tier",
+        default=1,
+        help="Report all tier 1 facts (the default, basic info only).",
+    )
+    ex_group.add_argument(
+        "-2",
+        action="store_const",
+        const=2,
+        dest="tier",
+        help="Report all tier 1 And 2 facts (most of the details).",
+    )
+    ex_group.add_argument(
+        "-3",
+        action="store_const",
+        const=3,
+        dest="tier",
+        help="Report all tier 1, 2, and 3 facts (everything, useless details included).",
+    )
 
 
-def set_report_defaults(default_facts: list[str]) -> None:
+def set_report_defaults(all_facts: list[str]) -> None:
     """If the user didn't say "report" explicitly on the command
     line, we want to make sure we still have a valid set of configs to control our reporting.
     """
 
-    # handle completely missing config
-    # print('handling completely missing config', cfg)
+    # handle completely missing config items
     if "output" not in cfg:
         cfg.output = "dots"
-    if "all" not in cfg:
-        cfg.all = False
+    if "verbose_level" not in cfg:
+        cfg.verbose_level = 0
+    if "net" not in cfg:
+        cfg.net = False
+    if "tier" not in cfg:
+        cfg.tier = 1
 
     if "facts" not in cfg or cfg.facts == []:
-        # print('setting default facts')
-        cfg.facts = default_facts
+        cfg.facts = all_facts
 
 
 def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
     sources_to_parse = set()
 
     # Loop through the facts that were requested on the command line and get a set of parsers that
-    # will obtain those facts (there's likely duplicates, so we use a set here)
-    for fact_spec in fact_specs:
-        for key in provides_map:
-            if key.startswith(fact_spec):
-                sources_to_parse.add(provides_map[key])
+    # will obtain those facts (there's likely duplicates for the sources, so we use a set here)
+    if fact_specs:
+        for fact_spec in fact_specs:
+            for key in provides_map:
+                if key.startswith(fact_spec):
+                    sources_to_parse.add(provides_map[key])
+    else:
+        # If the user didn't request any specific facts, we need to parse all the sources
+        sources_to_parse = set(provides_map.values())
 
     # Call the parsers that we found in the previous loop
     for source in sources_to_parse:
@@ -67,16 +93,18 @@ def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
         source.parse(parsed_facts)
 
 
-def filter_facts(requested_fact_specs, parsed_facts: Facts) -> Facts:
+def filter_facts(parsed_facts: Facts, requested_fact_specs, tier) -> Facts:
     """Filter the parsed facts based on the requested fact specifications."""
 
     # Loop through the facts that were requested on the command line (again) and make a new
-    # facts list/dict that has JUST those matching facts
+    # facts list/dict that has JUST those matching facts, taking into account the tier level too.
     output_facts = Facts()
+    tier_facts = parsed_facts.get_tier(Tier.get_by_int(tier))
 
     for fact_spec in requested_fact_specs:
         for key in parsed_facts:
-            if key.startswith(fact_spec):
+            if key.startswith(fact_spec) and key in tier_facts:
+                # print(f"Adding fact {key} to output")
                 output_facts[key] = parsed_facts[key]
 
     return output_facts
@@ -102,25 +130,21 @@ def report_facts() -> int:
 
     # User may not have explicity said "report" as the command name on command line - fill in the
     # gaps of our config if so.
-    set_report_defaults(opsys.default_facts())
+    set_report_defaults(provides_map.keys())
+    log.info(f"Updated config cfg={cfg}")
 
     # Our crude inter-fact dependency code is just to hard-code which facts _might_ be depended on
     # by other sources.  We parse the sources that give us those facts here.
     parse_facts_by_specs(provides_map, parsed_facts, opsys.early_facts())
 
-    # BUG: not sure why we do this here but it works for now
-    # fix should be to move .all handling to avoiding the filter step?
-    if cfg.all:
-        cfg.facts = list(provides_map.keys())
-
-    # Now that we have all the early facts, using the list of fact names the user requested (might
-    # be defaulted) parse the sources for that list - this is main parsing loop of the sub-command.
+    # Now that we have all the early facts, using the list of fact names the user requested or a
+    # tier, parse the sources for that list - this is main parsing step of the report command.
     parse_facts_by_specs(provides_map, parsed_facts, cfg.facts)
 
     # the sources always parse all the facts it can out of a file/program/whatever.
     # (its generally just as fast and FAR simpler for the Sources NOT to care)
     # But the user might have requested less than that - filter out the extra stuff here.
-    output_facts = filter_facts(cfg.facts, parsed_facts)
+    output_facts = filter_facts(parsed_facts, cfg.facts, cfg.tier)
 
     # Finally, out the filtered facts in the format the user requested (might be defaulted)
     do_output(output_facts, cfg.output)
@@ -143,4 +167,4 @@ def output_shell(facts: Facts) -> None:
 
 
 def output_json(facts: Facts) -> None:
-    print(json.dumps(facts, indent=2))
+    print(json.dumps(facts.to_dict(), indent=2))

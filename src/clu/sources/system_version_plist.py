@@ -3,7 +3,7 @@ import plistlib
 
 from clu.provides import Provides
 from clu.requires import Requires
-from clu.facts import Facts
+from clu.facts import Facts, Tier
 from clu.sources import Source, PARSE_FAIL_MSG
 from clu.input import text_file
 
@@ -38,7 +38,7 @@ class SystemVersionPlist(Source):
                 facts[key] = PARSE_FAIL_MSG
             return
         else:
-            facts["os.name"] = plist.get("ProductName", PARSE_FAIL_MSG)
-            facts["os.version"] = plist.get("ProductVersion", PARSE_FAIL_MSG)
-            facts["os.build"] = plist.get("ProductBuildVersion", PARSE_FAIL_MSG)
-            facts["id.build_id"] = plist.get("BuildID", PARSE_FAIL_MSG)
+            facts.add(Tier.ONE, "os.name", plist.get("ProductName", PARSE_FAIL_MSG))
+            facts.add(Tier.ONE, "os.version", plist.get("ProductVersion", PARSE_FAIL_MSG))
+            facts.add(Tier.TWO, "os.build", plist.get("ProductBuildVersion", PARSE_FAIL_MSG))
+            facts.add(Tier.THREE, "id.build_id", plist.get("BuildID", PARSE_FAIL_MSG))

@@ -54,11 +54,19 @@ def parse_cmdline() -> argparse.Namespace:
         help="Increase debugging output (can be used twice).",
     )
 
+    parser.add_argument(
+        "--verbose",
+        action="count",
+        default=1,
+        dest="verbose_level",
+        help="Increase verbosity of output.",
+    )
+
     subparsers = parser.add_subparsers(
         dest="cmd",
-        description="valid subcommands and some other text here blah blah blah",
-        metavar="",  # setting this to empty string removes the "subcommands"
-        #        title="commands",
+        description="valid commands and some other text here blah blah blah",
+        metavar="",  # setting this to empty string removes the ugly {foo,bar} from the help output
+        title="commands",
     )
     parser.set_defaults(cmd="report", func=clu.cmd.report.report_facts)
 

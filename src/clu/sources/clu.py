@@ -7,7 +7,7 @@ import sys
 from clu import __about__
 from clu.provides import Provides
 from clu.requires import Requires
-from clu.facts import Facts
+from clu.facts import Facts, Tier
 from clu.sources import Source
 
 log = logging.getLogger(__name__)
@@ -39,11 +39,12 @@ class Clu(Source):
 
     def parse(self, facts: Facts) -> None:
         """Return info about CLU itself (mostly runtime)."""
-        facts["clu.binary"] = sys.argv[0]
-        facts["clu.version"] = __about__.__version__
-        facts["clu.python.binary"] = sys.executable
-        facts["clu.python.version"] = ".".join(map(str, sys.version_info[:3]))
-        facts["clu.cmdline"] = " ".join(sys.argv)
-        facts["clu.cwd"] = os.getcwd()
-        facts["clu.user"] = getpass.getuser()
-        facts["clu.date"] = self._get_rfc3339_timestamp()
+
+        facts.add(Tier.TWO, "clu.binary", sys.argv[0])
+        facts.add(Tier.ONE, "clu.version", __about__.__version__)
+        facts.add(Tier.TWO, "clu.python.binary", sys.executable)
+        facts.add(Tier.ONE, "clu.python.version", ".".join(map(str, sys.version_info[:3])))
+        facts.add(Tier.TWO, "clu.cmdline", " ".join(sys.argv))
+        facts.add(Tier.THREE, "clu.cwd", os.getcwd())
+        facts.add(Tier.THREE, "clu.user", getpass.getuser())
+        facts.add(Tier.TWO, "clu.date", self._get_rfc3339_timestamp())
