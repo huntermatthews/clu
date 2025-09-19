@@ -1,10 +1,10 @@
 import logging
 
+from clu import panic
 from clu.provides import Provides
 from clu.requires import Requires
 from clu.facts import Facts
 from clu.sources import Source
-from clu.debug import panic
 from clu.sources import PARSE_FAIL_MSG
 
 log = logging.getLogger(__name__)
