@@ -3,29 +3,36 @@ from unittest.mock import patch
 
 from clu.facts import Facts
 from clu.sources.os_release import OsRelease
-from clu.sources import PARSE_FAIL_MSG
 
-from tests import mock_read_file, mock_data_dir
+from tests import dict_subset, mock_read_file, mock_data_dir
+
+input_keys = []
+output_keys = [
+    "os.distro.name",
+    "os.distro.version",
+]
 
 
 @pytest.mark.parametrize(
-    "mock_host, expected_result",
+    "mock_host, input_keys, output_keys",
     [
-        ("host1", {"os.distro.name": "centos", "os.distro.version": "9"}),
-        ("host2", {"os.distro.name": "opensuse-leap", "os.distro.version": "15.6"}),
-        ("host3", {"os.distro.name": "rhel", "os.distro.version": "9.5"}),
-        ("macos", {"os.distro.name": PARSE_FAIL_MSG, "os.distro.version": PARSE_FAIL_MSG}),
+        ("host1", input_keys, output_keys),
+        ("host2", input_keys, output_keys),
+        ("host3", input_keys, output_keys),
     ],
 )
-def test_os_release_parse(mock_host, expected_result):
-    """Test parse_os_release function with mock data from different hosts."""
+def test_os_release_parse(mock_host, input_keys, output_keys, host_json_loader):
+    host_all_facts = host_json_loader(mock_host)
+    host_input_facts = dict_subset(host_all_facts, input_keys)
+    host_output_facts = dict_subset(host_all_facts, output_keys)
 
     with patch("clu.sources.os_release.text_file") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_file(mock_data_dir / mock_host, cmdline)
 
         facts = Facts()
+        facts.update(host_input_facts)
         os_release = OsRelease()
         os_release.parse(facts)
 
         # Assert the expected results
-        assert facts == expected_result, mock_host
+        assert facts == host_output_facts, mock_host

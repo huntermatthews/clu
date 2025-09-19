@@ -4,29 +4,36 @@ from unittest.mock import patch
 from clu.facts import Facts
 from clu.sources.uptime import Uptime
 
-from tests import mock_read_program, mock_data_dir
+from tests import dict_subset, mock_read_program, mock_data_dir
 
 
-# CAUTION: linux hosts use /proc/uptime which was captured DIFFERENTLY than these
-# values. You can't update this to the host_json pattern...
+input_keys = []
+output_keys = [
+    "run.uptime",
+]
+
+
 @pytest.mark.parametrize(
-    "mock_host, expected_result",
+    "mock_host, input_keys, output_keys",
     [
-        ("host1", {"run.uptime": "58 days, 21:35"}),
-        ("host2", {"run.uptime": "54 days,  9:39, "}),
-        ("host3", {"run.uptime": "1 day, 5 hours, 28 minutes"}),
-        ("macos", {"run.uptime": "1:03"}),
+        ("host1", input_keys, output_keys),
+        ("host2", input_keys, output_keys),
+        ("host3", input_keys, output_keys),
+        ("macos", input_keys, output_keys),
     ],
 )
-def test_uptime_parse(mock_host, expected_result):
-    """Test parse_uptime function with mock data from different hosts."""
+def test_uptime_parse(mock_host, input_keys, output_keys, host_json_loader):
+    host_all_facts = host_json_loader(mock_host)
+    host_input_facts = dict_subset(host_all_facts, input_keys)
+    host_output_facts = dict_subset(host_all_facts, output_keys)
 
     with patch("clu.sources.uptime.text_program") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_program(mock_data_dir / mock_host, cmdline)
 
         facts = Facts()
+        facts.update(host_input_facts)
         uptime = Uptime()
         uptime.parse(facts)
 
         # Assert the expected results
-        assert facts == expected_result, mock_host
+        assert facts == host_output_facts, mock_host

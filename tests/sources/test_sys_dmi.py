@@ -4,40 +4,42 @@ from unittest.mock import patch
 from clu.facts import Facts
 from clu.sources.sys_dmi import SysDmi
 
-from tests import mock_read_file, mock_data_dir
+from tests import dict_subset, mock_read_file, mock_data_dir
+
+
+input_keys = ["phy.platform"]
+output_keys = [
+    "phy.platform",
+    "sys.vendor",
+    "sys.model.family",
+    "sys.model.name",
+    "sys.serial_no",
+    "sys.uuid",
+    "sys.oem",
+    "sys.asset_no",
+]
 
 
 @pytest.mark.parametrize(
-    "mock_host, input_facts, expected_result",
+    "mock_host, input_keys, output_keys",
     [
-        ("host1", {"phy.platform": "vmware"}, {"phy.platform": "vmware"}),
-        ("host2", {"phy.platform": "vmware"}, {"phy.platform": "vmware"}),
-        (
-            "host3",
-            {"phy.platform": "physical"},
-            {
-                "phy.platform": "physical",
-                "sys.vendor": "Dell Inc.",
-                "sys.model.family": "PowerEdge",
-                "sys.model.name": "PowerEdge R660xs",
-                "sys.serial_no": "95KQ144",
-                "sys.uuid": "4c4c4544-0035-4b10-8051-b9c04f313434",
-                "sys.oem": "Dell Inc.",
-                "sys.asset_no": "0123456789",
-            },
-        ),
+        ("host1", input_keys, output_keys),
+        ("host2", input_keys, output_keys),
+        ("host3", input_keys, output_keys),
     ],
 )
-def test_sys_dmi_parse(mock_host, input_facts, expected_result):
-    """Test parse_sys_dmi function with mock data from different hosts."""
+def test_sys_dmi_parse(mock_host, input_keys, output_keys, host_json_loader):
+    host_all_facts = host_json_loader(mock_host)
+    host_input_facts = dict_subset(host_all_facts, input_keys)
+    host_output_facts = dict_subset(host_all_facts, output_keys)
 
     with patch("clu.sources.sys_dmi.text_file") as mrf:
         mrf.side_effect = lambda cmdline: mock_read_file(mock_data_dir / mock_host, cmdline)
 
         facts = Facts()
-        facts.update(input_facts)
+        facts.update(host_input_facts)
         sys_dmi = SysDmi()
         sys_dmi.parse(facts)
 
         # Assert the expected results
-        assert facts == expected_result, mock_host
+        assert facts == host_output_facts, mock_host
