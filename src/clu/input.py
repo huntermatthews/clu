@@ -13,6 +13,10 @@ FILE_SIZE_LIMIT = 1 * 1024 * 1024  # 1MB - arbitrary limit - seems reasonable
 
 
 def text_file(fname: Union[str, Path], optional: bool = False) -> str:
+    return raw_text_file(fname, optional)
+
+
+def raw_text_file(fname: Union[str, Path], optional: bool = False) -> str:
     """Read a file and return its contents."""
     log.debug(f"text_file: {fname=}")
 
@@ -37,6 +41,10 @@ def text_file(fname: Union[str, Path], optional: bool = False) -> str:
 
 
 def text_program(cmdline) -> tuple[str, int]:
+    return raw_text_program(cmdline)
+
+
+def raw_text_program(cmdline) -> tuple[str, int]:
     log.debug(f"text_program: {cmdline}")
 
     # TODO: check for existence FIRST

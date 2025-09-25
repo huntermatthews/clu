@@ -2,21 +2,21 @@
 
 from pathlib import Path
 
-from clu.input import text_file, transform_cmdline_to_filename
+from clu.input import transform_cmdline_to_filename
 
+mock_data_root: Path = Path()
 mock_data_dir: Path = Path()
 
 
-def get_file_mock_path(mock_dir: Path, fname: Path) -> Path:
-    """Get the mock file path for a given file name."""
-    x = mock_dir / fname
-    return x
+def set_mock_dir(mock_host: str):
+    global mock_data_dir
+    mock_data_dir = mock_data_root / mock_host
 
 
-def mock_read_file(mock_dir: Path, fname: Path, optional: bool = False) -> str:
-    fname = get_file_mock_path(mock_dir, fname)
-    data = text_file(fname, optional=optional)
-    return data
+def mock_text_file(fname: Path, optional: bool = False) -> str:
+    fname = mock_data_dir / fname
+    with open(fname, "r") as f:
+        return f.read()
 
 
 def get_program_mock_path(mock_dir, cmdline):
@@ -27,23 +27,26 @@ def get_program_mock_path(mock_dir, cmdline):
     return (data_path, rc_path)
 
 
-def mock_read_program(mock_dir: Path, cmdline):
+def mock_text_program(cmdline):
     """Read a program's output from the mock directory."""
 
-    (dname, rc_name) = get_program_mock_path(mock_dir, cmdline)
+    (dname, rc_name) = get_program_mock_path(mock_data_dir, cmdline)
     dname = Path(dname)
     rc_name = Path(rc_name)  # why pytest, why?
 
-    data = text_file(Path(dname))
-
-    # First is simple - no file, its command not found
+    # First is simple - no data file means command not found
     if not dname.is_file():
-        rc = 127  # command not found (fish/bash/zsh/sh all consistent = 127)
-    elif rc_name.is_file():
-        # if we have a rc file, thats our RC by definition
-        rc = int(text_file(Path(rc_name)))
+        return "", 127  # command not found (fish/bash/zsh/sh all consistent = 127)
     else:
-        # otherwise, we can safely assume 0
+        with open(dname, "r") as f:
+            data = f.read()
+
+    if rc_name.is_file():
+        # if we have a rc file, thats our RC by definition
+        with open(rc_name, "r") as f:
+            rc = int(f.read())
+    else:
+        # otherwise, we can safely assume rc =0
         rc = 0
 
     return data, rc
