@@ -15,6 +15,10 @@ def set_mock_dir(mock_host: str):
 
 def mock_text_file(fname: Path, optional: bool = False) -> str:
     fname = mock_data_dir / fname
+
+    fname = Path(fname)
+    if not fname.is_file():  # this handles "optional" files...
+        return ""
     with open(fname, "r") as f:
         return f.read()
 
