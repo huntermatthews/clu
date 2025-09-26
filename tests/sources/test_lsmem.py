@@ -26,7 +26,6 @@ def test_lsmem_parse(mock_host, input_keys, output_keys, host_json_loader):
 
     host_input_facts = dict_subset(host_all_facts, input_keys)
     host_output_facts = dict_subset(host_all_facts, output_keys)
-    print(host_output_facts)
 
     with patch("clu.input.raw_text_program", new=mock_text_program):
         facts = Facts()

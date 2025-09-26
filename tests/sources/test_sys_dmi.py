@@ -4,7 +4,7 @@ from unittest.mock import patch
 from clu.facts import Facts
 from clu.sources.sys_dmi import SysDmi
 
-from tests import dict_subset, mock_read_file, mock_data_dir
+from tests import dict_subset, mock_text_file, set_mock_dir
 
 
 input_keys = ["phy.platform"]
@@ -29,13 +29,13 @@ output_keys = [
     ],
 )
 def test_sys_dmi_parse(mock_host, input_keys, output_keys, host_json_loader):
-    host_all_facts = host_json_loader(mock_host)
+    set_mock_dir(mock_host)
+    host_all_facts = host_json_loader()
+
     host_input_facts = dict_subset(host_all_facts, input_keys)
     host_output_facts = dict_subset(host_all_facts, output_keys)
 
-    with patch("clu.sources.sys_dmi.text_file") as mrf:
-        mrf.side_effect = lambda cmdline: mock_read_file(mock_data_dir / mock_host, cmdline)
-
+    with patch("clu.input.raw_text_file", new=mock_text_file):
         facts = Facts()
         facts.update(host_input_facts)
         sys_dmi = SysDmi()

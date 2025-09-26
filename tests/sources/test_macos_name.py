@@ -4,7 +4,7 @@ from clu.facts import Facts
 from clu.sources.macos_name import MacOSName
 from clu.sources import PARSE_FAIL_MSG
 
-from tests import dict_subset
+from tests import dict_subset, set_mock_dir
 
 input_keys = ["os.version"]
 output_keys = [
@@ -20,7 +20,9 @@ output_keys = [
     ],
 )
 def test_parse_macos_name(mock_host, input_keys, output_keys, host_json_loader):
-    host_all_facts = host_json_loader(mock_host)
+    set_mock_dir(mock_host)
+    host_all_facts = host_json_loader()
+
     host_input_facts = dict_subset(host_all_facts, input_keys)
     host_output_facts = dict_subset(host_all_facts, output_keys)
 

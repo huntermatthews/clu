@@ -5,7 +5,7 @@ from clu.sources.dnf_checkupdate import DnfCheckUpdate
 from clu.facts import Facts
 from clu.config import set_config, Namespace
 
-from tests import dict_subset, mock_read_program, mock_data_dir
+from tests import dict_subset, mock_text_program, set_mock_dir
 
 input_keys = []
 output_keys = ["run.update_required"]
@@ -26,15 +26,15 @@ def set_config_for_tests():
     ],
 )
 def test_dnf_checkupdate_parse(mock_host, input_keys, output_keys, host_json_loader):
-    host_all_facts = host_json_loader(mock_host)
+    set_mock_dir(mock_host)
+    host_all_facts = host_json_loader()
+
     host_input_facts = dict_subset(host_all_facts, input_keys)
     host_output_facts = dict_subset(host_all_facts, output_keys)
 
     set_config_for_tests()
 
-    with patch("clu.sources.dnf_checkupdate.text_program") as mrf:
-        mrf.side_effect = lambda cmdline: mock_read_program(mock_data_dir / mock_host, cmdline)
-
+    with patch("clu.input.raw_text_program", new=mock_text_program):
         facts = Facts()
         facts.update(host_input_facts)
         dnf_checkupdate = DnfCheckUpdate()
