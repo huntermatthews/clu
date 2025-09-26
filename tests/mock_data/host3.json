@@ -36,5 +36,13 @@
     "net.devs": "lo eno8303 eno12399np0 eno8403 eno12409np1 eno12419np2 eno12429np3 ",
     "net.ipv4": "127.0.0.1 165.112.174.7 ",
     "net.ipv6": "::1 2607:f220:404:2101::14 fe80::d604:e6ff:feef:9d70 ",
-    "net.macs": "00:00:00:00:00:00 d0:46:0c:70:51:be d4:04:e6:ef:9d:70 d0:46:0c:70:51:bf d4:04:e6:ef:9d:71 d4:04:e6:ef:9d:72 d4:04:e6:ef:9d:73 "
+    "net.macs": "00:00:00:00:00:00 d0:46:0c:70:51:be d4:04:e6:ef:9d:70 d0:46:0c:70:51:bf d4:04:e6:ef:9d:71 d4:04:e6:ef:9d:72 d4:04:e6:ef:9d:73 ",
+    "clu.binary": "/some/path/clu",
+    "clu.version": "9.9.9",
+    "clu.python.binary": "/usr/bin/pypy",
+    "clu.python.version": "3.9.5",
+    "clu.cmdline": "/some/path/clu --test",
+    "clu.cwd": "/some/working/directory",
+    "clu.user": "zorro",
+    "clu.date": "2023-10-01T12:00:00+00:00"
 }

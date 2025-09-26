@@ -9,5 +9,13 @@
     "os.build": "24G90",
     "os.code_name": "Sequoia",
     "run.uptime": "1:03",
-    "id.build_id": "A9352A4E-7AC8-11F0-9D2D-B731BA1D3D59"
+    "id.build_id": "A9352A4E-7AC8-11F0-9D2D-B731BA1D3D59",
+    "clu.binary": "/some/path/clu",
+    "clu.version": "9.9.9",
+    "clu.python.binary": "/usr/bin/pypy",
+    "clu.python.version": "3.9.5",
+    "clu.cmdline": "/some/path/clu --test",
+    "clu.cwd": "/some/working/directory",
+    "clu.user": "zorro",
+    "clu.date": "2023-10-01T12:00:00+00:00"
 }

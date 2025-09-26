@@ -22,5 +22,13 @@
     "net.devs": "lo eth0 ",
     "net.ipv4": "127.0.0.1 10.136.128.68 ",
     "net.ipv6": "::1 fe80::250:56ff:fe90:da67 ",
-    "net.macs": "00:00:00:00:00:00 00:50:56:90:da:67 "
+    "net.macs": "00:00:00:00:00:00 00:50:56:90:da:67 ",
+    "clu.binary": "/some/path/clu",
+    "clu.version": "9.9.9",
+    "clu.python.binary": "/usr/bin/pypy",
+    "clu.python.version": "3.9.5",
+    "clu.cmdline": "/some/path/clu --test",
+    "clu.cwd": "/some/working/directory",
+    "clu.user": "zorro",
+    "clu.date": "2023-10-01T12:00:00+00:00"
 }
