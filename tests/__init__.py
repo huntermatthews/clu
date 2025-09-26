@@ -56,6 +56,20 @@ def mock_text_program(cmdline):
     return data, rc
 
 
+def mock_clu_metadata() -> dict:
+    """Return info about CLU itself (mostly runtime)."""
+
+    return {
+        "sys.argv": ["/some/path/clu", "--test"],
+        "about.version": "9.9.9",
+        "sys.executable": "/usr/bin/pypy",
+        "sys.version_info": (3, 8, 5),
+        "os.getcwd": "/some/working/directory",
+        "getpass.getuser": "zorro",
+        "datestamp": "2023-10-01T12:00:00+00:00",
+    }
+
+
 def dict_subset(input_dict: dict, keys: list[str]) -> dict:
     """Return a new dictionary containing only the specified keys from the input dictionary."""
     # {k: input_dict.get(k, "") for k in ('l', 'm', 'n')}   # to synthesize missing keys
