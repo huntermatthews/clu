@@ -1,0 +1,354 @@
+{
+  "hdd_details": null,
+  "preferred_alias": null,
+  "hw_depth": null,
+  "in_service": true,
+  "aliases": [],
+  "id": 787,
+  "ucs_manager": null,
+  "uuid": "53D19F64-D663-A017-8922-0030489011F0",
+  "custom_fields": [
+    {
+      "notes": null,
+      "value": null,
+      "key": "''"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "1"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "123_test"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "3433"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "4242"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "80446"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "Administrator"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "App"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "BBBB"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "building"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "chvirvltdev01"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "contract_end_date"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "custom_field"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "department"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "dmz"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "dsagfdsfh"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "Env"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "environment"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "fav_fruit"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "fav_veg"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "ff_tag"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "Instance ID"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "isit1"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "is_wireless"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "IT-PATCH"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "Master"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "NewPL"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "NTL attribute"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "Owner"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "owner_name"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "Owner Name"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "PatchGroup"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "patch_version"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "Program"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "Project"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "rets"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "SchufaJira01"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "SchufaJira1"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "SentinelOne_Active"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "Status"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "terefe"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "test"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "used byre"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "usedbyre"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "WANK"
+    },
+    {
+      "notes": null,
+      "value": null,
+      "key": "YNtest"
+    }
+  ],
+  "notes": "",
+  "device_sub_type": "Generic",
+  "ip_addresses": [
+    {
+      "type": null,
+      "macaddress": "fe:16:3e:7e:e1:9c",
+      "label": "vnet0",
+      "subnet_id": 8,
+      "ip": "fe80::fc16:3eff:fe7e:e19c",
+      "subnet": "undefined-::/0"
+    },
+    {
+      "type": null,
+      "macaddress": "00:30:48:90:11:f1",
+      "label": "enp4s0f1",
+      "subnet_id": 7,
+      "ip": "192.168.11.253",
+      "subnet": "192.168.11.0/24"
+    },
+    {
+      "type": null,
+      "macaddress": "00:30:48:90:11:f1",
+      "label": "br100",
+      "subnet_id": 29,
+      "ip": "10.0.0.7",
+      "subnet": "asdfasdf-10.0.0.0/24(ABC, Inc.)"
+    },
+    {
+      "type": null,
+      "macaddress": "00:30:48:90:11:f0",
+      "label": "enp4s0f0",
+      "subnet_id": 8,
+      "ip": "fe80::230:48ff:fe90:11f0",
+      "subnet": "undefined-::/0"
+    },
+    {
+      "type": null,
+      "macaddress": "00:30:48:90:11:f0",
+      "label": "enp4s0f0",
+      "subnet_id": 7,
+      "ip": "192.168.11.80",
+      "subnet": "192.168.11.0/24"
+    },
+    {
+      "type": null,
+      "macaddress": "00:30:48:90:11:f1",
+      "label": "enp4s0f1",
+      "subnet_id": 8,
+      "ip": "fe80::230:48ff:fe90:11f1",
+      "subnet": "undefined-::/0"
+    }
+  ],
+  "name": "abqhxgpc01",
+  "manufacturer": "Supermicro",
+  "cpuspeed": 1870,
+  "hddcount": 4,
+  "device_id": 787,
+  "serial_no": "230295",
+  "customer": null,
+  "ram": 8192,
+  "category": "",
+  "is_it_virtual_host": "yes",
+  "cpucount": 2,
+  "os": "centos",
+  "type": "physical",
+  "hw_model": "X7DVL",
+  "mac_addresses": [
+    {
+      "mac": "00:30:48:90:11:f1",
+      "port_name": "br100",
+      "vlan": null,
+      "port": null
+    },
+    {
+      "mac": "00:30:48:90:11:f0",
+      "port_name": "enp4s0f0",
+      "vlan": null,
+      "port": null
+    },
+    {
+      "mac": "52:54:00:42:c3:d5",
+      "port_name": "virbr0",
+      "vlan": null,
+      "port": null
+    },
+    {
+      "mac": "fe:16:3e:7e:e1:9c",
+      "port_name": "vnet0",
+      "vlan": null,
+      "port": null
+    }
+  ],
+  "cpucore": 4,
+  "device_external_links": [],
+  "is_it_switch": "no",
+  "hddraid": null,
+  "service_level": "Production",
+  "last_updated": "2025-07-24T23:52:28.555129Z",
+  "device_purchase_line_items": [],
+  "corethread": "",
+  "hddsize": 102,
+  "is_it_blade_host": "no",
+  "tags": [
+    "demo"
+  ],
+  "virtual_host_name": null,
+  "osverno": "3.10.0-327.el7.x86_64",
+  "hw_model_id": 286,
+  "asset_no": "",
+  "hddraid_type": null,
+  "osver": "7.2.1511",
+  "nonauthoritativealiases": []
+}
