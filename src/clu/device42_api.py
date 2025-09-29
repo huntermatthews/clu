@@ -18,13 +18,13 @@ USERNAME = "guest"
 PASSWORD = "device42_rocks!"
 
 
-def get_host_device42_metadata() -> None:
+def get_host_info() -> dict:
     creds = get_primary_credentials()
     if not creds:
-        log.error("Failed to get Device42 credentials, cannot retrieve metadata.")
+        log.error("Failed to get Device42 credentials, cannot retrieve host info.")
         return {}
 
-    # Use the Device42 API to retrieve metadata
+    # Use the Device42 API to retrieve basic host info
     d42_get_device_url = TEST_URL + "/api/1.0/device/name/" + ORIGINAL_DEVICE_NAME
     request = urllib.request.Request(d42_get_device_url)
     credentials = f"{creds[0]}:{creds[1]}"
@@ -34,8 +34,8 @@ def get_host_device42_metadata() -> None:
     try:
         with urllib.request.urlopen(request) as response:
             device_data = json.loads(response.read().decode("utf-8"))
-            log.debug(f"Retrieved Device42 metadata: {device_data}")
+            log.debug(f"Retrieved Device42 host info: {device_data}")
     except urllib.error.URLError as e:
-        log.error(f"Error retrieving Device42 metadata: {e}")
+        log.error(f"Error retrieving Device42 host info: {e}")
         device_data = {}
     return device_data

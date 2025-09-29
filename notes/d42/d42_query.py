@@ -1,14 +1,13 @@
 import urllib.request
 import base64
 import json
+import sys
 
 from creds import D42_URL, D42_USERNAME, D42_PASSWORD
 
-ORIGINAL_DEVICE_NAME = "blueplate"  # original device name
-
 
 d42_get_devices_url = D42_URL + "/api/1.0/devices/all/"
-d42_get_device_url = D42_URL + "/api/1.0/device/name/" + ORIGINAL_DEVICE_NAME  # + '/'
+d42_get_device_url = D42_URL + "/api/1.0/device/name/" + sys.argv[1]
 request = urllib.request.Request(d42_get_device_url)
 credentials = f"{D42_USERNAME}:{D42_PASSWORD}"
 encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("ascii")
@@ -16,12 +15,13 @@ request.add_header("Authorization", f"Basic {encoded_credentials}")
 
 r = urllib.request.urlopen(request)
 if r.getcode() == 200:
-    obj = r.read()
-    data = json.loads(obj)
+    obj = r.read().decode(encoding="utf-8")
+    print(obj)
+    # data = json.loads(obj)
 
     # print(data)
     # print('----')
-    print(json.dumps(data, indent=4))
+    # print(json.dumps(data, indent=4))
 else:
     print(f"Error: {r.getcode()}")
 
