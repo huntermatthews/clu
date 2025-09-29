@@ -9,6 +9,7 @@ from clu.config import set_config, get_config
 import clu.cmd.report
 import clu.cmd.archive
 import clu.cmd.requires
+import clu.cmd.device42
 
 log = logging.getLogger(__name__)
 cfg = get_config()
@@ -36,11 +37,10 @@ def parse_cmdline() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="clu",
         description="clu utility",
-        #        epilog="end tezt here",
-        usage="%(prog)s [options] <command> [<commmand args>]",
+        # epilog="end text here",
     )
     parser.add_argument(
-        "--version", action="version", version="%%(prog)s %s" % clu.__about__.__version__
+        "--version", action="version", version="%%(prog)s %s" % __about__.__version__
     )
     parser._optionals.title = (
         "options"  # yeah, it's a private member - should have a public way to do this
@@ -64,8 +64,7 @@ def parse_cmdline() -> argparse.Namespace:
 
     subparsers = parser.add_subparsers(
         dest="cmd",
-        description="Clu's functionality is dividedi into commands. Use 'clu <command> --help' or the man page for more info.",
-        metavar="",  # setting this to empty string removes the ugly {foo,bar} from the help output
+        description="Clu's functionality is divided into commands.\n",
         title="commands",
     )
     parser.set_defaults(cmd="report", func=clu.cmd.report.report_facts)
@@ -73,12 +72,13 @@ def parse_cmdline() -> argparse.Namespace:
     clu.cmd.archive.parse_args(subparsers)
     clu.cmd.report.parse_args(subparsers)
     clu.cmd.requires.parse_args(subparsers)
+    clu.cmd.device42.parse_args(subparsers)
 
     return parser.parse_args()
 
 
 def main() -> int:
-    if sys.version_info < clu.__about__.__minimum_python_info__:
+    if sys.version_info < __about__.__minimum_python_info__:
         # Can't use logging here
         print(f"ERROR: Must use at least python {__about__.__minimum_python__}", file=sys.stderr)
         sys.exit(1)
