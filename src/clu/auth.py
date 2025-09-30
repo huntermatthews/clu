@@ -6,6 +6,8 @@ Does nothing fancy because we need to run on servers without pass or keyring.
 import getpass
 import logging
 
+import keyring
+
 from clu.config import get_config
 
 log = logging.getLogger(__name__)
@@ -23,10 +25,25 @@ def _get_username(username):
     return username
 
 
-def _get_password(username):
+def _get_password0(username):
     """Get password for username by prompting user."""
 
     password = getpass.getpass(prompt=f"{username} Password: ")
+
+    return password
+
+
+def _get_password(username):
+    """Get password for username, either from keyring or prompting user."""
+
+    try:
+        password = keyring.get_password("Python Keyring", username)
+    except:
+        # keyring_pass throws FileNotFoundError if it can't find the pass command
+        password = None
+
+    if not password:
+        password = getpass.getpass(prompt=f"{username} Password: ")
 
     return password
 
