@@ -9,23 +9,17 @@ from clu.auth import get_primary_credentials
 
 log = logging.getLogger(__name__)
 
-TEST_URL = "http://swaggerdemo.device42.com"
-ORIGINAL_DEVICE_NAME = "abqhxgpc01"
 
-# THIS IS NOT A CREDENTIAL LEAK!
-# THESE ARE PUBLICLY AVAILABLE ON THE DEVICE42 SWAGGER DEMO SITE
-USERNAME = "guest"
-PASSWORD = "device42_rocks!"
-
-
-def get_host_info() -> dict:
+def get_host_info(hostname: str) -> dict:
     creds = get_primary_credentials()
     if not creds:
         log.error("Failed to get Device42 credentials, cannot retrieve host info.")
         return {}
 
     # Use the Device42 API to retrieve basic host info
-    d42_get_device_url = TEST_URL + "/api/1.0/device/name/" + ORIGINAL_DEVICE_NAME
+    d42_get_device_url = (
+        "https://itbinventorytest01.nhgri.nih.gov" + "/api/1.0/device/name/" + hostname
+    )
     request = urllib.request.Request(d42_get_device_url)
     credentials = f"{creds[0]}:{creds[1]}"
     encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("ascii")
