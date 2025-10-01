@@ -12,60 +12,28 @@ _custom_fields_allow = [
     #     "Provision_Data",    # I don't think we use this anymore.
 ]
 
-_primary_fields_allow = [
+_virtual_fields_allow = [
+    "virtual_sub_type",
+    "virtual_host_name",
+]
+
+_physical_fields_allow = [
     "asset_no",
-    "building",
-    # "category",
-    "corethread",
-    "cpucore",
-    "cpucount",
-    "cpuspeed",
-    "customer",
-    # "customer_id",
-    # "device_external_links",
-    "device_id",
-    # "device_purchase_line_items",
-    "device_sub_type",
-    "hdd_details",
-    "hddcount",
-    "hddraid",
-    "hddraid_type",
-    "hddsize",
-    "hw_depth",
-    "hw_model",
-    "hw_model_id",
-    "hw_size",
-    "id",
-    "in_service",
-    "is_it_blade_host",
-    "is_it_switch",
-    "is_it_virtual_host",
-    "last_updated",
+    "physical_sub_type",
     "manufacturer",
-    "name",
-    "nonauthoritativealiases",
-    # "notes",
-    # "orientation",
-    "os",
-    "osarch",
-    "osver",
-    "osverno",
-    "preferred_alias",
-    "rack",
-    # "rack_id",
-    "ram",
-    "room",
-    "row",
     "serial_no",
-    "service_level",
     "start_at",
+]
+
+_common_fields_allow = [
+    "building",
+    "device_id",
+    "in_service",
+    "last_updated",
+    "name",
+    "service_level",
     "tags",
     "type",
-    # "ucs_manager",
-    "uuid",
-    "virtual_host_name",
-    "where",
-    "xpos",
 ]
 
 
@@ -77,16 +45,101 @@ def transform_custom_fields(custom_fields: list) -> dict:
     return cf_result
 
 
+def transform_network_fields(ip_addresses: list, mac_addresses: list) -> dict:
+    # Transform the network fields into the desired format
+    # TODO: I just have no idea what that format should be
+    net_result = {}
+    net_result["ip_addresses"] = ip_addresses
+    net_result["mac_addresses"] = mac_addresses
+    return net_result
+
+
 def filter_keys(input_dict: dict, allowed_keys: list) -> dict:
     return {k: v for k, v in input_dict.items() if k in allowed_keys}
 
 
-def output_host_info(host_info: dict):
+def transform_host_info(host_info: dict):
     # pprint.pprint(host_info)
-    print("---")
-    output_host_info = filter_keys(host_info, _primary_fields_allow)
+    output_host_info = filter_keys(host_info, _common_fields_allow)
+    type = host_info.get("type")
+    if type == "virtual":
+        output_host_info.update(filter_keys(host_info, _virtual_fields_allow))
+    elif type == "physical":
+        output_host_info.update(filter_keys(host_info, _physical_fields_allow))
+    # TODO: cluster
+    # TODO: unknown
+    # TODO: ???
+
+    # Custom field support
     cf = transform_custom_fields(host_info["custom_fields"])
     cf = filter_keys(cf, _custom_fields_allow)
     output_host_info.update(cf)
 
+    # network field support
+    net = transform_network_fields(host_info["ip_addresses"], host_info["mac_addresses"])
+    output_host_info.update(net)
+
+    return output_host_info
+
+
+def output_host_info(output_host_info: dict):
     pprint.pprint(output_host_info)
+
+
+# all_fields = [
+#     "asset_no",
+#     "building",
+#     # "category",
+#     # "corethread", # later hw support
+#     # "cpucore", # later hw support
+#     # "cpucount",# later hw support
+#     # "cpuspeed",# later hw support
+#     "customer",
+#     # "customer_id",
+#     # "device_external_links",
+#     "device_id",
+#     # "device_purchase_line_items",
+#     "device_sub_type",
+#     # "hdd_details",
+#     # "hddcount", # later for storage...
+#     # "hddraid",
+#     # "hddraid_type",
+#     # "hddsize",
+#     "hw_depth",
+#     "hw_model",
+#     # "hw_model_id",
+#     "hw_size",
+#     # "id",
+#     "in_service",
+#     # "ip_addresses",  # SPECIAL CASE
+#     # "is_it_blade_host",
+#     # "is_it_switch",
+#     # "is_it_virtual_host", # later
+#     "last_updated",
+#     "manufacturer",
+#     # "mac_addresses", # SPECIAL CASE
+#     "name",
+#     # "nonauthoritativealiases",# later for aliases
+#     # "notes", # SPECIAL CASE
+#     # "orientation", # later for rack
+#     "os",
+#     "osarch",
+#     "osver",
+#     "osverno",
+#     "preferred_alias",
+#     "rack",  # later for rack
+#     # "rack_id",
+#     # "ram", # later hw support
+#     # "room", # later for rack
+#     # "row", # later for rack
+#     "serial_no",
+#     "service_level",
+#     "start_at",
+#     "tags",
+#     "type",
+#     # "ucs_manager",
+#     "uuid",
+#     "virtual_host_name",
+#     "where",
+#     # "xpos", # later for rack
+# ]

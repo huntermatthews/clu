@@ -1,8 +1,9 @@
 import logging
+import pprint
 
 from clu.config import get_config
 from clu.device42_api import get_host_info
-from clu.device42_utils import output_host_info
+from clu.device42_utils import output_host_info, transform_host_info
 
 log = logging.getLogger(__name__)
 cfg = get_config()
@@ -49,9 +50,14 @@ def do_check():
 def do_query():
     log.info(f"Querying device information... {cfg.hostname}")
     host_info = get_host_info(cfg.hostname)
-    output_host_info(host_info)
-
-    return 0
+    if host_info:
+        print("Host Information:")
+        transformed_info = transform_host_info(host_info)
+        output_host_info(transformed_info)
+        return 0
+    else:
+        print(f"No host information found for {cfg.hostname}.")
+        return 1
 
 
 def do_update():

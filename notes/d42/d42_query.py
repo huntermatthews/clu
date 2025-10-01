@@ -2,12 +2,15 @@ import urllib.request
 import base64
 import json
 import sys
+import pprint
 
 from creds import D42_URL, D42_USERNAME, D42_PASSWORD
 
 
 d42_get_devices_url = D42_URL + "/api/1.0/devices/all/"
-d42_get_device_url = D42_URL + "/api/1.0/device/name/" + sys.argv[1]
+# d42_get_device_url = D42_URL + "/api/1.0/device/name/" + sys.argv[1]
+d42_get_device_url = D42_URL + "/api/1.0/device/name/" + "vm2forcloudserv_vm"
+
 request = urllib.request.Request(d42_get_device_url)
 credentials = f"{D42_USERNAME}:{D42_PASSWORD}"
 encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("ascii")
@@ -16,8 +19,9 @@ request.add_header("Authorization", f"Basic {encoded_credentials}")
 r = urllib.request.urlopen(request)
 if r.getcode() == 200:
     obj = r.read().decode(encoding="utf-8")
-    print(obj)
-    # data = json.loads(obj)
+    #    pprint.pprint(obj)
+    data = json.loads(obj)
+    pprint.pprint(data)
 
     # print(data)
     # print('----')
