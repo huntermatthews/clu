@@ -2,6 +2,7 @@ import logging
 import pprint
 from clu.config import get_config
 
+
 log = logging.getLogger(__name__)
 cfg = get_config()
 
@@ -13,13 +14,13 @@ _custom_fields_allow = [
 ]
 
 _virtual_fields_allow = [
-    "virtual_sub_type",
+    "virtual_subtype",
     "virtual_host_name",
 ]
 
 _physical_fields_allow = [
     "asset_no",
-    "physical_sub_type",
+    "physical_subtype",
     "manufacturer",
     "serial_no",
     "start_at",
@@ -27,6 +28,7 @@ _physical_fields_allow = [
 
 _common_fields_allow = [
     "building",
+    "customer",
     "device_id",
     "in_service",
     "last_updated",
@@ -59,10 +61,8 @@ def filter_keys(input_dict: dict, allowed_keys: list) -> dict:
 
 
 def transform_host_info(host_info: dict):
-    # pprint.pprint(host_info)
     output_host_info = filter_keys(host_info, _common_fields_allow)
-    type = host_info.get("type")
-    if type == "virtual":
+    if (type := host_info.get("type")) == "virtual":
         output_host_info.update(filter_keys(host_info, _virtual_fields_allow))
     elif type == "physical":
         output_host_info.update(filter_keys(host_info, _physical_fields_allow))
@@ -92,8 +92,8 @@ def output_host_info(output_host_info: dict):
 #     # "category",
 #     # "corethread", # later hw support
 #     # "cpucore", # later hw support
-#     # "cpucount",# later hw support
-#     # "cpuspeed",# later hw support
+#     # "cpucount", # later hw support
+#     # "cpuspeed", # later hw support
 #     "customer",
 #     # "customer_id",
 #     # "device_external_links",
@@ -105,10 +105,10 @@ def output_host_info(output_host_info: dict):
 #     # "hddraid",
 #     # "hddraid_type",
 #     # "hddsize",
-#     "hw_depth",
+#     "hw_depth", # "full"
 #     "hw_model",
 #     # "hw_model_id",
-#     "hw_size",
+#     "hw_size", # float 2.0 for a 2U device
 #     # "id",
 #     "in_service",
 #     # "ip_addresses",  # SPECIAL CASE

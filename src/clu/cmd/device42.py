@@ -1,9 +1,10 @@
 import logging
-import pprint
 
+from build.clu.opsys.factory import opsys_factory
 from clu.config import get_config
-from clu.device42_api import get_host_info
-from clu.device42_utils import output_host_info, transform_host_info
+from clu.device42.query import output_host_info, transform_host_info
+from clu.device42.check import check_os_info
+from clu.facts import Facts
 
 log = logging.getLogger(__name__)
 cfg = get_config()
@@ -42,8 +43,18 @@ def do_run():
 
 
 def do_check():
-    log.info("Checking device status...")
-    # Implement the check logic here
+    log.info(f"Begin checking {cfg.hostname} device information...")
+    host_info = get_host_info(cfg.hostname)
+    if host_info:
+        opsys = opsys_factory()
+        provides_map = opsys.provides()
+        parsed_facts = Facts()
+
+        check_os_info(host_info)
+    else:
+        log.error(f"Host {cfg.hostname} NOT found in Device42.")
+        return 1
+    log.info(f"End checking {cfg.hostname} device information...")
     return 0
 
 

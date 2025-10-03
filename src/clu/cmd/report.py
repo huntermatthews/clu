@@ -130,7 +130,7 @@ def report_facts() -> int:
 
     # User may not have explicity said "report" as the command name on command line - fill in the
     # gaps of our config if so.
-    set_report_defaults(provides_map.keys())
+    set_report_defaults(list(provides_map.keys()))
     log.info(f"Updated config cfg={cfg}")
 
     # Our crude inter-fact dependency code is just to hard-code which facts _might_ be depended on

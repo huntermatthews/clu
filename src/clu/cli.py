@@ -62,6 +62,12 @@ def parse_cmdline() -> argparse.Namespace:
         help="Increase verbosity of output.",
     )
 
+    parser.add_argument(
+        "--d42-server",
+        default="itbinventorytest01.nhgri.nih.gov",
+        help="Device42 server hostname to query .",
+    )
+
     subparsers = parser.add_subparsers(
         dest="cmd",
         description="Clu's functionality is divided into commands.\n",
