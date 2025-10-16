@@ -128,7 +128,7 @@ def report_facts() -> int:
     provides_map = opsys.provides()
     parsed_facts = Facts()
 
-    # User may not have explicity said "report" as the command name on command line - fill in the
+    # User may not have explicitly said "report" as the command name on command line - fill in the
     # gaps of our config if so.
     set_report_defaults(list(provides_map.keys()))
     log.info(f"Updated config cfg={cfg}")
