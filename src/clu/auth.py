@@ -3,6 +3,7 @@
 Does nothing fancy because we need to run on servers without pass or keyring.
 """
 
+import functools
 import getpass
 import logging
 
@@ -38,8 +39,9 @@ def _get_password(username):
 
     try:
         password = keyring.get_password("Python Keyring", username)
-    except:
+    except Exception as e:
         # keyring_pass throws FileNotFoundError if it can't find the pass command
+        log.error(f"Error retrieving password from keyring: {e}")
         password = None
 
     if not password:
@@ -48,6 +50,7 @@ def _get_password(username):
     return password
 
 
+@functools.lru_cache
 def get_primary_credentials(username=None) -> tuple[str, str]:
     """Get username and password for user running script."""
 
