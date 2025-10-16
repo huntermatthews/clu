@@ -11,6 +11,7 @@
         "pycache",
         "pytest",
         "rootdir",
+        "subcmd",
         "zipapp"
     ],
     "editor.formatOnSave": true,
