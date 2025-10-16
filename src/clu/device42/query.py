@@ -39,6 +39,19 @@ _common_fields_allow = [
 ]
 
 
+def subcmd_query():
+    log.info(f"Querying host information... {cfg.hostname}")
+    # host_info = get_host_info(cfg.hostname)
+    # if host_info:
+    #     print("Host Information:")
+    #     transformed_info = transform_host_info(host_info)
+    #     output_host_info(transformed_info)
+    #     return 0
+    # else:
+    #     print(f"No host information found for {cfg.hostname}.")
+    return 55
+
+
 def transform_custom_fields(custom_fields: list) -> dict:
     # Transform the custom fields into the desired format
     cf_result = {}
