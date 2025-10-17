@@ -7,6 +7,7 @@ class Tier(Enum):
     TWO = "two"
     THREE = "three"
 
+    @staticmethod
     def get_by_int(index: int) -> "Tier":
         if index == 1:
             return Tier.ONE

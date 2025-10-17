@@ -3,7 +3,9 @@ import logging
 
 from clu.opsys.factory import opsys_factory
 from clu.facts import Facts, Tier
+from clu.provides import Provides
 from clu.config import get_config
+
 
 log = logging.getLogger(__name__)
 cfg = get_config()
@@ -73,7 +75,9 @@ def set_report_defaults(all_facts: list[str]) -> None:
         cfg.facts = all_facts
 
 
-def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
+def parse_facts_by_specs(
+    provides_map: Provides, parsed_facts: Facts, fact_specs: list[str]
+) -> None:
     sources_to_parse = set()
 
     # Loop through the facts that were requested on the command line and get a set of parsers that
@@ -93,7 +97,7 @@ def parse_facts_by_specs(provides_map, parsed_facts: Facts, fact_specs) -> None:
         source.parse(parsed_facts)
 
 
-def filter_facts(parsed_facts: Facts, requested_fact_specs, tier) -> Facts:
+def filter_facts(parsed_facts: Facts, requested_fact_specs: list[str], tier: int) -> Facts:
     """Filter the parsed facts based on the requested fact specifications."""
 
     # Loop through the facts that were requested on the command line (again) and make a new

@@ -17,7 +17,7 @@ class OpSys:
         return []
 
     def provides(self) -> Provides:
-        """Define the provider map for macOS (Darwin)."""
+        """Define the provider map for an operating system."""
         provs = Provides()
 
         for source in self._sources:
@@ -28,7 +28,7 @@ class OpSys:
         return provs
 
     def requires(self) -> Requires:
-        """Define the requirements for macOS (Darwin)."""
+        """Define the requirements for an operating system."""
         reqs = Requires()
 
         for source in self._sources:

@@ -1,6 +1,7 @@
 import logging
 import pprint
 from clu.config import get_config
+from clu.device42.api import get_host_by_name
 
 
 log = logging.getLogger(__name__)
@@ -41,15 +42,15 @@ _common_fields_allow = [
 
 def subcmd_query():
     log.info(f"Querying host information... {cfg.hostname}")
-    # host_info = get_host_info(cfg.hostname)
-    # if host_info:
-    #     print("Host Information:")
-    #     transformed_info = transform_host_info(host_info)
-    #     output_host_info(transformed_info)
-    #     return 0
-    # else:
-    #     print(f"No host information found for {cfg.hostname}.")
-    return 55
+    host_info = get_host_by_name(cfg.hostname)
+    if not host_info:
+        print(f"No host information found for {cfg.hostname}.")
+        return 1
+    else:
+        print("Host Information:")
+        transformed_info = transform_host_info(host_info)
+        output_host_info(transformed_info)
+        return 0
 
 
 def transform_custom_fields(custom_fields: list) -> dict:
@@ -86,11 +87,11 @@ def transform_host_info(host_info: dict):
     # Custom field support
     cf = transform_custom_fields(host_info["custom_fields"])
     cf = filter_keys(cf, _custom_fields_allow)
-    output_host_info.update(cf)
+    output_host_info["custom_fields"] = cf
 
     # network field support
     net = transform_network_fields(host_info["ip_addresses"], host_info["mac_addresses"])
-    output_host_info.update(net)
+    output_host_info["network"] = net
 
     return output_host_info
 
