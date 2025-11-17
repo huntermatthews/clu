@@ -1,0 +1,1 @@
+https://github.com/sigstore/sigstore-go/blob/main/.github/workflows
