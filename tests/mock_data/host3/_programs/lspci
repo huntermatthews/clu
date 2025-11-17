@@ -1,0 +1,227 @@
+00:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+00:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+00:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+00:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+00:0c.0 PCI bridge: Intel Corporation Device 1bbc (rev 11)
+00:0e.0 PCI bridge: Intel Corporation Device 1bbe (rev 11)
+00:14.0 USB controller: Intel Corporation Emmitsburg (C740 Family) USB 3.2 Gen 1 xHCI Controller (rev 11)
+00:14.2 RAM memory: Intel Corporation Device 1bce (rev 11)
+00:14.4 Host bridge: Intel Corporation Device 1bfe (rev 11)
+00:15.0 System peripheral: Intel Corporation Device 1bff (rev 11)
+00:16.0 Communication controller: Intel Corporation Device 1be0 (rev 11)
+00:18.0 SATA controller: Intel Corporation Sapphire Rapids SATA AHCI Controller (rev 11)
+00:19.0 SATA controller: Intel Corporation Sapphire Rapids SATA AHCI Controller (rev 11)
+00:1f.0 ISA bridge: Intel Corporation Device 1b81 (rev 11)
+00:1f.4 SMBus: Intel Corporation Device 1bc9 (rev 11)
+00:1f.5 Serial bus controller: Intel Corporation Device 1bca (rev 11)
+01:00.0 Ethernet controller: Broadcom Inc. and subsidiaries NetXtreme BCM5720 Gigabit Ethernet PCIe
+01:00.1 Ethernet controller: Broadcom Inc. and subsidiaries NetXtreme BCM5720 Gigabit Ethernet PCIe
+02:00.0 PCI bridge: PLDA PCI Express Bridge (rev 02)
+03:00.0 VGA compatible controller: Matrox Electronics Systems Ltd. Integrated Matrox G200eW3 Graphics Controller (rev 04)
+16:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+16:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+16:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+16:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+29:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+29:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+29:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+29:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+3c:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+3c:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+3c:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+3c:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+3c:03.0 PCI bridge: Intel Corporation Device 352b (rev 04)
+3c:05.0 PCI bridge: Intel Corporation Device 352c (rev 04)
+3d:00.0 Ethernet controller: Broadcom Inc. and subsidiaries BCM57504 NetXtreme-E 10Gb/25Gb/40Gb/50Gb/100Gb/200Gb Ethernet (rev 12)
+3d:00.1 Ethernet controller: Broadcom Inc. and subsidiaries BCM57504 NetXtreme-E 10Gb/25Gb/40Gb/50Gb/100Gb/200Gb Ethernet (rev 12)
+3d:00.2 Ethernet controller: Broadcom Inc. and subsidiaries BCM57504 NetXtreme-E 10Gb/25Gb/40Gb/50Gb/100Gb/200Gb Ethernet (rev 12)
+3d:00.3 Ethernet controller: Broadcom Inc. and subsidiaries BCM57504 NetXtreme-E 10Gb/25Gb/40Gb/50Gb/100Gb/200Gb Ethernet (rev 12)
+3e:00.0 Non-Volatile memory controller: Marvell Technology Group Ltd. 88NR2241 Non-Volatile memory controller (rev 20)
+4f:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+4f:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+4f:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+4f:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+4f:01.0 PCI bridge: Intel Corporation Device 352a (rev 04)
+50:00.0 RAID bus controller: Broadcom / LSI Fusion-MPT 24GSAS/PCIe SAS40xx/41xx (rev 01)
+62:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+62:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+62:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+62:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+75:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+75:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+75:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+75:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+75:01.0 System peripheral: Intel Corporation Device 0b25
+75:03.0 System peripheral: Intel Corporation Ice Lake MSM
+75:03.1 System peripheral: Intel Corporation Ice Lake PMON MSM
+7e:00.0 System peripheral: Intel Corporation Device 3250
+7e:00.1 System peripheral: Intel Corporation Device 3251
+7e:00.2 System peripheral: Intel Corporation Device 3252
+7e:00.3 Host bridge: Intel Corporation Ice Lake IEH
+7e:00.5 System peripheral: Intel Corporation Device 3255
+7e:01.0 System peripheral: Intel Corporation Device 3240
+7e:01.1 System peripheral: Intel Corporation Device 3241
+7e:01.2 System peripheral: Intel Corporation Device 3242
+7e:02.0 System peripheral: Intel Corporation Device 3240
+7e:02.1 System peripheral: Intel Corporation Device 3241
+7e:02.2 System peripheral: Intel Corporation Device 3242
+7e:05.0 System peripheral: Intel Corporation Device 3245
+7e:05.1 System peripheral: Intel Corporation Device 3246
+7e:05.2 System peripheral: Intel Corporation Device 3247
+7e:06.0 System peripheral: Intel Corporation Device 3245
+7e:06.1 System peripheral: Intel Corporation Device 3246
+7e:06.2 System peripheral: Intel Corporation Device 3247
+7e:07.0 System peripheral: Intel Corporation Device 3245
+7e:07.1 System peripheral: Intel Corporation Device 3246
+7e:07.2 System peripheral: Intel Corporation Device 3247
+7e:0c.0 Performance counters: Intel Corporation Device 324a
+7e:0d.0 Performance counters: Intel Corporation Device 324a
+7e:0e.0 Performance counters: Intel Corporation Device 324a
+7e:0f.0 Performance counters: Intel Corporation Device 324a
+7e:1a.0 Performance counters: Intel Corporation Device 2880
+7e:1b.0 Performance counters: Intel Corporation Device 2880
+7e:1c.0 Performance counters: Intel Corporation Device 2880
+7e:1d.0 Performance counters: Intel Corporation Device 2880
+7f:00.0 System peripheral: Intel Corporation Device 324c
+7f:00.1 System peripheral: Intel Corporation Device 324c
+7f:00.2 System peripheral: Intel Corporation Device 324c
+7f:00.3 System peripheral: Intel Corporation Device 324c
+7f:00.4 System peripheral: Intel Corporation Device 324c
+7f:00.5 System peripheral: Intel Corporation Device 324c
+7f:00.6 System peripheral: Intel Corporation Device 324c
+7f:00.7 System peripheral: Intel Corporation Device 324c
+7f:01.0 System peripheral: Intel Corporation Device 324c
+7f:01.1 System peripheral: Intel Corporation Device 324c
+7f:01.2 System peripheral: Intel Corporation Device 324c
+7f:01.3 System peripheral: Intel Corporation Device 324c
+7f:01.4 System peripheral: Intel Corporation Device 324c
+7f:01.5 System peripheral: Intel Corporation Device 324c
+7f:01.6 System peripheral: Intel Corporation Device 324c
+7f:01.7 System peripheral: Intel Corporation Device 324c
+7f:0a.0 System peripheral: Intel Corporation Device 324d
+7f:0a.1 System peripheral: Intel Corporation Device 324d
+7f:0a.2 System peripheral: Intel Corporation Device 324d
+7f:0a.3 System peripheral: Intel Corporation Device 324d
+7f:0a.4 System peripheral: Intel Corporation Device 324d
+7f:0a.5 System peripheral: Intel Corporation Device 324d
+7f:0a.6 System peripheral: Intel Corporation Device 324d
+7f:0a.7 System peripheral: Intel Corporation Device 324d
+7f:0b.0 System peripheral: Intel Corporation Device 324d
+7f:0b.1 System peripheral: Intel Corporation Device 324d
+7f:0b.2 System peripheral: Intel Corporation Device 324d
+7f:0b.3 System peripheral: Intel Corporation Device 324d
+7f:0b.4 System peripheral: Intel Corporation Device 324d
+7f:0b.5 System peripheral: Intel Corporation Device 324d
+7f:0b.6 System peripheral: Intel Corporation Device 324d
+7f:0b.7 System peripheral: Intel Corporation Device 324d
+7f:1d.0 System peripheral: Intel Corporation Device 344f
+7f:1d.1 System peripheral: Intel Corporation Device 3457
+7f:1e.0 System peripheral: Intel Corporation Device 3258 (rev 08)
+7f:1e.1 System peripheral: Intel Corporation Device 3259 (rev 08)
+7f:1e.2 System peripheral: Intel Corporation Device 325a (rev 08)
+7f:1e.3 System peripheral: Intel Corporation Device 325b (rev 08)
+7f:1e.4 System peripheral: Intel Corporation Device 325c (rev 08)
+7f:1e.5 System peripheral: Intel Corporation Device 325d (rev 08)
+7f:1e.6 System peripheral: Intel Corporation Device 325e (rev 08)
+7f:1e.7 System peripheral: Intel Corporation Device 325f (rev 08)
+80:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+80:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+80:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+80:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+98:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+98:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+98:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+98:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+aa:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+aa:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+aa:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+aa:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+bc:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+bc:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+bc:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+bc:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+ce:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+ce:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+ce:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+ce:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+e0:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+e0:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+e0:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+e0:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+f2:00.0 System peripheral: Intel Corporation Ice Lake Memory Map/VT-d (rev 20)
+f2:00.1 System peripheral: Intel Corporation Ice Lake Mesh 2 PCIe (rev 20)
+f2:00.2 System peripheral: Intel Corporation Ice Lake RAS (rev 20)
+f2:00.4 Generic system peripheral [0807]: Intel Corporation Device 0b23
+f2:01.0 System peripheral: Intel Corporation Device 0b25
+f2:03.0 System peripheral: Intel Corporation Ice Lake MSM
+f2:03.1 System peripheral: Intel Corporation Ice Lake PMON MSM
+fe:00.0 System peripheral: Intel Corporation Device 3250
+fe:00.1 System peripheral: Intel Corporation Device 3251
+fe:00.2 System peripheral: Intel Corporation Device 3252
+fe:00.3 Host bridge: Intel Corporation Ice Lake IEH
+fe:00.5 System peripheral: Intel Corporation Device 3255
+fe:01.0 System peripheral: Intel Corporation Device 3240
+fe:01.1 System peripheral: Intel Corporation Device 3241
+fe:01.2 System peripheral: Intel Corporation Device 3242
+fe:02.0 System peripheral: Intel Corporation Device 3240
+fe:02.1 System peripheral: Intel Corporation Device 3241
+fe:02.2 System peripheral: Intel Corporation Device 3242
+fe:05.0 System peripheral: Intel Corporation Device 3245
+fe:05.1 System peripheral: Intel Corporation Device 3246
+fe:05.2 System peripheral: Intel Corporation Device 3247
+fe:06.0 System peripheral: Intel Corporation Device 3245
+fe:06.1 System peripheral: Intel Corporation Device 3246
+fe:06.2 System peripheral: Intel Corporation Device 3247
+fe:07.0 System peripheral: Intel Corporation Device 3245
+fe:07.1 System peripheral: Intel Corporation Device 3246
+fe:07.2 System peripheral: Intel Corporation Device 3247
+fe:0c.0 Performance counters: Intel Corporation Device 324a
+fe:0d.0 Performance counters: Intel Corporation Device 324a
+fe:0e.0 Performance counters: Intel Corporation Device 324a
+fe:0f.0 Performance counters: Intel Corporation Device 324a
+fe:1a.0 Performance counters: Intel Corporation Device 2880
+fe:1b.0 Performance counters: Intel Corporation Device 2880
+fe:1c.0 Performance counters: Intel Corporation Device 2880
+fe:1d.0 Performance counters: Intel Corporation Device 2880
+ff:00.0 System peripheral: Intel Corporation Device 324c
+ff:00.1 System peripheral: Intel Corporation Device 324c
+ff:00.2 System peripheral: Intel Corporation Device 324c
+ff:00.3 System peripheral: Intel Corporation Device 324c
+ff:00.4 System peripheral: Intel Corporation Device 324c
+ff:00.5 System peripheral: Intel Corporation Device 324c
+ff:00.6 System peripheral: Intel Corporation Device 324c
+ff:00.7 System peripheral: Intel Corporation Device 324c
+ff:01.0 System peripheral: Intel Corporation Device 324c
+ff:01.1 System peripheral: Intel Corporation Device 324c
+ff:01.2 System peripheral: Intel Corporation Device 324c
+ff:01.3 System peripheral: Intel Corporation Device 324c
+ff:01.4 System peripheral: Intel Corporation Device 324c
+ff:01.5 System peripheral: Intel Corporation Device 324c
+ff:01.6 System peripheral: Intel Corporation Device 324c
+ff:01.7 System peripheral: Intel Corporation Device 324c
+ff:0a.0 System peripheral: Intel Corporation Device 324d
+ff:0a.1 System peripheral: Intel Corporation Device 324d
+ff:0a.2 System peripheral: Intel Corporation Device 324d
+ff:0a.3 System peripheral: Intel Corporation Device 324d
+ff:0a.4 System peripheral: Intel Corporation Device 324d
+ff:0a.5 System peripheral: Intel Corporation Device 324d
+ff:0a.6 System peripheral: Intel Corporation Device 324d
+ff:0a.7 System peripheral: Intel Corporation Device 324d
+ff:0b.0 System peripheral: Intel Corporation Device 324d
+ff:0b.1 System peripheral: Intel Corporation Device 324d
+ff:0b.2 System peripheral: Intel Corporation Device 324d
+ff:0b.3 System peripheral: Intel Corporation Device 324d
+ff:0b.4 System peripheral: Intel Corporation Device 324d
+ff:0b.5 System peripheral: Intel Corporation Device 324d
+ff:0b.6 System peripheral: Intel Corporation Device 324d
+ff:0b.7 System peripheral: Intel Corporation Device 324d
+ff:1d.0 System peripheral: Intel Corporation Device 344f
+ff:1d.1 System peripheral: Intel Corporation Device 3457
+ff:1e.0 System peripheral: Intel Corporation Device 3258 (rev 08)
+ff:1e.1 System peripheral: Intel Corporation Device 3259 (rev 08)
+ff:1e.2 System peripheral: Intel Corporation Device 325a (rev 08)
+ff:1e.3 System peripheral: Intel Corporation Device 325b (rev 08)
+ff:1e.4 System peripheral: Intel Corporation Device 325c (rev 08)
+ff:1e.5 System peripheral: Intel Corporation Device 325d (rev 08)
+ff:1e.6 System peripheral: Intel Corporation Device 325e (rev 08)
+ff:1e.7 System peripheral: Intel Corporation Device 325f (rev 08)

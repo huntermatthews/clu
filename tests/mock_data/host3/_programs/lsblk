@@ -1,0 +1,14 @@
+NAME                  MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda                     8:0    0     7T  0 disk 
+└─networker-nsr       253:2    0   1.8T  0 lvm  /nsr
+nvme0n1               259:1    0 447.1G  0 disk 
+├─nvme0n1p1           259:2    0   512M  0 part /boot/efi
+├─nvme0n1p2           259:3    0     1G  0 part /boot
+└─nvme0n1p3           259:4    0   155G  0 part 
+  ├─sysvg-lv_root     253:0    0   100G  0 lvm  /
+  ├─sysvg-lv_tmp      253:1    0     5G  0 lvm  [SWAP]
+  ├─sysvg-tmp         253:3    0     4G  0 lvm  /tmp
+  ├─sysvg-lv_varaudit 253:4    0     1G  0 lvm  /var/log/audit
+  ├─sysvg-lv_vartmp   253:5    0     5G  0 lvm  /var/tmp
+  ├─sysvg-lv_varlog   253:6    0    10G  0 lvm  /var/log
+  └─sysvg-lv_var      253:7    0    30G  0 lvm  /var
