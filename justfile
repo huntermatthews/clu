@@ -78,3 +78,7 @@ sync:
 # [group('dev')]
 # tag *args:
 #     git tag --annotate --sign {{args}}
+
+
+###
+# go build -ldflags \"-X github.com/huntermatthews/clu/pkg.Version=1.2.3\"
