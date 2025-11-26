@@ -1,0 +1,18 @@
+-----------------------------------------
+Default helper function orDefault(v, def string)
+
+
+	f.Add(pkg.TierOne, "os.name", orDefault(name, ParseFailMsg))
+	f.Add(pkg.TierOne, "os.version", orDefault(version, ParseFailMsg))
+	f.Add(pkg.TierTwo, "os.build", orDefault(build, ParseFailMsg))
+	f.Add(pkg.TierThree, "id.build_id", orDefault(buildID, ParseFailMsg))
+}
+
+func orDefault(v, def string) string {
+	if strings.TrimSpace(v) == "" {
+		return def
+	}
+	return v
+}
+
+---------------------------------------
