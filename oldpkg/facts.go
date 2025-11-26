@@ -1,4 +1,4 @@
-package sources
+package pkg
 
 type tier int
 
@@ -27,7 +27,7 @@ func (t tier) String() string {
 type Facts map[string]string
 
 // var f Facts f = make(Facts)
-// f := Facts{} 
+// f := Facts{}
 func NewFacts() Facts {
 	return make(Facts)
 }
