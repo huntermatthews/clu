@@ -74,17 +74,21 @@ func parseFloat(s string) (float64, error) {
 // SecondsToText converts seconds into a human-readable string with months, days, hours, minutes, seconds.
 // Follows Python logic (using 30-day months) and pluralization rules.
 func SecondsToText(secs int64) string {
-	if secs < 0 {
+	if secs <= 0 {
 		return "0 seconds"
 	}
 	months := secs / 2592000 // 30*24*60*60
 	remaining := secs % 2592000
+
 	days := remaining / 86400
 	remaining = remaining % 86400
+
 	hours := remaining / 3600
 	remaining = remaining % 3600
+
 	minutes := remaining / 60
 	seconds := remaining % 60
+
 	parts := make([]string, 0, 5)
 	if months > 0 {
 		parts = append(parts, pluralize(months, "month"))

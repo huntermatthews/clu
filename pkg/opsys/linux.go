@@ -11,7 +11,6 @@ import (
 // NewLinux constructs the Linux OpSys. Order mirrors Python minus unported AwsImds source.
 func NewLinux() *OpSys {
 	srcs := []sources.Source{
-		// &sources.AwsImds{}, // TODO: port aws_imds.py
 		&sources.Clu{},
 		&sources.DnfCheckUpdate{},
 		&sources.IpAddr{},

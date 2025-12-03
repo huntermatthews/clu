@@ -4,7 +4,7 @@ package opsys
 // source aggregation and default/early fact lists.
 
 import (
-	"github.com/huntermatthews/clu/pkg/sources"
+	sources "github.com/huntermatthews/clu/pkg/source"
 )
 
 // NewDarwin constructs the Darwin OpSys with its ordered sources and fact lists.

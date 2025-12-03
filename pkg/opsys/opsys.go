@@ -6,26 +6,26 @@ package opsys
 // an ordered slice of sources plus default and early fact key lists.
 
 import (
-	pkg "github.com/huntermatthews/clu/pkg"
-	"github.com/huntermatthews/clu/pkg/sources"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/source"
 )
 
 // OpSys aggregates a set of fact sources for an operating system.
 // DefaultFacts and EarlyFacts mirror the Python methods returning ordered key lists.
 type OpSys struct {
-	Sources      []sources.Source
+	Sources      []source.Source
 	DefaultFacts []string
 	EarlyFacts   []string
 }
 
 // New constructs a new OpSys instance.
-func New(s []sources.Source, defaults, early []string) *OpSys {
+func NewOpSys(s []source.Source, defaults, early []string) *OpSys {
 	return &OpSys{Sources: s, DefaultFacts: defaults, EarlyFacts: early}
 }
 
 // Provides builds a provider map by invoking Provides on each source in order.
-func (o *OpSys) Provides() pkg.Provides {
-	provs := pkg.Provides{}
+func (o *OpSys) Provides() pkg.types.Provides {
+	provs := pkg.types.Provides{}
 	for _, src := range o.Sources {
 		if src != nil {
 			src.Provides(provs)
@@ -35,8 +35,8 @@ func (o *OpSys) Provides() pkg.Provides {
 }
 
 // Requires aggregates program/file/API/fact requirements from all sources.
-func (o *OpSys) Requires() *pkg.Requires {
-	reqs := pkg.NewRequires()
+func (o *OpSys) Requires() *pkg.types.Requires {
+	reqs := pkg.types.NewRequires()
 	for _, src := range o.Sources {
 		if src != nil {
 			src.Requires(reqs)
