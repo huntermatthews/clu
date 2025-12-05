@@ -23,3 +23,5 @@ clean:
     mkdir -p build
     # go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=1.2.3" -o build/clu ./cmd/main.go
     go build -o build/clu ./cmd/main.go
+
+# @echo "This is a {{os()}} system running on {{arch()}} with {{num_cpus()}} logical CPUs."
