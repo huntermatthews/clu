@@ -1,9 +1,10 @@
-package source
+package sources
 
 import (
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // Uname collects simple uname-derived facts by running `uname -snrm`.
@@ -17,27 +18,27 @@ var unameKeys = []string{
 }
 
 // Provides registers which keys this source provides.
-func (u *Uname) Provides(p pkg.Provides) {
+func (u *Uname) Provides(p types.Provides) {
 	for _, k := range unameKeys {
 		p[k] = u
 	}
 }
 
 // Requires declares external programs this source depends on.
-func (u *Uname) Requires(r *pkg.Requires) {
+func (u *Uname) Requires(r *types.Requires) {
 	r.Programs = append(r.Programs, "uname -snrm")
 }
 
 // Parse populates the provided Facts map with values from `uname -snrm`.
 // If the primary key already exists this function is a no-op.
-func (u *Uname) Parse(f *pkg.Facts) {
+func (u *Uname) Parse(f *types.Facts) {
 	if f.Contains("os.kernel.name") {
 		return
 	}
 	data, rc := pkg.CommandRunner("uname -snrm")
 	if data == "" || rc != 0 {
 		for _, k := range unameKeys {
-			f.Set(k, ParseFailMsg)
+			f.Set(k, types.ParseFailMsg)
 		}
 		return
 	}
@@ -46,7 +47,7 @@ func (u *Uname) Parse(f *pkg.Facts) {
 		if i < len(fields) {
 			f.Set(k, fields[i])
 		} else {
-			f.Set(k, ParseFailMsg)
+			f.Set(k, types.ParseFailMsg)
 		}
 	}
 }

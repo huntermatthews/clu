@@ -7,14 +7,11 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"runtime"
 	"sort"
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	"github.com/huntermatthews/clu/pkg/opsys"
-	"github.com/huntermatthews/clu/pkg/sources"
+	"github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // ReportConfig holds runtime configuration for the report command. In Python
@@ -42,10 +39,10 @@ func SetReportDefaults(cfg *ReportConfig, allFactKeys []string) {
 }
 
 // parseFactsBySpecs replicates parse_facts_by_specs: determine sources to run.
-func parseFactsBySpecs(provides pkg.Provides, facts *pkg.Facts, specs []string) {
-	sourcesToParse := map[sources.Source]struct{}{}
+func parseFactsBySpecs(provides types.Provides, facts *types.Facts, specs []string) {
+	sourcesToParse := map[types.Sources]struct{}{}
 	addSource := func(src interface{}) {
-		if s, ok := src.(sources.Source); ok && s != nil {
+		if s, ok := src.(types.Sources); ok && s != nil {
 			sourcesToParse[s] = struct{}{}
 		}
 	}
@@ -68,9 +65,9 @@ func parseFactsBySpecs(provides pkg.Provides, facts *pkg.Facts, specs []string) 
 }
 
 // filterFacts mirrors filter_facts: retain facts matching specs and tier.
-func filterFacts(parsed *pkg.Facts, specs []string, tier int) *pkg.Facts {
-	output := pkg.NewFacts()
-	tierFacts := parsed.GetTier(pkg.Tier(tier)) // TierOne=1 mapping preserved
+func filterFacts(parsed *types.Facts, specs []string, tier int) *types.Facts {
+	output := types.NewFacts()
+	tierFacts := parsed.GetTier(types.Tier(tier)) // TierOne=1 mapping preserved
 	tierSet := map[string]struct{}{}
 	for _, k := range tierFacts {
 		tierSet[k] = struct{}{}
@@ -88,7 +85,7 @@ func filterFacts(parsed *pkg.Facts, specs []string, tier int) *pkg.Facts {
 }
 
 // doOutput dispatches to format-specific output functions.
-func doOutput(f *pkg.Facts, format string) {
+func doOutput(f *types.Facts, format string) {
 	switch format {
 	case "json":
 		outputJSON(f)
@@ -104,16 +101,11 @@ func doOutput(f *pkg.Facts, format string) {
 // ReportFacts executes the report workflow, returning an exit code (0 success).
 // Caller is responsible for printing errors (none currently) or using result.
 func ReportFacts(cfg *ReportConfig) int {
-	// Build OS abstraction (simple factory: detect GOOS). Simplified vs Python opsys_factory.
-	var osys *opsys.OpSys
+
 	// Basic platform detection using runtime.GOOS; only darwin/linux expected now.
-	if osVal := runtimeGOOS(); osVal == "darwin" {
-		osys = opsys.NewDarwin()
-	} else {
-		osys = opsys.NewLinux()
-	}
+	osys := facts.OpSysFactory()
 	providesMap := osys.Provides()
-	parsed := pkg.NewFacts()
+	parsed := types.NewFacts()
 
 	// Apply defaults if caller did not set certain fields.
 	allKeys := make([]string, 0, len(providesMap))
@@ -133,16 +125,8 @@ func ReportFacts(cfg *ReportConfig) int {
 	return 0
 }
 
-// runtimeGOOS isolated for easier testing (DI if needed later).
-var runtimeGOOS = func() string {
-	if v := os.Getenv("GOOS_OVERRIDE"); v != "" {
-		return v
-	}
-	return runtime.GOOS
-}
-
 // outputDots prints key: value lines sorted by key.
-func outputDots(f *pkg.Facts) {
+func outputDots(f *types.Facts) {
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
@@ -152,7 +136,7 @@ func outputDots(f *pkg.Facts) {
 }
 
 // outputShell prints KEY_WITH_UNDERSCORES="value" lines.
-func outputShell(f *pkg.Facts) {
+func outputShell(f *types.Facts) {
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
@@ -163,7 +147,7 @@ func outputShell(f *pkg.Facts) {
 }
 
 // outputJSON prints a JSON map of facts.
-func outputJSON(f *pkg.Facts) {
+func outputJSON(f *types.Facts) {
 	data, _ := json.MarshalIndent(f.ToMap(), "", "  ")
 	fmt.Println(string(data))
 }

@@ -1,9 +1,10 @@
-package source
+package sources
 
 import (
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // SystemVersionPlist parses macOS SystemVersion.plist for OS info.
@@ -11,17 +12,17 @@ type SystemVersionPlist struct{}
 
 var svKeys = []string{"os.name", "os.version", "os.build", "id.build_id"}
 
-func (s *SystemVersionPlist) Provides(p pkg.Provides) {
+func (s *SystemVersionPlist) Provides(p types.Provides) {
 	for _, k := range svKeys {
 		p[k] = s
 	}
 }
 
-func (s *SystemVersionPlist) Requires(r *pkg.Requires) {
+func (s *SystemVersionPlist) Requires(r *types.Requires) {
 	r.Files = append(r.Files, "/System/Library/CoreServices/SystemVersion.plist")
 }
 
-func (s *SystemVersionPlist) Parse(f *pkg.Facts) {
+func (s *SystemVersionPlist) Parse(f *types.Facts) {
 	if f.Contains("os.name") {
 		return
 	}
@@ -29,7 +30,7 @@ func (s *SystemVersionPlist) Parse(f *pkg.Facts) {
 	data, err := pkg.FileReader(path)
 	if err != nil {
 		for _, k := range svKeys {
-			f.Set(k, ParseFailMsg)
+			f.Set(k, types.ParseFailMsg)
 		}
 		return
 	}
@@ -41,7 +42,7 @@ func (s *SystemVersionPlist) Parse(f *pkg.Facts) {
 	buildID := extractTag(content, "BuildID")
 	if name == "" && version == "" && build == "" && buildID == "" {
 		for _, k := range svKeys {
-			f.Set(k, ParseFailMsg)
+			f.Set(k, types.ParseFailMsg)
 		}
 		return
 	}

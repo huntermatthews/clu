@@ -1,22 +1,22 @@
-package source
+package sources
 
 import (
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // MacOSName derives the macOS marketing code name from the major version.
 type MacOSName struct{}
 
-func (m *MacOSName) Provides(p pkg.Provides) { p["os.code_name"] = m }
+func (m *MacOSName) Provides(p types.Provides) { p["os.code_name"] = m }
 
-func (m *MacOSName) Requires(r *pkg.Requires) { r.Facts = append(r.Facts, "os.version") }
+func (m *MacOSName) Requires(r *types.Requires) { r.Facts = append(r.Facts, "os.version") }
 
-func (m *MacOSName) Parse(f *pkg.Facts) {
+func (m *MacOSName) Parse(f *types.Facts) {
 	ver, ok := f.Get("os.version")
 	if !ok || strings.TrimSpace(ver) == "" {
-		f.Set("os.code_name", ParseFailMsg)
+		f.Set("os.code_name", types.ParseFailMsg)
 		return
 	}
 	major := strings.Split(ver, ".")[0]
@@ -39,6 +39,6 @@ func codeNameFromMajor(major string) string {
 	case "11":
 		return "Big Sur"
 	default:
-		return ParseFailMsg
+		return types.ParseFailMsg
 	}
 }

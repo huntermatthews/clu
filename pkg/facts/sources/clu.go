@@ -1,4 +1,4 @@
-package source
+package sources
 
 import (
 	"os"
@@ -7,13 +7,14 @@ import (
 	"strings"
 	"time"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // Clu provides runtime-related facts about the running CLI and environment.
 type Clu struct{}
 
-func (c *Clu) Provides(p pkg.Provides) {
+func (c *Clu) Provides(p types.Provides) {
 	for _, k := range []string{
 		"clu.binary",
 		"clu.version",
@@ -28,36 +29,35 @@ func (c *Clu) Provides(p pkg.Provides) {
 	}
 }
 
-func (c *Clu) Requires(r *pkg.Requires) { /* no external requirements */ }
+func (c *Clu) Requires(r *types.Requires) { /* no external requirements */ }
 
-func (c *Clu) Parse(f *pkg.Facts) {
+func (c *Clu) Parse(f *types.Facts) {
 	// Binary name (argv0)
 	argv0 := os.Args[0]
-	f.Add(pkg.TierTwo, "clu.binary", argv0)
+	f.Add(types.TierTwo, "clu.binary", argv0)
 
 	// Version from about.go
-	f.Add(pkg.TierOne, "clu.version", pkg.Version)
+	f.Add(types.TierOne, "clu.version", pkg.Version)
 
 	// Python analogs: in Go, provide placeholders: binary is the current executable path
 	// and version is runtime.Version()
-	f.Add(pkg.TierTwo, "clu.python.binary", argv0)
-	f.Add(pkg.TierOne, "clu.python.version", runtime.Version())
+	f.Add(types.TierTwo, "clu.python.binary", argv0)
+	f.Add(types.TierOne, "clu.python.version", runtime.Version())
 
 	// Command line
-	f.Add(pkg.TierTwo, "clu.cmdline", strings.Join(os.Args, " "))
+	f.Add(types.TierTwo, "clu.cmdline", strings.Join(os.Args, " "))
 
 	// Working directory
 	cwd, _ := os.Getwd()
-	f.Add(pkg.TierThree, "clu.cwd", cwd)
-
+	f.Add(types.TierThree, "clu.cwd", cwd)
 	// User
 	u, _ := user.Current()
 	if u != nil && u.Username != "" {
-		f.Add(pkg.TierThree, "clu.user", u.Username)
+		f.Add(types.TierThree, "clu.user", u.Username)
 	} else {
-		f.Add(pkg.TierThree, "clu.user", "")
+		f.Add(types.TierThree, "clu.user", "")
 	}
 
 	// RFC3339 timestamp (UTC)
-	f.Add(pkg.TierTwo, "clu.date", time.Now().UTC().Format(time.RFC3339))
+	f.Add(types.TierTwo, "clu.date", time.Now().UTC().Format(time.RFC3339))
 }

@@ -11,6 +11,7 @@ package pkg
 type AppConfig struct {
 	Verbose bool
 	Debug   bool
+	NetEnabled bool
 	// Output  string
 	// Facts   []string
 }

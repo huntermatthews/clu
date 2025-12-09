@@ -17,6 +17,7 @@ import (
 	"time"
 
 	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // ArchiveConfig controls archive creation (currently only output directory override).
@@ -42,12 +43,12 @@ func MakeArchive(cfg *ArchiveConfig) int {
 	defer cleanupWorkdir(workDir)
 
 	// Fallback if detectOpSys not configured externally.
-	var requires *pkg.Requires
+	var requires *types.Requires
 	osysIface := detectOpSys()
 	if osysIface != nil {
 		requires = osysIface.Requires()
 	} else {
-		requires = pkg.NewRequires() // empty fallback
+		requires = types.NewRequires() // empty fallback
 	}
 
 	collectMetadata(workDir, hostname)
@@ -65,7 +66,7 @@ func MakeArchive(cfg *ArchiveConfig) int {
 // opsysFactory simplified runtime selection.
 // detectOpSys delegates to report command's runtime factory (reuse) to avoid duplicate definition.
 // Provided by requires.go; if refactoring later, centralize in a shared package.
-var detectOpSys = func() interface{ Requires() *pkg.Requires } { return nil }
+var detectOpSys = func() interface{ Requires() *types.Requires } { return nil }
 
 func hostName() string { h, _ := os.Hostname(); return h }
 
@@ -89,7 +90,7 @@ func collectMetadata(workDir, hostname string) {
 	writeFile(metaDir, "date", time.Now().Format(time.RFC3339)+"\n")
 }
 
-func collectFiles(reqs *pkg.Requires, workDir string) {
+func collectFiles(reqs *types.Requires, workDir string) {
 	for _, file := range reqs.Files {
 		if file == "" {
 			continue
@@ -106,7 +107,7 @@ func collectFiles(reqs *pkg.Requires, workDir string) {
 	}
 }
 
-func collectPrograms(reqs *pkg.Requires, workDir string) {
+func collectPrograms(reqs *types.Requires, workDir string) {
 	progDir := filepath.Join(workDir, "_programs")
 	_ = os.MkdirAll(progDir, 0o755)
 	for _, prog := range reqs.Programs {

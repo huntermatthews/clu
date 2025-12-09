@@ -1,9 +1,10 @@
-package source
+package sources
 
 import (
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // SwVers collects macOS version info via `sw_vers` program.
@@ -15,24 +16,24 @@ var swKeys = []string{
 	"os.build",
 }
 
-func (s *SwVers) Provides(p pkg.Provides) {
+func (s *SwVers) Provides(p types.Provides) {
 	for _, k := range swKeys {
 		p[k] = s
 	}
 }
 
-func (s *SwVers) Requires(r *pkg.Requires) {
+func (s *SwVers) Requires(r *types.Requires) {
 	r.Programs = append(r.Programs, "sw_vers")
 }
 
-func (s *SwVers) Parse(f *pkg.Facts) {
+func (s *SwVers) Parse(f *types.Facts) {
 	if f.Contains("os.name") {
 		return
 	}
 	data, rc := pkg.CommandRunner("sw_vers")
 	if data == "" || rc != 0 {
 		for _, k := range swKeys {
-			f.Set(k, ParseFailMsg)
+			f.Set(k, types.ParseFailMsg)
 		}
 		return
 	}

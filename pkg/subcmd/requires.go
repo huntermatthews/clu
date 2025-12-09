@@ -7,10 +7,9 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"runtime"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/opsys"
+	"github.com/huntermatthews/clu/pkg/facts"
 )
 
 // RequiresConfig carries the chosen subcommand name ("list" or "check").
@@ -31,17 +30,9 @@ func (c *RequiresConfig) Run() int {
 	}
 }
 
-// opsysFactory replicates Python opsys_factory minimal logic using runtime.GOOS.
-func opsysFactory() *opsys.OpSys {
-	if runtime.GOOS == "darwin" {
-		return opsys.NewDarwin()
-	}
-	return opsys.NewLinux()
-}
-
 // listRequires lists all file and program requirements.
 func listRequires() int {
-	reqs := opsysFactory().Requires()
+	reqs := facts.OpSysFactory().Requires()
 	fmt.Println("Listing Requirements:")
 	fmt.Println("----------------------")
 	fmt.Println("Files:")
@@ -58,7 +49,7 @@ func listRequires() int {
 
 // checkRequires checks existence of required files and programs.
 func checkRequires() int {
-	reqs := opsysFactory().Requires()
+	reqs := facts.OpSysFactory().Requires()
 	fmt.Println("Checking requirements:")
 	fmt.Println("----------------------")
 	fmt.Println("Files:")
