@@ -1,5 +1,7 @@
 package pkg
 
+import "github.com/huntermatthews/clu/pkg/facts/types"
+
 // config.go provides a simple global configuration container with NO thread safety.
 // Fields:
 //  - Verbose: enable extra (non-debug) informational output
@@ -9,12 +11,13 @@ package pkg
 
 // AppConfig holds runtime configuration flags and selections.
 type AppConfig struct {
-	Verbose bool
-	Debug   bool
+	Verbose    bool
+	Debug      bool
 	NetEnabled bool
-	// Output  string
-	// Facts   []string
+	Output     string
+	Tier       types.Tier
+	FactSpecs  []string
 }
 
 // Config is the singleton instance backing global configuration access.
-var Config = &AppConfig{}
+var Config = &AppConfig{Tier: types.TierOne}

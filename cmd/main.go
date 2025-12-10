@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/subcmd"
 )
 
 // setupLogging is a placeholder to integrate with a logging framework.
@@ -35,5 +36,7 @@ func main() {
 	parseCmdline(os.Args[1:])
 	setupLogging()
 
-	os.Exit(0)
+	exit := subcmd.ReportFacts()
+
+	os.Exit(exit)
 }

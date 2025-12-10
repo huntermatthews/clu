@@ -6,6 +6,9 @@ package facts
 // an ordered slice of sources plus default and early fact key lists.
 
 import (
+	"fmt"
+
+	"github.com/huntermatthews/clu/pkg/facts/sources"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
@@ -18,7 +21,7 @@ type OpSys struct {
 }
 
 // New constructs a new OpSys instance.
-func NewOpSys(s []types.Sources, defaults, early []string) *OpSys {
+func NewOpSys(s []types.Sources, defaults []string, early []string) *OpSys {
 	return &OpSys{Sources: s, DefaultFacts: defaults, EarlyFacts: early}
 }
 
@@ -56,8 +59,15 @@ func (o *OpSys) GetEarlyFacts() []string {
 
 // OpSysFactory replicates Python opsys_factory minimal logic using runtime.GOOS.
 func OpSysFactory() *OpSys {
-	// if runtime.GOOS == "linux"
-	//     return NewLinux()
-	// }
-	return NewDarwin()
+	uname := &sources.Uname{}
+	facts := types.NewFacts()
+	uname.Parse(facts)
+	if kernel, ok := facts.Get("os.kernel.name"); ok {
+		if kernel == "Darwin" {
+			return NewDarwin()
+		}
+		fmt.Printf("Unsupported OS kernel: %s\n", kernel)
+	}
+
+	panic("unsupported operating system; only Darwin (macOS) is currently implemented")
 }

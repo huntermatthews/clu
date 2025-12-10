@@ -10,6 +10,7 @@ import (
 // Uname collects simple uname-derived facts by running `uname -snrm`.
 type Uname struct{}
 
+// This ORDER is important and matches the output order of `uname -snrm`.
 var unameKeys = []string{
 	"os.kernel.name",
 	"os.hostname",
