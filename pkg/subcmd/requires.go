@@ -1,4 +1,4 @@
-package cmd
+package subcmd
 
 // Go port of src/clu/cmd/requires.py excluding parse_args. Provides listing and
 // checking of system requirements gathered from the OpSys abstraction. Caller

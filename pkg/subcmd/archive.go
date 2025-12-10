@@ -1,4 +1,4 @@
-package cmd
+package subcmd
 
 // Go port of src/clu/cmd/archive.py excluding parse_args. Implements system
 // snapshot archiving: gathers required files, program outputs, and metadata

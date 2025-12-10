@@ -1,4 +1,4 @@
-package cmd
+package subcmd
 
 // Go port of src/clu/cmd/report.py (excluding parse_args). Implements the
 // core reporting workflow: obtain OpSys, parse early facts, parse requested
@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
@@ -18,25 +19,54 @@ import (
 // this derived from global cfg (set_config + argparse). Here we expose a struct
 // expecting the caller (CLI layer) to populate it; defaults applied via
 // SetReportDefaults.
-type ReportConfig struct {
-	Output string   // dots | shell | json
-	Net    bool     // enable network access (placeholder, not yet used)
-	Tier   int      // 1,2,3 controlling fact visibility
-	Facts  []string // requested fact spec prefixes; empty means all defaults
+
+// type ReportConfig struct {
+// 	Output string   // dots | shell | json
+// 	Net    bool     // enable network access (placeholder, not yet used)
+// 	Tier   int      // 1,2,3 controlling fact visibility
+// 	Facts  []string // requested fact spec prefixes; empty means all defaults
+// }
+
+// ReportFacts executes the report workflow, returning an exit code (0 success).
+// Caller is responsible for printing errors (none currently) or using result.
+func ReportFacts() int {
+
+	osys := facts.OpSysFactory()
+	provides := osys.Provides()
+	facts := types.NewFacts()
+
+	// Apply defaults if caller did not set certain fields.
+	allKeys := make([]string, 0, len(provides))
+	for k := range provides {
+		allKeys = append(allKeys, k)
+	}
+	//	pkg.Config.FactSpecs = append([]string{}, allKeys...)
+	pkg.Config.FactSpecs = allKeys
+	// SetReportDefaults(cfg, allKeys)
+
+	// Parse early facts first.
+	parseFactsBySpecs(provides, facts, osys.GetEarlyFacts())
+	// Parse requested facts (may include duplicates; source parsing idempotent for now).
+	parseFactsBySpecs(provides, facts, pkg.Config.FactSpecs)
+	// Filter down to requested + tier selection.
+	outputFacts := filterFacts(facts, pkg.Config.FactSpecs, int(pkg.Config.Tier))
+	// Output.
+	doOutput(outputFacts, pkg.Config.Output)
+	return 0
 }
 
 // SetReportDefaults sets missing values analogous to set_report_defaults().
-func SetReportDefaults(cfg *ReportConfig, allFactKeys []string) {
-	if cfg.Output == "" {
-		cfg.Output = "dots"
-	}
-	if cfg.Tier == 0 { // treat 0 as unset
-		cfg.Tier = 1
-	}
-	if len(cfg.Facts) == 0 {
-		cfg.Facts = append([]string{}, allFactKeys...)
-	}
-}
+// func SetReportDefaults(cfg *ReportConfig, allFactKeys []string) {
+// 	if pkg.ConfigOutput == "" {
+// 		pkg.ConfigOutput = "dots"
+// 	}
+// 	if pkg.ConfigTier == 0 { // treat 0 as unset
+// 		pkg.ConfigTier = 1
+// 	}
+// 	if len(pkg.ConfigFacts) == 0 {
+// 		pkg.ConfigFacts = append([]string{}, allFactKeys...)
+// 	}
+// }
 
 // parseFactsBySpecs replicates parse_facts_by_specs: determine sources to run.
 func parseFactsBySpecs(provides types.Provides, facts *types.Facts, specs []string) {
@@ -96,33 +126,6 @@ func doOutput(f *types.Facts, format string) {
 	default:
 		outputDots(f)
 	}
-}
-
-// ReportFacts executes the report workflow, returning an exit code (0 success).
-// Caller is responsible for printing errors (none currently) or using result.
-func ReportFacts(cfg *ReportConfig) int {
-
-	// Basic platform detection using runtime.GOOS; only darwin/linux expected now.
-	osys := facts.OpSysFactory()
-	providesMap := osys.Provides()
-	parsed := types.NewFacts()
-
-	// Apply defaults if caller did not set certain fields.
-	allKeys := make([]string, 0, len(providesMap))
-	for k := range providesMap {
-		allKeys = append(allKeys, k)
-	}
-	SetReportDefaults(cfg, allKeys)
-
-	// Parse early facts first.
-	parseFactsBySpecs(providesMap, parsed, osys.GetEarlyFacts())
-	// Parse requested facts (may include duplicates; source parsing idempotent for now).
-	parseFactsBySpecs(providesMap, parsed, cfg.Facts)
-	// Filter down to requested + tier selection.
-	outputFacts := filterFacts(parsed, cfg.Facts, cfg.Tier)
-	// Output.
-	doOutput(outputFacts, cfg.Output)
-	return 0
 }
 
 // outputDots prints key: value lines sorted by key.
