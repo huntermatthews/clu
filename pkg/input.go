@@ -15,6 +15,7 @@ const FileSizeLimit = 1 * 1024 * 1024 // 1MB arbitrary limit
 
 // TextFile reads a file and returns its contents as a string. If optional is true
 // and the file does not exist, an empty string is returned without treating it as an error.
+// FIXME: currently logs errors; should  return error instead. (ported from python)
 func TextFile(fname string, optional bool) string {
 	info, err := os.Stat(fname)
 	if err != nil {
@@ -43,6 +44,7 @@ func TextFile(fname string, optional bool) string {
 
 // TextProgram runs a command line (split on spaces) and returns stdout and the exit code.
 // On   error returns empty output and rc=1.
+// FIXME: currently logs errors; should  return error instead. (ported from python)
 func TextProgram(cmdline string) (string, int) {
 	parts := strings.Fields(cmdline)
 	if len(parts) == 0 {

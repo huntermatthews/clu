@@ -26,26 +26,23 @@ func (s *SystemVersionPlist) Parse(f *types.Facts) {
 	if f.Contains("os.name") {
 		return
 	}
+
+	for _, k := range svKeys {
+		f.Set(k, types.ParseFailMsg)
+	}
+
 	path := "/System/Library/CoreServices/SystemVersion.plist"
 	data, err := pkg.FileReader(path)
 	if err != nil {
-		for _, k := range svKeys {
-			f.Set(k, types.ParseFailMsg)
-		}
 		return
 	}
-	content := data
+
 	// Simple extraction for expected keys; not a full plist parser.
-	name := extractTag(content, "ProductName")
-	version := extractTag(content, "ProductVersion")
-	build := extractTag(content, "ProductBuildVersion")
-	buildID := extractTag(content, "BuildID")
-	if name == "" && version == "" && build == "" && buildID == "" {
-		for _, k := range svKeys {
-			f.Set(k, types.ParseFailMsg)
-		}
-		return
-	}
+	name := extractTag(data, "ProductName")
+	version := extractTag(data, "ProductVersion")
+	build := extractTag(data, "ProductBuildVersion")
+	buildID := extractTag(data, "BuildID")
+
 	f.Set("os.name", name)
 	f.Set("os.version", version)
 	f.Set("os.build", build)
@@ -53,6 +50,7 @@ func (s *SystemVersionPlist) Parse(f *types.Facts) {
 }
 
 func extractTag(s, key string) string {
+	// FIXME: This is a very naive xml plist parser; consider using a proper xml  library. (AI did this)
 	// Look for <key>key</key><string>value</string>
 	keyTag := "<key>" + key + "</key>"
 	idx := strings.Index(s, keyTag)
