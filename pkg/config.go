@@ -20,4 +20,4 @@ type AppConfig struct {
 }
 
 // Config is the singleton instance backing global configuration access.
-var Config = &AppConfig{Tier: types.TierOne}
+var Config = &AppConfig{Tier: types.TierThree}
