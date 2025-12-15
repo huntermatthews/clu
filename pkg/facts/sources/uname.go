@@ -39,16 +39,18 @@ func (u *Uname) Parse(f *types.Facts) {
 	data, rc := pkg.CommandRunner("uname -snrm")
 	if data == "" || rc != 0 {
 		for _, k := range unameKeys {
-			f.Set(k, types.ParseFailMsg)
+			f.Add(types.TierOne, k, types.ParseFailMsg)
 		}
 		return
 	}
+    
+	// Fixme - os.kernel.version is tier two
 	fields := strings.Fields(strings.TrimSpace(data))
 	for i, k := range unameKeys {
 		if i < len(fields) {
-			f.Set(k, fields[i])
+			f.Add(types.TierOne, k, fields[i])
 		} else {
-			f.Set(k, types.ParseFailMsg)
+			f.Add(types.TierOne, k, types.ParseFailMsg)
 		}
 	}
 }

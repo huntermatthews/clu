@@ -28,7 +28,8 @@ func (s *SystemVersionPlist) Parse(f *types.Facts) {
 	}
 
 	for _, k := range svKeys {
-		f.Set(k, types.ParseFailMsg)
+		// failures are tier one to make sure they are visible
+		f.Add(types.TierOne, k, types.ParseFailMsg)
 	}
 
 	path := "/System/Library/CoreServices/SystemVersion.plist"
@@ -43,10 +44,10 @@ func (s *SystemVersionPlist) Parse(f *types.Facts) {
 	build := extractTag(data, "ProductBuildVersion")
 	buildID := extractTag(data, "BuildID")
 
-	f.Set("os.name", name)
-	f.Set("os.version", version)
-	f.Set("os.build", build)
-	f.Set("id.build_id", buildID)
+	f.Add(types.TierOne, "os.name", name)
+	f.Add(types.TierOne, "os.version", version)
+	f.Add(types.TierThree, "os.build", build)
+	f.Add(types.TierThree, "id.build_id", buildID)
 }
 
 func extractTag(s, key string) string {

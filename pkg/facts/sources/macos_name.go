@@ -16,12 +16,13 @@ func (m *MacOSName) Requires(r *types.Requires) { r.Facts = append(r.Facts, "os.
 func (m *MacOSName) Parse(f *types.Facts) {
 	ver, ok := f.Get("os.version")
 	if !ok || strings.TrimSpace(ver) == "" {
-		f.Set("os.code_name", types.ParseFailMsg)
+		f.Add(types.TierOne, "os.code_name", types.ParseFailMsg)
 		return
 	}
+
 	major := strings.Split(ver, ".")[0]
 	code := codeNameFromMajor(major)
-	f.Set("os.code_name", code)
+	f.Add(types.TierOne, "os.code_name", code)
 }
 
 func codeNameFromMajor(major string) string {
@@ -37,7 +38,7 @@ func codeNameFromMajor(major string) string {
 	case "12":
 		return "Monterey"
 	case "11":
-		return "Big Sur"
+		return "Big Sur" // big sur is OLD enough...
 	default:
 		return types.ParseFailMsg
 	}

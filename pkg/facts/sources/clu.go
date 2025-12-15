@@ -18,8 +18,6 @@ func (c *Clu) Provides(p types.Provides) {
 	for _, k := range []string{
 		"clu.binary",
 		"clu.version",
-		"clu.python.binary",
-		"clu.python.version",
 		"clu.cmdline",
 		"clu.cwd",
 		"clu.user",
@@ -39,10 +37,8 @@ func (c *Clu) Parse(f *types.Facts) {
 	// Version from about.go
 	f.Add(types.TierOne, "clu.version", pkg.Version)
 
-	// Python analogs: in Go, provide placeholders: binary is the current executable path
-	// and version is runtime.Version()
-	f.Add(types.TierTwo, "clu.python.binary", argv0)
-	f.Add(types.TierOne, "clu.python.version", runtime.Version())
+	// Go runtime version
+	f.Add(types.TierThree, "clu.golang.version", runtime.Version())
 
 	// Command line
 	f.Add(types.TierTwo, "clu.cmdline", strings.Join(os.Args, " "))
@@ -50,12 +46,13 @@ func (c *Clu) Parse(f *types.Facts) {
 	// Working directory
 	cwd, _ := os.Getwd()
 	f.Add(types.TierThree, "clu.cwd", cwd)
+
 	// User
 	u, _ := user.Current()
-	if u != nil && u.Username != "" {
+	if u != nil {
 		f.Add(types.TierThree, "clu.user", u.Username)
 	} else {
-		f.Add(types.TierThree, "clu.user", "")
+		f.Add(types.TierThree, "clu.user", types.ParseFailMsg)
 	}
 
 	// RFC3339 timestamp (UTC)

@@ -23,7 +23,7 @@ func (u *Uptime) Requires(r *types.Requires) {
 var uptimeRegex = regexp.MustCompile(`.*up *(.*) \d+ users,? .*`)
 
 func (u *Uptime) Parse(f *types.Facts) {
-	f.Set("run.uptime", types.ParseFailMsg)
+	f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)
 
 	data, rc := pkg.CommandRunner("uptime")
 	if data == "" || rc != 0 {
@@ -34,6 +34,11 @@ func (u *Uptime) Parse(f *types.Facts) {
 	uptime := types.ParseFailMsg
 	if len(m) > 1 {
 		uptime = strings.TrimSuffix(m[1], ",")
+		uptime = standardizeSpaces(uptime)
 	}
-	f.Set("run.uptime", uptime)
+	f.Add(types.TierOne, "run.uptime", uptime)
+}
+
+func standardizeSpaces(s string) string {
+	return strings.Join(strings.Fields(s), " ")
 }
