@@ -1,13 +1,12 @@
 package sources
 
-// Go port of src/clu/sources/selinux.py
 // Determines SELinux enablement and current mode using `selinuxenabled` and `getenforce`.
 
 import (
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	types "github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // Selinux source collects os.selinux.enable and os.selinux.mode facts.
@@ -35,12 +34,12 @@ func (s *Selinux) Parse(f *types.Facts) {
 	case 1:
 		f.Set("os.selinux.enable", "False")
 	default:
-		f.Set("os.selinux.enable", ParseFailMsg)
+		f.Set("os.selinux.enable", types.ParseFailMsg)
 	}
 
 	data, _ := pkg.CommandRunner("getenforce")
 	if strings.TrimSpace(data) == "" {
-		f.Set("os.selinux.mode", ParseFailMsg)
+		f.Set("os.selinux.mode", types.ParseFailMsg)
 	} else {
 		f.Set("os.selinux.mode", strings.TrimSpace(data))
 	}

@@ -7,27 +7,27 @@ import (
 	"regexp"
 	"strconv"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // UdevadmRam collects total physical RAM size from udevadm output.
 type UdevadmRam struct{}
 
 // Provides registers phy.ram key.
-func (u *UdevadmRam) Provides(p facts.Provides) { p["phy.ram"] = u }
+func (u *UdevadmRam) Provides(p types.Provides) { p["phy.ram"] = u }
 
 // Requires declares dependency on udevadm command.
-func (u *UdevadmRam) Requires(r *facts.Requires) {
+func (u *UdevadmRam) Requires(r *types.Requires) {
 	r.Programs = append(r.Programs, "udevadm info --path /devices/virtual/dmi/id")
 }
 
 // Parse executes command, extracts MEMORY_DEVICE_x_SIZE numbers, sums them and converts to SI string.
 // On failure sets ParseFailMsg.
-func (u *UdevadmRam) Parse(f *facts.Facts) {
+func (u *UdevadmRam) Parse(f *types.Facts) {
 	data, rc := pkg.CommandRunner("udevadm info --path /devices/virtual/dmi/id")
 	if data == "" || rc != 0 {
-		f.Set("phy.ram", ParseFailMsg)
+		f.Set("phy.ram", types.ParseFailMsg)
 		return
 	}
 	re := regexp.MustCompile(`MEMORY_DEVICE_\d+_SIZE=(\d+)`)

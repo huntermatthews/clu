@@ -6,27 +6,27 @@ package sources
 import (
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // NoSalt reports whether the /no_salt file exists and its content as a reason.
 type NoSalt struct{}
 
 // Provides registers fact keys produced by this source.
-func (n *NoSalt) Provides(p facts.Provides) {
+func (n *NoSalt) Provides(p types.Provides) {
 	p["salt.no_salt.exists"] = n
 	p["salt.no_salt.reason"] = n
 }
 
 // Requires declares file dependency.
-func (n *NoSalt) Requires(r *facts.Requires) {
+func (n *NoSalt) Requires(r *types.Requires) {
 	r.Files = append(r.Files, "/no_salt")
 }
 
 // Parse reads /no_salt optionally. If missing or empty sets exists False and returns.
 // Otherwise sets exists True and reason to trimmed file content.
-func (n *NoSalt) Parse(f *facts.Facts) {
+func (n *NoSalt) Parse(f *types.Facts) {
 	// Use TextFile directly with optional semantics; DI FileReader treats empty as error.
 	data := pkg.TextFile("/no_salt", true)
 	if strings.TrimSpace(data) == "" { // missing or empty

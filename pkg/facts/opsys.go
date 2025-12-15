@@ -6,8 +6,6 @@ package facts
 // an ordered slice of sources plus default and early fact key lists.
 
 import (
-	"fmt"
-
 	"github.com/huntermatthews/clu/pkg/facts/sources"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
@@ -62,12 +60,19 @@ func OpSysFactory() *OpSys {
 	uname := &sources.Uname{}
 	facts := types.NewFacts()
 	uname.Parse(facts)
-	if kernel, ok := facts.Get("os.kernel.name"); ok {
-		if kernel == "Darwin" {
-			return NewDarwin()
-		}
-		fmt.Printf("Unsupported OS kernel: %s\n", kernel)
+	kernel, ok := facts.Get("os.kernel.name")
+	if !ok {
+		panic("unable to determine OS kernel name")
 	}
 
-	panic("unsupported operating system; only Darwin (macOS) is currently implemented")
+	switch kernel {
+	case "Darwin":
+		return NewDarwin()
+	case "Linux":
+		return NewLinux()
+	default:
+		panic("unsupported operating system; got " + kernel)
+
+	}
+
 }

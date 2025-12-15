@@ -4,8 +4,8 @@ package facts
 // source aggregation and default/early fact lists.
 
 import (
-    "github.com/huntermatthews/clu/pkg/facts/types"
 	"github.com/huntermatthews/clu/pkg/facts/sources"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // NewDarwin constructs the Darwin OpSys with its ordered sources and fact lists.
@@ -18,7 +18,14 @@ func NewDarwin() *OpSys {
 		&sources.Uptime{},
 		&sources.Clu{},
 	}
-	defaults := []string{"os.name", "os.hostname", "os.version", "os.code_name", "run.uptime", "clu.version"}
+	defaults := []string{
+		"os.name",
+		"os.hostname",
+		"os.version",
+		"os.code_name",
+		"run.uptime",
+		"clu.version",
+	}
 	early := []string{"os.version"}
 	return NewOpSys(srcs, defaults, early)
 }

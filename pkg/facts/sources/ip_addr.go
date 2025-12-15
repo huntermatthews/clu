@@ -1,6 +1,5 @@
 package sources
 
-// Go port of src/clu/sources/ip_addr.py
 // Parses `ip --json addr` to collect interface names, MACs, IPv4 and IPv6 addresses.
 // On empty output or non-zero exit code all fact keys are set to ParseFailMsg.
 
@@ -8,8 +7,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // IpAddr gathers network interface facts.
@@ -19,14 +18,14 @@ type IpAddr struct{}
 var ipAddrKeys = []string{"net.macs", "net.ipv4", "net.ipv6", "net.devs"}
 
 // Provides registers fact keys produced by this source.
-func (i *IpAddr) Provides(p facts.Provides) {
+func (i *IpAddr) Provides(p types.Provides) {
 	for _, k := range ipAddrKeys {
 		p[k] = i
 	}
 }
 
 // Requires declares external program dependency.
-func (i *IpAddr) Requires(r *facts.Requires) {
+func (i *IpAddr) Requires(r *types.Requires) {
 	r.Programs = append(r.Programs, "ip --json addr")
 }
 
@@ -41,11 +40,11 @@ type ipAddrIface struct {
 }
 
 // Parse executes command, decodes JSON and accumulates space-separated lists (trailing space retained for parity).
-func (i *IpAddr) Parse(f *facts.Facts) {
+func (i *IpAddr) Parse(f *types.Facts) {
 	data, rc := pkg.CommandRunner("ip --json addr")
 	if data == "" || rc != 0 {
 		for _, k := range ipAddrKeys {
-			f.Set(k, ParseFailMsg)
+			f.Set(k, types.ParseFailMsg)
 		}
 		return
 	}
@@ -57,7 +56,7 @@ func (i *IpAddr) Parse(f *facts.Facts) {
 	var ifaces []ipAddrIface
 	if err := json.Unmarshal([]byte(data), &ifaces); err != nil {
 		for _, k := range ipAddrKeys {
-			f.Set(k, ParseFailMsg)
+			f.Set(k, types.ParseFailMsg)
 		}
 		return
 	}

@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // Lscpu collects CPU topology and identification facts.
@@ -25,21 +25,21 @@ var lscpuKeys = []string{
 }
 
 // Provides registers the fact keys produced by this source.
-func (l *Lscpu) Provides(p facts.Provides) {
+func (l *Lscpu) Provides(p types.Provides) {
 	for _, k := range lscpuKeys {
 		p[k] = l
 	}
 }
 
 // Requires declares program dependency.
-func (l *Lscpu) Requires(r *facts.Requires) {
+func (l *Lscpu) Requires(r *types.Requires) {
 	r.Programs = append(r.Programs, "lscpu")
 }
 
 // Parse executes lscpu and extracts values. On command failure it silently returns
 // (matching Python behavior where no facts are set). Computation failures set
 // cores/threads to ParseFailMsg.
-func (l *Lscpu) Parse(f *facts.Facts) {
+func (l *Lscpu) Parse(f *types.Facts) {
 	data, rc := pkg.CommandRunner("lscpu")
 	if data == "" || rc != 0 {
 		return // mimic Python: skip setting anything
@@ -61,8 +61,8 @@ func (l *Lscpu) Parse(f *facts.Facts) {
 		}
 	}
 	// Derive cores & threads if possible
-	cores := ParseFailMsg
-	threads := ParseFailMsg
+	cores := types.ParseFailMsg
+	threads := types.ParseFailMsg
 	if cps, ok1 := fields["cores_per_socket"]; ok1 {
 		if sockets, ok2 := fields["sockets"]; ok2 {
 			if cpsInt, err1 := strconv.Atoi(cps); err1 == nil {

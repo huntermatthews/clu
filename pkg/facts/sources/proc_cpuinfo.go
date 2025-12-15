@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	types "github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // ProcCpuinfo determines phy.cpu.arch_version for x86_64/amd64 platforms.

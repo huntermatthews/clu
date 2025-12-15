@@ -7,28 +7,29 @@ import (
 	"strconv"
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // Lsmem collects physical RAM size.
 type Lsmem struct{}
 
 // Provides registers the RAM fact key.
-func (l *Lsmem) Provides(p facts.Provides) { p["phy.ram"] = l }
+func (l *Lsmem) Provides(p types.Provides) { p["phy.ram"] = l }
 
 // Requires declares dependency on lsmem command.
-func (l *Lsmem) Requires(r *facts.Requires) {
+func (l *Lsmem) Requires(r *types.Requires) {
 	r.Programs = append(r.Programs, "lsmem --summary --bytes")
 }
 
 // Parse extracts total online memory from command output. On failure sets ParseFailMsg.
-func (l *Lsmem) Parse(f *facts.Facts) {
+func (l *Lsmem) Parse(f *types.Facts) {
 	data, rc := pkg.CommandRunner("lsmem --summary --bytes")
 	if data == "" || rc != 0 {
-		f.Set("phy.ram", ParseFailMsg)
+		f.Set("phy.ram", types.ParseFailMsg)
 		return
 	}
+
 	var byteCount string
 	for _, line := range strings.Split(data, "\n") {
 		if strings.HasPrefix(line, "Total online memory") {
@@ -39,14 +40,16 @@ func (l *Lsmem) Parse(f *facts.Facts) {
 			break
 		}
 	}
+
 	if byteCount == "" {
-		f.Set("phy.ram", ParseFailMsg)
+		f.Set("phy.ram", types.ParseFailMsg)
 		return
 	}
+
 	// Convert using BytesToSI; input expects a float64 number of bytes.
 	if v, err := strconv.ParseFloat(byteCount, 64); err == nil {
 		f.Set("phy.ram", pkg.BytesToSI(v))
 	} else {
-		f.Set("phy.ram", ParseFailMsg)
+		f.Set("phy.ram", types.ParseFailMsg)
 	}
 }

@@ -1,8 +1,6 @@
 package facts
 
-// Go port of src/clu/opsys/linux.py
 // Constructs the Linux OpSys with its ordered fact sources and default/early fact lists.
-// Note: Source AwsImds not yet ported.
 
 import (
 	"github.com/huntermatthews/clu/pkg/facts/sources"
@@ -38,6 +36,9 @@ func NewLinux() *OpSys {
 		"run.uptime",
 		"clu.version",
 	}
-	early := []string{"phy.arch", "phy.platform"}
+	early := []string{
+		"phy.arch",
+		"phy.platform",
+	}
 	return NewOpSys(srcs, defaults, early)
 }

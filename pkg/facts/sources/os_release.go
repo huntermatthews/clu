@@ -6,7 +6,7 @@ package sources
 import (
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
@@ -30,6 +30,7 @@ func (o *OsRelease) Parse(f *types.Facts) {
 		f.Set("os.distro.version", types.ParseFailMsg)
 		return
 	}
+    
 	var id, version string
 	for _, line := range strings.Split(data, "\n") {
 		if !strings.Contains(line, "=") {

@@ -6,7 +6,7 @@ package sources
 import (
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
@@ -25,17 +25,20 @@ func (v *VirtWhat) Parse(f *types.Facts) {
 	if f.Contains("phy.platform") {
 		return
 	}
+
 	data, rc := pkg.CommandRunner("virt-what")
 	if rc != 0 {
 		f.Set("phy.platform", types.ParseFailMsg)
 		return
 	}
+
 	data = strings.TrimSpace(data)
 	if data == "" {
 		f.Set("phy.platform", "physical")
 		return
 	}
+
 	// Replace newlines with comma-space
 	data = strings.ReplaceAll(data, "\n", ", ")
-	f.Set("phy.platform", data)
+	f.Add(types.TierOne, "phy.platform", data)
 }

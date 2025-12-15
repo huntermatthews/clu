@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"strings"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // Ipmitool gathers BMC firmware/network details.
@@ -29,7 +29,7 @@ var ipmitoolMcInfoKeys = []string{
 }
 
 // Provides registers all fact keys produced by this source.
-func (i *Ipmitool) Provides(p facts.Provides) {
+func (i *Ipmitool) Provides(p types.Provides) {
 	for _, k := range ipmitoolLanKeys {
 		p[k] = i
 	}
@@ -39,12 +39,12 @@ func (i *Ipmitool) Provides(p facts.Provides) {
 }
 
 // Requires declares external program dependency.
-func (i *Ipmitool) Requires(r *facts.Requires) {
+func (i *Ipmitool) Requires(r *types.Requires) {
 	r.Programs = append(r.Programs, "ipmitool")
 }
 
 // Parse orchestrates the two ipmitool queries if platform is physical.
-func (i *Ipmitool) Parse(f *facts.Facts) {
+func (i *Ipmitool) Parse(f *types.Facts) {
 	platform, _ := f.Get("phy.platform")
 	if platform != "physical" { // skip if not physical hardware
 		return
@@ -53,7 +53,7 @@ func (i *Ipmitool) Parse(f *facts.Facts) {
 	i.parseLanPrint(f)
 }
 
-func (i *Ipmitool) parseLanPrint(f *facts.Facts) {
+func (i *Ipmitool) parseLanPrint(f *types.Facts) {
 	patterns := map[string]string{
 		`^IP Address Source *: (.+)`: "bmc.ipv4_source",
 		`^IP Address *: (.+)`:        "bmc.ipv4_address",
@@ -63,7 +63,7 @@ func (i *Ipmitool) parseLanPrint(f *facts.Facts) {
 	data, rc := pkg.CommandRunner("ipmitool lan print")
 	if data == "" || rc != 0 {
 		for _, k := range ipmitoolLanKeys {
-			f.Set(k, ParseFailMsg)
+			f.Set(k, types.ParseFailMsg)
 		}
 		return
 	}
@@ -80,7 +80,7 @@ func (i *Ipmitool) parseLanPrint(f *facts.Facts) {
 	}
 }
 
-func (i *Ipmitool) parseMcInfo(f *facts.Facts) {
+func (i *Ipmitool) parseMcInfo(f *types.Facts) {
 	patterns := map[string]string{
 		`^Firmware Revision *: (.+)`: "bmc.firmware_version",
 		`^Manufacturer ID *: (.+)`:   "bmc.manufacturer_id",
@@ -89,7 +89,7 @@ func (i *Ipmitool) parseMcInfo(f *facts.Facts) {
 	data, rc := pkg.CommandRunner("ipmitool mc info")
 	if data == "" || rc != 0 {
 		for _, k := range ipmitoolMcInfoKeys {
-			f.Set(k, ParseFailMsg)
+			f.Set(k, types.ParseFailMsg)
 		}
 		return
 	}
