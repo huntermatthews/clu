@@ -24,7 +24,7 @@ func NewLinux() *OpSys {
 		&sources.SysDmi{},
 		&sources.Uname{},
 		&sources.VirtWhat{},
-		&sources.UdevadmRam{},
+		//		&sources.UdevadmRam{},
 	}
 	defaults := []string{
 		"os.name",
