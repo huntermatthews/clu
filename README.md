@@ -9,6 +9,10 @@ Clu gives us a clue as to what this os / hardware is.
 
 - [ ] we end up calling uname twice - not a huge deal but Would Be Nice not too
 
+## Testing
+
+```go test ./examples/...```
+
 ### build/artifact related
 
 - [ ] Add build attestations [https://github.com/FiloSottile/age/pull/621]
