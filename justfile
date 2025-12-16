@@ -22,6 +22,7 @@ clean:
 @clu:
     mkdir -p build
     # go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=1.2.3" -o build/clu ./cmd/main.go
-    go build -o build/clu ./cmd/main.go
+    GOOS=darwin GOARCH=arm64 go build -o build/clu-macos ./cmd/main.go
+    GOOS=linux GOARCH=amd64 go build -o build/clu-linux-amd64 ./cmd/main.go
 
 # @echo "This is a {{os()}} system running on {{arch()}} with {{num_cpus()}} logical CPUs."
