@@ -16,10 +16,10 @@ import (
 
 // setupLogging is a placeholder to integrate with a logging framework.
 // For now it does nothing beyond being a stub.
-func setupLogging() {
-	fmt.Printf("LOG: setupLogging called with debug=%t\n", pkg.Config.Debug)
-	fmt.Printf("LOG: setupLogging called with verbose=%t\n", pkg.Config.Verbose)
-}
+// func setupLogging() {
+// 	fmt.Printf("LOG: setupLogging called with debug=%t\n", pkg.Config.Debug)
+// 	fmt.Printf("LOG: setupLogging called with verbose=%t\n", pkg.Config.Verbose)
+// }
 
 // parseCmdline configures and parses flags and returns the selected command function.
 func parseCmdline(args []string) {
@@ -34,7 +34,7 @@ func parseCmdline(args []string) {
 func main() {
 
 	parseCmdline(os.Args[1:])
-	setupLogging()
+	// setupLogging()
 
 	exit := subcmd.ReportFacts()
 
