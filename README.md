@@ -12,6 +12,7 @@ Clu gives us a clue as to what this os / hardware is.
 ## Testing
 
 ```go test ./examples/...```
+```go test ./pkg/facts/sources -run TestLscpu -v```
 
 ### build/artifact related
 
