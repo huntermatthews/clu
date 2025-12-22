@@ -35,10 +35,13 @@ func (f *FactsCmd) Run() error {
 }
 
 // CollectorCmd implements the "collector" subcommand (stub only).
-type CollectorCmd struct{}
+type CollectorCmd struct {
+	OutputDir string `name:"output-dir" default:"/tmp" help:"Directory to write the archive/output."`
+}
 
 func (c *CollectorCmd) Run() error {
-	fmt.Println("collector: running (stub)")
+	// Stub action; show chosen output directory to confirm flag wiring.
+	fmt.Printf("collector: running (stub) output-dir=%s\n", c.OutputDir)
 	return nil
 }
 

@@ -10,63 +10,51 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
-// ReportConfig holds runtime configuration for the report command. In Python
-// this derived from global cfg (set_config + argparse). Here we expose a struct
-// expecting the caller (CLI layer) to populate it; defaults applied via
-// SetReportDefaults.
+// FactsCmd implements the "facts" subcommand.
+type FactsCmd struct {
+	Tier         int      `name:"tier" short:"t" enum:"1,2,3" default:"1" help:"Tier level (1, 2, or 3)."`
+	OutputFormat string   `name:"out" enum:"dots,json,shell" default:"dots" help:"Output format: dots, json, or shell."`
+	Net          bool     `name:"net" help:"Enable network access."`
+	FactNames    []string `arg:"" optional:"true" help:"Zero or more fact names to report on."`
+}
 
-// type ReportConfig struct {
-// 	Output string   // dots | shell | json
-// 	Net    bool     // enable network access (placeholder, not yet used)
-// 	Tier   int      // 1,2,3 controlling fact visibility
-// 	Facts  []string // requested fact spec prefixes; empty means all defaults
-// }
-
-// ReportFacts executes the report workflow, returning an exit code (0 success).
-// Caller is responsible for printing errors (none currently) or using result.
-func ReportFacts() int {
+func (f *FactsCmd) Run() error {
+	if len(f.FactNames) > 0 {
+		fmt.Printf("TRACE: facts: tier=%d net=%v (stub) %s\n", f.Tier, f.Net, strings.Join(f.FactNames, " "))
+	} else {
+		fmt.Printf("TRACE: facts: tier=%d net=%v (stub)\n", f.Tier, f.Net)
+	}
 
 	osys := facts.OpSysFactory()
 	provides := osys.Provides()
 	facts := types.NewFacts()
 
-	// Apply defaults if caller did not set certain fields.
-	allKeys := make([]string, 0, len(provides))
-	for k := range provides {
-		allKeys = append(allKeys, k)
+	if len(f.FactNames) == 0 {
+		// an empty slice means all facts
+		// f.FactNames = make([]string, 0, len(provides))
+		for k := range provides {
+			f.FactNames = append(f.FactNames, k)
+		}
 	}
-	//	pkg.Config.FactSpecs = append([]string{}, allKeys...)
-	pkg.Config.FactSpecs = allKeys
-	// SetReportDefaults(cfg, allKeys)
 
-	// Parse early facts first.
+	// Parse early facts first. Early facts are our primitive way of handling inter-source dependancies.
+	// They are always parsed, even if not actually needed later.
 	parseFactsBySpecs(provides, facts, osys.GetEarlyFacts())
-	// Parse requested facts (may include duplicates; source parsing idempotent for now).
-	parseFactsBySpecs(provides, facts, pkg.Config.FactSpecs)
-	// Filter down to requested + tier selection.
-	outputFacts := filterFacts(facts, pkg.Config.FactSpecs, int(pkg.Config.Tier))
-	// Output.
-	doOutput(outputFacts, pkg.Config.Output)
-	return 0
-}
 
-// SetReportDefaults sets missing values analogous to set_report_defaults().
-// func SetReportDefaults(cfg *ReportConfig, allFactKeys []string) {
-// 	if pkg.ConfigOutput == "" {
-// 		pkg.ConfigOutput = "dots"
-// 	}
-// 	if pkg.ConfigTier == 0 { // treat 0 as unset
-// 		pkg.ConfigTier = 1
-// 	}
-// 	if len(pkg.ConfigFacts) == 0 {
-// 		pkg.ConfigFacts = append([]string{}, allFactKeys...)
-// 	}
-// }
+	// Parse requested facts (may include duplicates; source parsing is idempotent).
+	parseFactsBySpecs(provides, facts, f.FactNames)
+
+	// Filter down to requested + tier selection.
+	outputFacts := filterFacts(facts, f.FactNames, int(f.Tier))
+	// Output.
+	doOutput(outputFacts, f.OutputFormat)
+
+	return nil
+}
 
 // parseFactsBySpecs replicates parse_facts_by_specs: determine sources to run.
 func parseFactsBySpecs(provides types.Provides, facts *types.Facts, specs []string) {

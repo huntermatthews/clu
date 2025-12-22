@@ -12,23 +12,40 @@ import (
 	"github.com/huntermatthews/clu/pkg/facts"
 )
 
-// RequiresConfig carries the chosen subcommand name ("list" or "check").
-type RequiresConfig struct {
-	Subcmd string
+// RequiresCmd implements the "requires" subcommand (stub only).
+type RequiresCmd struct {
+	Mode string `arg:"" enum:"list,check" help:"Operation to perform: list or check."`
 }
 
-// Run dispatches to list or check logic based on Subcmd. Returns exit code.
-func (c *RequiresConfig) Run() int {
-	switch c.Subcmd {
+func (r *RequiresCmd) Run() error {
+	switch r.Mode {
 	case "list":
-		return listRequires()
+		// fmt.Println("requires: listing (stub)")
+		listRequires()
 	case "check":
-		return checkRequires()
-	default:
-		fmt.Fprintf(os.Stderr, "Unknown sub-command: %s\n", c.Subcmd)
-		return 2
+		// fmt.Println("requires: checking (stub)")
+		checkRequires()
 	}
+	return nil
 }
+
+// // RequiresConfig carries the chosen subcommand name ("list" or "check").
+// type RequiresConfig struct {
+// 	Subcmd string
+// }
+
+// // Run dispatches to list or check logic based on Subcmd. Returns exit code.
+// func (c *RequiresConfig) Run() int {
+// 	switch c.Subcmd {
+// 	case "list":
+// 		return listRequires()
+// 	case "check":
+// 		return checkRequires()
+// 	default:
+// 		fmt.Fprintf(os.Stderr, "Unknown sub-command: %s\n", c.Subcmd)
+// 		return 2
+// 	}
+// }
 
 // listRequires lists all file and program requirements.
 func listRequires() int {

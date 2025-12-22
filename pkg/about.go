@@ -30,3 +30,25 @@ const (
 // 		fmt.Printf("  %s: %s\n", setting.Key, setting.Value)
 // 	}
 // }
+
+// -- about as a struct - like a sane person.
+// var (
+// 	Version   string
+// 	BuildTime string
+// 	GitCommit string
+// )
+
+// // The Config struct
+// type BuildInfo struct {
+// 	Version   string
+// 	BuildTime string
+// 	GitCommit string
+// }
+
+// func GetBuildInfo() BuildInfo {
+// 	return BuildInfo{
+// 		Version:   Version,
+// 		BuildTime: BuildTime,
+// 		GitCommit: GitCommit,
+// 	}
+// }
