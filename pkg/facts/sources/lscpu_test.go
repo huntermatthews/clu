@@ -3,8 +3,8 @@ package sources
 import (
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // Representative lscpu output snippet.
@@ -19,7 +19,7 @@ Vendor ID:                       GenuineIntel`
 // TestLscpuProvides checks keys registration.
 func TestLscpuProvides(t *testing.T) {
 	src := &Lscpu{}
-	p := facts.Provides{}
+	p := types.Provides{}
 	src.Provides(p)
 	keys := []string{"phy.cpu.model", "phy.cpu.vendor", "phy.cpu.cores", "phy.cpu.threads", "phy.cpu.sockets"}
 	for _, k := range keys {
@@ -34,7 +34,7 @@ func TestLscpuSuccess(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmdline string) (string, int) { return sampleLscpu, 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	src := &Lscpu{}
 	src.Parse(f)
 	cases := map[string]string{
@@ -57,7 +57,7 @@ func TestLscpuFailure(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmdline string) (string, int) { return "", 1 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	src := &Lscpu{}
 	src.Parse(f)
 	if _, ok := f.Get("phy.cpu.model"); ok {
@@ -72,7 +72,7 @@ func TestLscpuPartialMissing(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmdline string) (string, int) { return partial, 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	src := &Lscpu{}
 	src.Parse(f)
 	cores, _ := f.Get("phy.cpu.cores")
@@ -80,7 +80,7 @@ func TestLscpuPartialMissing(t *testing.T) {
 	if cores != "8" { // 4 * 2
 		t.Fatalf("expected cores=8 got %s", cores)
 	}
-	if threads != ParseFailMsg {
+	if threads != types.ParseFailMsg {
 		t.Fatalf("expected threads ParseFailMsg got %s", threads)
 	}
 }

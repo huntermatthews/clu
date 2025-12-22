@@ -44,15 +44,20 @@ func (l *Lscpu) Parse(f *types.Facts) {
 	if data == "" || rc != 0 {
 		return // mimic Python: skip setting anything
 	}
+	// Normalize escaped newlines ("\n") into real newlines so both raw and
+	// literal-escaped inputs are handled consistently.
+	data = strings.ReplaceAll(data, "\\n", "\n")
+
 	patterns := map[string]string{
-		`^\s*Model name:\s*(.+)`:            "model",
-		`^\s*Vendor ID:\s*(.+)`:             "vendor",
-		`^\s*Core\(s\) per socket:\s*(\d+)`: "cores_per_socket",
-		`^\s*Thread\(s\) per core:\s*(\d+)`: "threads_per_core",
-		`^\s*Socket\(s\):\s*(\d+)`:          "sockets",
-		`^\s*CPU\(s\):\s*(\d+)`:             "cpus",
+		`(?m)^\s*Model name:\s*(.+)`:            "model",
+		`(?m)^\s*Vendor ID:\s*(.+)`:             "vendor",
+		`(?m)^\s*Core\(s\) per socket:\s*(\d+)`: "cores_per_socket",
+		`(?m)^\s*Thread\(s\) per core:\s*(\d+)`: "threads_per_core",
+		`(?m)^\s*Socket\(s\):\s*(\d+)`:          "sockets",
+		`(?m)^\s*CPU\(s\):\s*(\d+)`:             "cpus",
 	}
 	fields := map[string]string{}
+
 	for regex, key := range patterns {
 		re := regexp.MustCompile(regex)
 		m := re.FindStringSubmatch(data)
@@ -60,6 +65,7 @@ func (l *Lscpu) Parse(f *types.Facts) {
 			fields[key] = strings.TrimSpace(m[1])
 		}
 	}
+
 	// Derive cores & threads if possible
 	cores := types.ParseFailMsg
 	threads := types.ParseFailMsg
@@ -78,6 +84,7 @@ func (l *Lscpu) Parse(f *types.Facts) {
 			}
 		}
 	}
+    
 	// Set facts (nil/missing -> empty string like Python assignment of None)
 	f.Set("phy.cpu.model", fields["model"])   // may be empty
 	f.Set("phy.cpu.vendor", fields["vendor"]) // may be empty
