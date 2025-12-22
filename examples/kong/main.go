@@ -11,6 +11,7 @@ import (
 // CLI defines the root command and global flags.
 type CLI struct {
 	Debug     bool         `help:"Enable debug logging."`
+	Verbose   bool         `help:"Enable verbose output."`
 	Facts     FactsCmd     `cmd:"" help:"Show facts (stub)."`
 	Collector CollectorCmd `cmd:"" help:"Run collector (stub)."`
 	Requires  RequiresCmd  `cmd:"" help:"Requires actions: list or check."`
@@ -24,7 +25,13 @@ type FactsCmd struct {
 	Facts        []string `arg:"" optional:"true" help:"Zero or more fact names."`
 }
 
-func (f *FactsCmd) Run() error {
+func (f *FactsCmd) Run(cli *CLI) error {
+	if cli.Debug {
+		fmt.Fprintln(os.Stderr, "debug: facts run")
+	}
+	if cli.Verbose {
+		fmt.Fprintln(os.Stderr, "verbose: facts run")
+	}
 	tier := f.Tier
 	if len(f.Facts) > 0 {
 		fmt.Printf("facts: tier=%d net=%v (stub) %s\n", tier, f.Net, strings.Join(f.Facts, " "))
@@ -37,7 +44,13 @@ func (f *FactsCmd) Run() error {
 // CollectorCmd implements the "collector" subcommand (stub only).
 type CollectorCmd struct{}
 
-func (c *CollectorCmd) Run() error {
+func (c *CollectorCmd) Run(cli *CLI) error {
+	if cli.Debug {
+		fmt.Fprintln(os.Stderr, "debug: collector run")
+	}
+	if cli.Verbose {
+		fmt.Fprintln(os.Stderr, "verbose: collector run")
+	}
 	fmt.Println("collector: running (stub)")
 	return nil
 }
@@ -47,7 +60,14 @@ type RequiresCmd struct {
 	Mode string `arg:"" enum:"list,check" help:"Operation to perform: list or check."`
 }
 
-func (r *RequiresCmd) Run() error {
+func (r *RequiresCmd) Run(cli *CLI) error {
+	if cli.Debug {
+		fmt.Fprintln(os.Stderr, "debug: requires run")
+	}
+	if cli.Verbose {
+		fmt.Fprintln(os.Stderr, "verbose: requires run")
+	}
+
 	switch r.Mode {
 	case "list":
 		fmt.Println("requires: listing (stub)")
@@ -63,6 +83,7 @@ func main() {
 		kong.Name("clu"),
 		kong.Description("Kong example with facts/collector/requires subcommands."),
 		kong.DefaultEnvars("CLU"),
+		kong.Bind(cli),
 		kong.UsageOnError(),
 	)
 	if err != nil {
@@ -78,10 +99,11 @@ func main() {
 	if cli.Debug {
 		fmt.Fprintln(os.Stderr, "debug: enabled")
 	}
+	if cli.Verbose {
+		fmt.Fprintln(os.Stderr, "verbose: enabled")
+	}
 
 	err = ctx.Run()
 	ctx.FatalIfErrorf(err)
 }
 
-// Note: Kong does not support numeric-only short options like -1/-2/-3.
-// Use -t/--tier with values 1,2,3 instead (e.g., -t=2 or --tier 2).

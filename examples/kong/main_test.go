@@ -17,6 +17,7 @@ func runCLI(args []string) (stdout, stderr string, err error) {
 	k, err := kong.New(&cli,
 		kong.Name("clu"),
 		kong.Description("Kong example with facts/collector/requires subcommands."),
+		kong.Bind(&cli),
 		kong.UsageOnError(),
 	)
 	if err != nil {
@@ -44,6 +45,9 @@ func runCLI(args []string) (stdout, stderr string, err error) {
 
 	if cli.Debug {
 		fmt.Fprintln(os.Stderr, "debug: enabled")
+	}
+	if cli.Verbose {
+		fmt.Fprintln(os.Stderr, "verbose: enabled")
 	}
 	runErr := ctx.Run()
 
@@ -120,7 +124,90 @@ func TestDebugFlag(t *testing.T) {
 	if want := "debug: enabled"; !strings.Contains(errOut, want) {
 		t.Fatalf("stderr missing %q, got: %q", want, errOut)
 	}
+	if want := "debug: facts run"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
 	if want := "facts: tier=1 net=false (stub)"; !strings.Contains(out, want) {
 		t.Fatalf("stdout missing %q, got: %q", want, out)
+	}
+}
+
+func TestDebugCollector(t *testing.T) {
+	out, errOut, err := runCLI([]string{"--debug", "collector"})
+	if err != nil {
+		t.Fatalf("run error: %v", err)
+	}
+	if want := "collector: running (stub)"; !strings.Contains(out, want) {
+		t.Fatalf("stdout missing %q, got: %q", want, out)
+	}
+	if want := "debug: enabled"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
+	if want := "debug: collector run"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
+}
+
+func TestDebugRequires(t *testing.T) {
+	out, errOut, err := runCLI([]string{"--debug", "requires", "list"})
+	if err != nil {
+		t.Fatalf("run error: %v", err)
+	}
+	if want := "requires: listing (stub)"; !strings.Contains(out, want) {
+		t.Fatalf("stdout missing %q, got: %q", want, out)
+	}
+	if want := "debug: enabled"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
+	if want := "debug: requires run"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
+}
+
+func TestVerboseFacts(t *testing.T) {
+	out, errOut, err := runCLI([]string{"--verbose", "facts", "-t", "1"})
+	if err != nil {
+		t.Fatalf("run error: %v", err)
+	}
+	if want := "verbose: enabled"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
+	if want := "verbose: facts run"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
+	if want := "facts: tier=1 net=false (stub)"; !strings.Contains(out, want) {
+		t.Fatalf("stdout missing %q, got: %q", want, out)
+	}
+}
+
+func TestVerboseCollector(t *testing.T) {
+	out, errOut, err := runCLI([]string{"--verbose", "collector"})
+	if err != nil {
+		t.Fatalf("run error: %v", err)
+	}
+	if want := "collector: running (stub)"; !strings.Contains(out, want) {
+		t.Fatalf("stdout missing %q, got: %q", want, out)
+	}
+	if want := "verbose: enabled"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
+	if want := "verbose: collector run"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
+}
+
+func TestVerboseRequires(t *testing.T) {
+	out, errOut, err := runCLI([]string{"--verbose", "requires", "list"})
+	if err != nil {
+		t.Fatalf("run error: %v", err)
+	}
+	if want := "requires: listing (stub)"; !strings.Contains(out, want) {
+		t.Fatalf("stdout missing %q, got: %q", want, out)
+	}
+	if want := "verbose: enabled"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
+	}
+	if want := "verbose: requires run"; !strings.Contains(errOut, want) {
+		t.Fatalf("stderr missing %q, got: %q", want, errOut)
 	}
 }
