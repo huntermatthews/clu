@@ -1,12 +1,11 @@
 package pkg
 
 // Version of the program, set at build time -- consts won't work with -ldflags
-var Version = "0.dev0+unknown"
+var Version = "unknown"
 
 // About the program itself
 const (
-	Title = "clu"
-
+	Title       = "clu"
 	Summary     = "clu utility"
 	License     = "Apache-2.0"
 	AuthorEmail = "hunter@unix.haus"
