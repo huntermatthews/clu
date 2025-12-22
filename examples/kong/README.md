@@ -68,6 +68,7 @@ go run ./examples/kong requires list
 
 # Debug flag (prints to stderr)
 go run ./examples/kong --debug facts -t 1
+```
 
 ## Kong Options Cheat Sheet
 
@@ -75,7 +76,7 @@ You can pass these option constructors to `kong.New(...)` to configure behavior:
 
 - Name & description:
   - `kong.Name(string)` — https://pkg.go.dev/github.com/alecthomas/kong#Name
-  - `kong.Description(string)` — https://pkg.go.dev/github.com/alecthomas/kong#Description
+  - `kong.Description(string)` — <https://pkg.go.dev/github.com/alecthomas/kong#Description>
   - `kong.Summary(string)` — https://pkg.go.dev/github.com/alecthomas/kong#Summary
   - `kong.Epilogue(string)` — https://pkg.go.dev/github.com/alecthomas/kong#Epilogue
 - Help & usage:
@@ -97,7 +98,7 @@ You can pass these option constructors to `kong.New(...)` to configure behavior:
   - `kong.Bind(any)` — https://pkg.go.dev/github.com/alecthomas/kong#Bind
   - `kong.Exit(func(code int))` — https://pkg.go.dev/github.com/alecthomas/kong#Exit
   - `kong.Usage(func(*kong.Context))` — https://pkg.go.dev/github.com/alecthomas/kong#Usage
-```
+
 
 ## Tests
 
