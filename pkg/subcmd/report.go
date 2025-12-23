@@ -23,9 +23,9 @@ type FactsCmd struct {
 
 func (f *FactsCmd) Run() error {
 	if len(f.FactNames) > 0 {
-		fmt.Printf("TRACE: facts: tier=%d (stub) %s\n", f.Tier, strings.Join(f.FactNames, " "))
+		fmt.Printf("TRACE: facts: tier=%d %s\n", f.Tier, strings.Join(f.FactNames, " "))
 	} else {
-		fmt.Printf("TRACE: facts: tier=%d (stub)\n", f.Tier)
+		fmt.Printf("TRACE: facts: tier=%d\n", f.Tier)
 	}
 
 	osys := facts.OpSysFactory()

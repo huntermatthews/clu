@@ -19,8 +19,8 @@ import (
 type CLI struct {
 	Debug     bool                `help:"Enable debug logging."`
 	Net       bool                `name:"net" help:"Enable network access."`
-	Facts     subcmd.FactsCmd     `cmd:"" help:"Show facts (stub)."`
-	Collector subcmd.CollectorCmd `cmd:"" help:"Run collector (stub)."`
+	Facts     subcmd.FactsCmd     `cmd:"" help:"Show facts." default:"withargs"`
+	Collector subcmd.CollectorCmd `cmd:"" help:"Run collector."`
 	Requires  subcmd.RequiresCmd  `cmd:"" help:"Requires actions: list or check."`
 }
 
@@ -29,7 +29,6 @@ func main() {
 	k, err := kong.New(cli,
 		kong.Name("clu"),
 		kong.Description("Kong example with facts/collector/requires subcommands."),
-		kong.DefaultEnvars("CLU"),
 		kong.UsageOnError(),
 	)
 	if err != nil {
@@ -44,6 +43,7 @@ func main() {
 
 	if cli.Debug {
 		fmt.Fprintln(os.Stderr, "debug: enabled")
+		// see comment in pkg/config.go about this
 		pkg.CluConfig.Debug = true
 	}
 
