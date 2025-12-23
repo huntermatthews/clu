@@ -42,7 +42,9 @@ func (f *FactsCmd) Run(cli *CLI) error {
 }
 
 // CollectorCmd implements the "collector" subcommand (stub only).
-type CollectorCmd struct{}
+type CollectorCmd struct {
+	OutputDir string `name:"output-dir" default:"/tmp" help:"Directory to write the archive/output."`
+}
 
 func (c *CollectorCmd) Run(cli *CLI) error {
 	if cli.Debug {

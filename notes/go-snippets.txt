@@ -16,3 +16,41 @@ func orDefault(v, def string) string {
 }
 
 ---------------------------------------
+
+Other way to get program global (options) pushed down to subcmd level, however: this doesn't do anything for the
+Sources.Parse() themselves.
+
+// pkg/subcmd/globals.go
+package subcmd
+
+type Globals struct {
+    Net bool `name:"net" help:"Enable network access."`
+}
+
+and then wire it in:
+
+// cmd/main.go
+type CLI struct {
+    Debug bool
+    subcmd.Globals `embed:""`
+    Facts     subcmd.FactsCmd `cmd:""`
+    Collector subcmd.CollectorCmd `cmd:""`
+    Requires  subcmd.RequiresCmd  `cmd:""`
+}
+
+// pkg/subcmd/report.go
+type FactsCmd struct {
+    Globals `embed:""`                // now has Net
+    Tier         int  `name:"tier" short:"t" enum:"1,2,3" default:"1"`
+    OutputFormat string `name:"out" enum:"dots,json,shell" default:"dots"`
+    FactNames    []string `arg:"" optional:"true"`
+}
+
+func (f *FactsCmd) Run() error {
+    // use f.Net here
+    // ...
+    return nil
+}
+
+---------------------------------------
+

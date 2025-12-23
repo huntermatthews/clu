@@ -77,12 +77,25 @@ func TestFactsTierAndNetWithNames(t *testing.T) {
 	}
 }
 
-func TestCollectorStub(t *testing.T) {
+func TestCollectorStub_DefaultOutputDir(t *testing.T) {
 	out, errOut, err := runCLI([]string{"collector"})
 	if err != nil {
 		t.Fatalf("run error: %v", err)
 	}
-	if want := "collector: running (stub)"; !strings.Contains(out, want) {
+	if want := "collector: running (stub) output-dir=/tmp"; !strings.Contains(out, want) {
+		t.Fatalf("stdout missing %q, got: %q", want, out)
+	}
+	if errOut != "" {
+		t.Fatalf("unexpected stderr: %q", errOut)
+	}
+}
+
+func TestCollectorStub_OverrideOutputDir(t *testing.T) {
+	out, errOut, err := runCLI([]string{"collector", "--output-dir", "/var/tmp"})
+	if err != nil {
+		t.Fatalf("run error: %v", err)
+	}
+	if want := "collector: running (stub) output-dir=/var/tmp"; !strings.Contains(out, want) {
 		t.Fatalf("stdout missing %q, got: %q", want, out)
 	}
 	if errOut != "" {

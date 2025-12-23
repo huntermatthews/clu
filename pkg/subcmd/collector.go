@@ -20,6 +20,14 @@ import (
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
+// CollectorCmd implements the "collector" subcommand (stub only).
+type CollectorCmd struct{}
+
+func (c *CollectorCmd) Run() error {
+	fmt.Println("collector: running (stub)")
+	return nil
+}
+
 // ArchiveConfig controls archive creation (currently only output directory override).
 type ArchiveConfig struct {
 	OutputDir string // where to place final archive (default /tmp)

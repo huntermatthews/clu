@@ -1,23 +1,15 @@
 package pkg
 
-import "github.com/huntermatthews/clu/pkg/facts/types"
-
-// config.go provides a simple global configuration container with NO thread safety.
-// Fields:
-//  - Verbose: enable extra (non-debug) informational output
-//  - Debug: enable diagnostic / debug output
-//  - Output: selected output format name (e.g., "dots", "json", "shell")
-//  - Facts: list of fact name prefixes requested by user / caller
-
-// AppConfig holds runtime configuration flags and selections.
-type AppConfig struct {
-	Verbose    bool
+// NOTE: I'm not super happy with this global mutable state design, but it's
+// simple and effective for now. We can refactor later if needed.
+// Specifically, I want a _simple_ way to access Net and Debug at least in the Source.Parse() methods that
+// doesn't involve threading config objects through multiple layers of calls.
+// When logging is added I suspect I'll learn more and reconsider.
+type config struct {
 	Debug      bool
+	Verbose    bool
 	NetEnabled bool
-	Output     string
-	Tier       types.Tier
-	FactSpecs  []string
 }
 
 // Config is the singleton instance backing global configuration access.
-var Config = &AppConfig{Tier: types.TierThree}
+var CluConfig = &config{}

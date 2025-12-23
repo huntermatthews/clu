@@ -6,37 +6,52 @@ package main
 // requires) are expected to be added separately.
 
 import (
-	"flag"
 	"fmt"
 	"os"
+
+	"github.com/alecthomas/kong"
 
 	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/subcmd"
 )
 
-// setupLogging is a placeholder to integrate with a logging framework.
-// For now it does nothing beyond being a stub.
-// func setupLogging() {
-// 	fmt.Printf("LOG: setupLogging called with debug=%t\n", pkg.Config.Debug)
-// 	fmt.Printf("LOG: setupLogging called with verbose=%t\n", pkg.Config.Verbose)
-// }
-
-// parseCmdline configures and parses flags and returns the selected command function.
-func parseCmdline(args []string) {
-	fmt.Printf("LOG: parseCmdline called with args=%v\n", args)
-
-	flag.BoolVar(&pkg.Config.Debug, "debug", false, "enable debug output")
-	flag.BoolVar(&pkg.Config.Verbose, "verbose", false, "enable verbose output")
-
-	flag.Parse()
+// CLI defines the root command and global flags.
+type CLI struct {
+	Debug     bool                `help:"Enable debug logging."`
+	Net       bool                `name:"net" help:"Enable network access."`
+	Facts     subcmd.FactsCmd     `cmd:"" help:"Show facts." default:"withargs"`
+	Collector subcmd.CollectorCmd `cmd:"" help:"Run collector."`
+	Requires  subcmd.RequiresCmd  `cmd:"" help:"Requires actions: list or check."`
 }
 
 func main() {
+	cli := &CLI{}
+	k, err := kong.New(cli,
+		kong.Name("clu"),
+		kong.Description("Kong example with facts/collector/requires subcommands."),
+		kong.UsageOnError(),
+	)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "failed to init CLI:", err)
+		os.Exit(2)
+	}
 
-	parseCmdline(os.Args[1:])
-	// setupLogging()
+	ctx, err := k.Parse(os.Args[1:])
+	if err != nil {
+		k.FatalIfErrorf(err)
+	}
 
-	exit := subcmd.ReportFacts()
+	if cli.Debug {
+		fmt.Fprintln(os.Stderr, "debug: enabled")
+		// see comment in pkg/config.go about this
+		pkg.CluConfig.Debug = true
+	}
 
-	os.Exit(exit)
+	if cli.Net {
+		fmt.Fprintln(os.Stderr, "net: enabled")
+		pkg.CluConfig.NetEnabled = true
+	}
+
+	err = ctx.Run()
+	ctx.FatalIfErrorf(err)
 }
