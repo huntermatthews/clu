@@ -18,15 +18,14 @@ import (
 type FactsCmd struct {
 	Tier         int      `name:"tier" short:"t" enum:"1,2,3" default:"1" help:"Tier level (1, 2, or 3)."`
 	OutputFormat string   `name:"out" enum:"dots,json,shell" default:"dots" help:"Output format: dots, json, or shell."`
-	Net          bool     `name:"net" help:"Enable network access."`
 	FactNames    []string `arg:"" optional:"true" help:"Zero or more fact names to report on."`
 }
 
 func (f *FactsCmd) Run() error {
 	if len(f.FactNames) > 0 {
-		fmt.Printf("TRACE: facts: tier=%d net=%v (stub) %s\n", f.Tier, f.Net, strings.Join(f.FactNames, " "))
+		fmt.Printf("TRACE: facts: tier=%d (stub) %s\n", f.Tier, strings.Join(f.FactNames, " "))
 	} else {
-		fmt.Printf("TRACE: facts: tier=%d net=%v (stub)\n", f.Tier, f.Net)
+		fmt.Printf("TRACE: facts: tier=%d (stub)\n", f.Tier)
 	}
 
 	osys := facts.OpSysFactory()

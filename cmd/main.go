@@ -11,18 +11,18 @@ import (
 
 	"github.com/alecthomas/kong"
 
+	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/subcmd"
 )
 
 // CLI defines the root command and global flags.
 type CLI struct {
 	Debug     bool                `help:"Enable debug logging."`
+	Net       bool                `name:"net" help:"Enable network access."`
 	Facts     subcmd.FactsCmd     `cmd:"" help:"Show facts (stub)."`
 	Collector subcmd.CollectorCmd `cmd:"" help:"Run collector (stub)."`
 	Requires  subcmd.RequiresCmd  `cmd:"" help:"Requires actions: list or check."`
 }
-
-
 
 func main() {
 	cli := &CLI{}
@@ -44,12 +44,13 @@ func main() {
 
 	if cli.Debug {
 		fmt.Fprintln(os.Stderr, "debug: enabled")
+		pkg.CluConfig.Debug = true
 	}
 
-	// Parts of the program need to know if debug, verbose and net are set.
-	pkg.GlobalConfig.Debug = cli.Debug
-	pkg.GlobalConfig.Verbose = cli.Verbose
-	pkg.GlobalConfig.NetEnabled = cli.Net
+	if cli.Net {
+		fmt.Fprintln(os.Stderr, "net: enabled")
+		pkg.CluConfig.NetEnabled = true
+	}
 
 	err = ctx.Run()
 	ctx.FatalIfErrorf(err)
