@@ -8,13 +8,16 @@ import (
 	"github.com/alecthomas/kong"
 )
 
+const version = "0.1.0"
+
 // CLI defines the root command and global flags.
 type CLI struct {
-	Debug     bool         `help:"Enable debug logging."`
-	Verbose   bool         `help:"Enable verbose output."`
-	Facts     FactsCmd     `cmd:"" help:"Show facts (stub)."`
-	Collector CollectorCmd `cmd:"" help:"Run collector (stub)."`
-	Requires  RequiresCmd  `cmd:"" help:"Requires actions: list or check."`
+	Debug     bool             `help:"Enable debug logging."`
+	Verbose   bool             `help:"Enable verbose output."`
+	Version   kong.VersionFlag `help:"Print version information and quit."`
+	Facts     FactsCmd         `cmd:"" help:"Show facts (stub)."`
+	Collector CollectorCmd     `cmd:"" help:"Run collector (stub)."`
+	Requires  RequiresCmd      `cmd:"" help:"Requires actions: list or check."`
 }
 
 // FactsCmd implements the "facts" subcommand.
@@ -87,6 +90,7 @@ func main() {
 		kong.DefaultEnvars("CLU"),
 		kong.Bind(cli),
 		kong.UsageOnError(),
+		kong.Vars{"version": "v0.1.0"},
 	)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to init CLI:", err)
@@ -96,6 +100,12 @@ func main() {
 	ctx, err := k.Parse(os.Args[1:])
 	if err != nil {
 		k.FatalIfErrorf(err)
+	}
+
+	// Handle --version at root: print and exit.
+	if cli.Version {
+		fmt.Println(version)
+		os.Exit(0)
 	}
 
 	if cli.Debug {
@@ -108,4 +118,3 @@ func main() {
 	err = ctx.Run()
 	ctx.FatalIfErrorf(err)
 }
-
