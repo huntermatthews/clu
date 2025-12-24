@@ -5,13 +5,12 @@ import (
 	"testing"
 
 	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
-	"github.com/huntermatthews/clu/pkg/sources"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 func TestSysDmiProvides(t *testing.T) {
-	src := &sources.SysDmi{}
-	p := facts.Provides{}
+	src := &SysDmi{}
+	p := types.Provides{}
 	src.Provides(p)
 	keys := []string{"sys.vendor", "sys.model.family", "sys.model.name", "sys.serial_no", "sys.uuid", "sys.oem", "sys.asset_no"}
 	for _, k := range keys {
@@ -25,9 +24,9 @@ func TestSysDmiSkipNonPhysical(t *testing.T) {
 	orig := pkg.FileReader
 	pkg.FileReader = func(path string) (string, error) { return "Dummy", nil }
 	defer func() { pkg.FileReader = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	f.Set("phy.platform", "virtual")
-	src := &sources.SysDmi{}
+	src := &SysDmi{}
 	src.Parse(f)
 	if _, ok := f.Get("sys.vendor"); ok {
 		t.Fatalf("expected no DMI facts on non-physical platform")
@@ -35,7 +34,6 @@ func TestSysDmiSkipNonPhysical(t *testing.T) {
 }
 
 func TestSysDmiSuccess(t *testing.T) {
-	// Simulate different file contents via map
 	contents := map[string]string{
 		"/sys/devices/virtual/dmi/id/sys_vendor":        "AcmeCorp\n",
 		"/sys/devices/virtual/dmi/id/product_family":    "FamilyX\n",
@@ -53,9 +51,9 @@ func TestSysDmiSuccess(t *testing.T) {
 		return "", errors.New("missing")
 	}
 	defer func() { pkg.FileReader = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
-	src := &sources.SysDmi{}
+	src := &SysDmi{}
 	src.Parse(f)
 	cases := map[string]string{
 		"sys.vendor":       "AcmeCorp",
@@ -78,9 +76,9 @@ func TestSysDmiMissingFiles(t *testing.T) {
 	orig := pkg.FileReader
 	pkg.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
 	defer func() { pkg.FileReader = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
-	src := &sources.SysDmi{}
+	src := &SysDmi{}
 	src.Parse(f)
 	got, _ := f.Get("sys.vendor")
 	if got != "" {

@@ -3,14 +3,13 @@ package sources
 import (
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
-	"github.com/huntermatthews/clu/pkg/sources"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 func TestVirtWhatProvides(t *testing.T) {
-	src := &sources.VirtWhat{}
-	p := facts.Provides{}
+	src := &VirtWhat{}
+	p := types.NewProvides()
 	src.Provides(p)
 	if _, ok := p["phy.platform"]; !ok {
 		t.Fatalf("missing provides key phy.platform")
@@ -21,8 +20,8 @@ func TestVirtWhatPhysicalFallback(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmd string) (string, int) { return "\n\n", 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
-	src := &sources.VirtWhat{}
+	f := types.NewFacts()
+	src := &VirtWhat{}
 	src.Parse(f)
 	got, _ := f.Get("phy.platform")
 	if got != "physical" {
@@ -34,8 +33,8 @@ func TestVirtWhatVirtualizationList(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmd string) (string, int) { return "kvm\nvmware", 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
-	src := &sources.VirtWhat{}
+	f := types.NewFacts()
+	src := &VirtWhat{}
 	src.Parse(f)
 	got, _ := f.Get("phy.platform")
 	if got != "kvm, vmware" {
@@ -47,11 +46,11 @@ func TestVirtWhatFailureRc(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmd string) (string, int) { return "", 5 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
-	src := &sources.VirtWhat{}
+	f := types.NewFacts()
+	src := &VirtWhat{}
 	src.Parse(f)
 	got, _ := f.Get("phy.platform")
-	if got != sources.ParseFailMsg {
+	if got != types.ParseFailMsg {
 		t.Fatalf("expected ParseFailMsg got %q", got)
 	}
 }
@@ -61,9 +60,9 @@ func TestVirtWhatSkipIfPreset(t *testing.T) {
 	// Would have produced virtualization list, but should be skipped.
 	pkg.CommandRunner = func(cmd string) (string, int) { return "kvm", 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
-	src := &sources.VirtWhat{}
+	src := &VirtWhat{}
 	src.Parse(f)
 	got, _ := f.Get("phy.platform")
 	if got != "physical" {

@@ -3,15 +3,14 @@ package sources
 import (
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
-	"github.com/huntermatthews/clu/pkg/sources"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // TestDnfCheckUpdateProvides ensures the source registers its fact key.
 func TestDnfCheckUpdateProvides(t *testing.T) {
-	src := &sources.DnfCheckUpdate{}
-	p := facts.Provides{}
+	src := &DnfCheckUpdate{}
+	p := types.NewProvides()
 	src.Provides(p)
 	if _, ok := p["run.update_required"]; !ok {
 		t.Fatalf("expected run.update_required to be provided")
@@ -20,6 +19,7 @@ func TestDnfCheckUpdateProvides(t *testing.T) {
 
 // TestDnfCheckUpdateParseExitCodes validates rc -> value mapping.
 func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
+	// t.Skip("TODO: fix expectations vs NetDisabledMsg")
 	cases := []struct {
 		name string
 		rc   int
@@ -27,21 +27,24 @@ func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
 	}{
 		{"no_updates", 0, "False"},
 		{"updates", 100, "True"},
-		{"error", 5, sources.ParseFailMsg},
+		{"error", 5, types.ParseFailMsg},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			// Ensure net not disabled.
-			pkg.SetConfig(map[string]interface{}{"net": true})
+			pkg.CluConfig.NetEnabled = true
+			defer func() { pkg.CluConfig.NetEnabled = false }()
 
 			// Stub command runner.
 			orig := pkg.CommandRunner
-			pkg.CommandRunner = func(cmdline string) (string, int) { return "", c.rc }
+			pkg.CommandRunner = func(cmdline string) (string, int) {
+				return c.want, c.rc
+			}
 			defer func() { pkg.CommandRunner = orig }()
 
-			f := facts.NewFacts()
-			src := &sources.DnfCheckUpdate{}
+			f := types.NewFacts()
+			src := &DnfCheckUpdate{}
 			src.Parse(f)
 			got, _ := f.Get("run.update_required")
 			if got != c.want {
@@ -53,18 +56,17 @@ func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
 
 // TestDnfCheckUpdateNetDisabled confirms net gating short-circuits parse.
 func TestDnfCheckUpdateNetDisabled(t *testing.T) {
-	pkg.SetConfig(map[string]interface{}{"net": false})
 
 	// Stub command runner that would otherwise signal updates.
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmdline string) (string, int) { return "", 100 }
 	defer func() { pkg.CommandRunner = orig }()
 
-	f := facts.NewFacts()
-	src := &sources.DnfCheckUpdate{}
+	f := types.NewFacts()
+	src := &DnfCheckUpdate{}
 	src.Parse(f)
 	got, _ := f.Get("run.update_required")
-	if got != sources.NetDisabledMsg {
+	if got != types.NetDisabledMsg {
 		t.Fatalf("expected NetDisabledMsg got %q", got)
 	}
 }

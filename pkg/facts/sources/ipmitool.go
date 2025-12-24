@@ -55,10 +55,10 @@ func (i *Ipmitool) Parse(f *types.Facts) {
 
 func (i *Ipmitool) parseLanPrint(f *types.Facts) {
 	patterns := map[string]string{
-		`^IP Address Source *: (.+)`: "bmc.ipv4_source",
-		`^IP Address *: (.+)`:        "bmc.ipv4_address",
-		`^Subnet Mask *: (.+)`:       "bmc.ipv4_mask",
-		`^MAC Address *: (.+)`:       "bmc.mac_address",
+		`(?m)^IP Address Source *: (.+)`: "bmc.ipv4_source",
+		`(?m)^IP Address *: (.+)`:        "bmc.ipv4_address",
+		`(?m)^Subnet Mask *: (.+)`:       "bmc.ipv4_mask",
+		`(?m)^MAC Address *: (.+)`:       "bmc.mac_address",
 	}
 	data, rc := pkg.CommandRunner("ipmitool lan print")
 	if data == "" || rc != 0 {
@@ -82,9 +82,9 @@ func (i *Ipmitool) parseLanPrint(f *types.Facts) {
 
 func (i *Ipmitool) parseMcInfo(f *types.Facts) {
 	patterns := map[string]string{
-		`^Firmware Revision *: (.+)`: "bmc.firmware_version",
-		`^Manufacturer ID *: (.+)`:   "bmc.manufacturer_id",
-		`^Manufacturer Name *: (.+)`: "bmc.manufacturer_name",
+		`(?m)^Firmware Revision *: (.+)`: "bmc.firmware_version",
+		`(?m)^Manufacturer ID *: (.+)`:   "bmc.manufacturer_id",
+		`(?m)^Manufacturer Name *: (.+)`: "bmc.manufacturer_name",
 	}
 	data, rc := pkg.CommandRunner("ipmitool mc info")
 	if data == "" || rc != 0 {

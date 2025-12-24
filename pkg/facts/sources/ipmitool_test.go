@@ -3,8 +3,8 @@ package sources
 import (
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	"github.com/huntermatthews/clu/pkg/sources"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // sample outputs modeled after ipmitool output patterns
@@ -19,8 +19,8 @@ Manufacturer Name       : ExampleCorp`
 
 // TestIpmitoolProvides ensures keys are registered.
 func TestIpmitoolProvides(t *testing.T) {
-	src := &sources.Ipmitool{}
-	p := pkg.Provides{}
+	src := &Ipmitool{}
+	p := types.NewProvides()
 	src.Provides(p)
 	keys := []string{
 		"bmc.ipv4_source", "bmc.ipv4_address", "bmc.ipv4_mask", "bmc.mac_address",
@@ -39,9 +39,9 @@ func TestIpmitoolSkipNonPhysical(t *testing.T) {
 	pkg.CommandRunner = func(cmdline string) (string, int) { return sampleLanPrint, 0 }
 	defer func() { pkg.CommandRunner = orig }()
 
-	f := pkg.NewFacts()
+	f := types.NewFacts()
 	f.Set("phy.platform", "virtual")
-	src := &sources.Ipmitool{}
+	src := &Ipmitool{}
 	src.Parse(f)
 	if v, ok := f.Get("bmc.mac_address"); ok || v != "" {
 		t.Fatalf("expected no bmc facts on non-physical platform")
@@ -63,9 +63,9 @@ func TestIpmitoolSuccess(t *testing.T) {
 	}
 	defer func() { pkg.CommandRunner = orig }()
 
-	f := pkg.NewFacts()
+	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
-	src := &sources.Ipmitool{}
+	src := &Ipmitool{}
 	src.Parse(f)
 
 	checks := map[string]string{
@@ -99,15 +99,15 @@ func TestIpmitoolLanFailure(t *testing.T) {
 	}
 	defer func() { pkg.CommandRunner = orig }()
 
-	f := pkg.NewFacts()
+	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
-	src := &sources.Ipmitool{}
+	src := &Ipmitool{}
 	src.Parse(f)
 
 	lanKeys := []string{"bmc.ipv4_source", "bmc.ipv4_address", "bmc.ipv4_mask", "bmc.mac_address"}
 	for _, k := range lanKeys {
 		got, _ := f.Get(k)
-		if got != sources.ParseFailMsg {
+		if got != types.ParseFailMsg {
 			t.Fatalf("expected ParseFailMsg for %s got %q", k, got)
 		}
 	}
@@ -131,15 +131,15 @@ func TestIpmitoolMcFailure(t *testing.T) {
 	}
 	defer func() { pkg.CommandRunner = orig }()
 
-	f := pkg.NewFacts()
+	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
-	src := &sources.Ipmitool{}
+	src := &Ipmitool{}
 	src.Parse(f)
 
 	mcKeys := []string{"bmc.firmware_version", "bmc.manufacturer_id", "bmc.manufacturer_name"}
 	for _, k := range mcKeys {
 		got, _ := f.Get(k)
-		if got != sources.ParseFailMsg {
+		if got != types.ParseFailMsg {
 			t.Fatalf("expected ParseFailMsg for %s got %q", k, got)
 		}
 	}

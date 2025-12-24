@@ -20,7 +20,7 @@ func (u *Uptime) Requires(r *types.Requires) {
 }
 
 // Match both singular 'user' and plural 'users'.
-var uptimeRegex = regexp.MustCompile(`.*up *(.*) \d+ users,? .*`)
+var uptimeRegex = regexp.MustCompile(`.*up *(.*) \d+ user(?:s)?,? .*`)
 
 func (u *Uptime) Parse(f *types.Facts) {
 	f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)

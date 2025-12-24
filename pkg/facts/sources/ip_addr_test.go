@@ -3,13 +3,13 @@ package sources
 import (
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 func TestIpAddrProvides(t *testing.T) {
 	src := &IpAddr{}
-	p := facts.Provides{}
+	p := types.NewProvides()
 	src.Provides(p)
 	for _, k := range []string{"net.macs", "net.ipv4", "net.ipv6", "net.devs"} {
 		if _, ok := p[k]; !ok {
@@ -26,7 +26,7 @@ func TestIpAddrSuccess(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmd string) (string, int) { return json, 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	src := &IpAddr{}
 	src.Parse(f)
 	cases := map[string]string{
@@ -47,12 +47,12 @@ func TestIpAddrFailureRC(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmd string) (string, int) { return "", 1 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	src := &IpAddr{}
 	src.Parse(f)
 	for _, k := range []string{"net.macs", "net.ipv4", "net.ipv6", "net.devs"} {
 		got, _ := f.Get(k)
-		if got != ParseFailMsg {
+		if got != types.ParseFailMsg {
 			t.Fatalf("%s expected ParseFailMsg got %q", k, got)
 		}
 	}
@@ -62,12 +62,12 @@ func TestIpAddrEmptyOutput(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmd string) (string, int) { return "", 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	src := &IpAddr{}
 	src.Parse(f)
 	for _, k := range []string{"net.macs", "net.ipv4", "net.ipv6", "net.devs"} {
 		got, _ := f.Get(k)
-		if got != ParseFailMsg {
+		if got != types.ParseFailMsg {
 			t.Fatalf("%s expected ParseFailMsg got %q", k, got)
 		}
 	}
@@ -77,12 +77,12 @@ func TestIpAddrMalformedJSON(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmd string) (string, int) { return "not json", 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
+	f := types.NewFacts()
 	src := &IpAddr{}
 	src.Parse(f)
 	for _, k := range []string{"net.macs", "net.ipv4", "net.ipv6", "net.devs"} {
 		got, _ := f.Get(k)
-		if got != ParseFailMsg {
+		if got != types.ParseFailMsg {
 			t.Fatalf("%s expected ParseFailMsg got %q", k, got)
 		}
 	}

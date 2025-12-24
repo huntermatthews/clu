@@ -5,8 +5,7 @@ import (
 	"testing"
 
 	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
-	"github.com/huntermatthews/clu/pkg/sources"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 var sampleOsRelease = `NAME="Test Linux"
@@ -16,8 +15,8 @@ PRETTY_NAME="Test Linux 1.2"`
 
 // TestOsReleaseProvides validates registration of provided keys.
 func TestOsReleaseProvides(t *testing.T) {
-	src := &sources.OsRelease{}
-	p := facts.Provides{}
+	src := &OsRelease{}
+	p := types.Provides{}
 	src.Provides(p)
 	for _, k := range []string{"os.distro.name", "os.distro.version"} {
 		if _, ok := p[k]; !ok {
@@ -31,8 +30,8 @@ func TestOsReleaseSuccess(t *testing.T) {
 	orig := pkg.FileReader
 	pkg.FileReader = func(path string) (string, error) { return sampleOsRelease, nil }
 	defer func() { pkg.FileReader = orig }()
-	f := facts.NewFacts()
-	src := &sources.OsRelease{}
+	f := types.NewFacts()
+	src := &OsRelease{}
 	src.Parse(f)
 	name, _ := f.Get("os.distro.name")
 	ver, _ := f.Get("os.distro.version")
@@ -45,12 +44,12 @@ func TestOsReleaseMissing(t *testing.T) {
 	orig := pkg.FileReader
 	pkg.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
 	defer func() { pkg.FileReader = orig }()
-	f := facts.NewFacts()
-	src := &sources.OsRelease{}
+	f := types.NewFacts()
+	src := &OsRelease{}
 	src.Parse(f)
 	name, _ := f.Get("os.distro.name")
 	ver, _ := f.Get("os.distro.version")
-	if name != sources.ParseFailMsg || ver != sources.ParseFailMsg {
+	if name != types.ParseFailMsg || ver != types.ParseFailMsg {
 		t.Fatalf("expected ParseFailMsg got name=%q ver=%q", name, ver)
 	}
 }

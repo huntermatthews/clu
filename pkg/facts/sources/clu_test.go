@@ -7,15 +7,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // TestCluProvides ensures all expected keys are registered.
 func TestCluProvides(t *testing.T) {
 	c := &Clu{}
-	p := facts.NewProvides()
+	p := types.NewProvides()
 	c.Provides(p)
-	keys := []string{"clu.binary", "clu.version", "clu.python.binary", "clu.python.version", "clu.cmdline", "clu.cwd", "clu.user", "clu.date"}
+	keys := []string{"clu.binary", "clu.version", "clu.cmdline", "clu.cwd", "clu.user", "clu.date"}
 	for _, k := range keys {
 		if _, ok := p[k]; !ok {
 			t.Errorf("expected key %s in provides map", k)
@@ -26,10 +26,10 @@ func TestCluProvides(t *testing.T) {
 // TestCluParse basic parsing; skips assertions if runtime changes unexpectedly.
 func TestCluParse(t *testing.T) {
 	c := &Clu{}
-	facts := facts.NewFacts()
+	facts := types.NewFacts()
 	c.Parse(facts)
 	// Presence
-	for _, k := range []string{"clu.binary", "clu.version", "clu.python.version", "clu.cmdline", "clu.cwd", "clu.user", "clu.date"} {
+	for _, k := range []string{"clu.binary", "clu.version", "clu.cmdline", "clu.cwd", "clu.user", "clu.date"} {
 		if !facts.Contains(k) {
 			t.Errorf("missing fact %s", k)
 		}

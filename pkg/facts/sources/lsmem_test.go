@@ -4,8 +4,7 @@ import (
 	"testing"
 
 	pkg "github.com/huntermatthews/clu/pkg"
-	facts "github.com/huntermatthews/clu/pkg/facts"
-	"github.com/huntermatthews/clu/pkg/sources"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 var sampleLsmem = `RANGE   SIZE   STATE
@@ -14,8 +13,8 @@ Total online memory:     4294967296`
 
 // TestLsmemProvides ensures key registration.
 func TestLsmemProvides(t *testing.T) {
-	src := &sources.Lsmem{}
-	p := facts.Provides{}
+	src := &Lsmem{}
+	p := types.Provides{}
 	src.Provides(p)
 	if _, ok := p["phy.ram"]; !ok {
 		t.Fatalf("phy.ram not provided")
@@ -27,8 +26,8 @@ func TestLsmemSuccess(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmdline string) (string, int) { return sampleLsmem, 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
-	src := &sources.Lsmem{}
+	f := types.NewFacts()
+	src := &Lsmem{}
 	src.Parse(f)
 	got, ok := f.Get("phy.ram")
 	if !ok || got == "" {
@@ -45,11 +44,11 @@ func TestLsmemFailure(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmdline string) (string, int) { return "", 1 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
-	src := &sources.Lsmem{}
+	f := types.NewFacts()
+	src := &Lsmem{}
 	src.Parse(f)
 	got, _ := f.Get("phy.ram")
-	if got != sources.ParseFailMsg {
+	if got != types.ParseFailMsg {
 		t.Fatalf("expected ParseFailMsg got %q", got)
 	}
 }
@@ -59,11 +58,11 @@ func TestLsmemMissingLine(t *testing.T) {
 	orig := pkg.CommandRunner
 	pkg.CommandRunner = func(cmdline string) (string, int) { return "Header\nNo total line here", 0 }
 	defer func() { pkg.CommandRunner = orig }()
-	f := facts.NewFacts()
-	src := &sources.Lsmem{}
+	f := types.NewFacts()
+	src := &Lsmem{}
 	src.Parse(f)
 	got, _ := f.Get("phy.ram")
-	if got != sources.ParseFailMsg {
+	if got != types.ParseFailMsg {
 		t.Fatalf("expected ParseFailMsg got %q", got)
 	}
 }

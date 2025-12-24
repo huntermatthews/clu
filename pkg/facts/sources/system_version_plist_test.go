@@ -4,12 +4,12 @@ import (
 	"os"
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 func TestSystemVersionPlistProvides(t *testing.T) {
 	s := &SystemVersionPlist{}
-	p := pkg.NewProvides()
+	p := types.NewProvides()
 	s.Provides(p)
 	for _, k := range []string{"os.name", "os.version", "os.build", "id.build_id"} {
 		if _, ok := p[k]; !ok {
@@ -24,7 +24,7 @@ func TestSystemVersionPlistParse(t *testing.T) {
 		t.Skip("SystemVersion.plist not present")
 	}
 	s := &SystemVersionPlist{}
-	facts := pkg.NewFacts()
+	facts := types.NewFacts()
 	s.Parse(facts)
 	if !facts.Contains("os.name") {
 		t.Errorf("expected os.name fact populated")

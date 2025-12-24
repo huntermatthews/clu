@@ -4,12 +4,12 @@ import (
 	"os/exec"
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 func TestSwVersProvides(t *testing.T) {
 	s := &SwVers{}
-	p := pkg.NewProvides()
+	p := types.NewProvides()
 	s.Provides(p)
 	for _, k := range []string{"os.name", "os.version", "os.build"} {
 		if _, ok := p[k]; !ok {
@@ -23,9 +23,8 @@ func TestSwVersParse(t *testing.T) {
 		t.Skip("sw_vers not available")
 	}
 	s := &SwVers{}
-	facts := pkg.NewFacts()
+	facts := types.NewFacts()
 	s.Parse(facts)
-	// On macOS typical keys should be present; tolerate ParseFailMsg on non-mac hosts if command returns empty.
 	if !facts.Contains("os.name") {
 		t.Errorf("expected os.name fact")
 	}
