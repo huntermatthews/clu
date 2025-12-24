@@ -1,10 +1,5 @@
 package main
 
-// Go port of src/clu/cli.py using pflag for argument parsing.
-// This provides a main-style entrypoint plus subcommand registration similar
-// to the Python implementation. Subcommand implementations (report, archive,
-// requires) are expected to be added separately.
-
 import (
 	"fmt"
 	"os"
@@ -19,6 +14,7 @@ import (
 type CLI struct {
 	Debug     bool                `help:"Enable debug logging."`
 	Net       bool                `name:"net" help:"Enable network access."`
+	Version   kong.VersionFlag    `help:"Print version information and quit."`
 	Facts     subcmd.FactsCmd     `cmd:"" help:"Show facts." default:"withargs"`
 	Collector subcmd.CollectorCmd `cmd:"" help:"Run collector."`
 	Requires  subcmd.RequiresCmd  `cmd:"" help:"Requires actions: list or check."`
@@ -30,6 +26,7 @@ func main() {
 		kong.Name("clu"),
 		kong.Description("Kong example with facts/collector/requires subcommands."),
 		kong.UsageOnError(),
+		kong.Vars{"version": pkg.Version},
 	)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to init CLI:", err)
