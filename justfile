@@ -19,7 +19,7 @@ clean:
 # Build the Go CLI tool
 [group('build')]
 clu: clean
-    #!/bin/zsh
+    #! /usr/bin/env zsh
     CLU_VERSION=$(git describe --dirty --always --match "v[0-9]*")
     mkdir -p build
     platforms=("darwin:arm64" "linux:amd64")
