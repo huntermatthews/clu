@@ -41,7 +41,7 @@ jobs:
             build/clu
           fail_on_unmatched_files: true
 # ----
-# Please work
+# Please work harder.
 
 # on:
 #   push:
