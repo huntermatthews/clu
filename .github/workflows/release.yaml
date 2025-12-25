@@ -1,0 +1,125 @@
+---
+name: Build and Release Clu
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: # this might allow manual triggering for testing
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go (stable)
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+          check-latest: true
+
+      - name: Install Just
+        uses: extractions/setup-just@v1
+        with:
+          just-version: latest
+
+      - name: Build binary
+        run: |
+          just build
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          body: |
+            Release ${{ github.ref }}.
+            Download / deploy with
+            `curl -fsSL -o clu https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu`
+          files: |
+            build/clu
+          fail_on_unmatched_files: true
+# on:
+#   push:
+#     tags:
+#       - "v[0-9]+.[0-9]+" # v1.0
+#       - "v[0-9]+.[0-9]+.[0-9]+" # v1.0.0
+
+# permissions:
+#   contents: write
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         goos: [linux, darwin]
+#         goarch: [amd64, arm64]
+#         exclude:
+#           - goos: darwin
+#             goarch: amd64 # not relevant anymore since Apple Silicon transition
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Setup Go
+#         uses: actions/setup-go@v5
+#         with:
+#           go-version: "stable"
+#           check-latest: true
+
+#       # ... (rest of your build/test steps)
+
+#       - name: Release
+#         uses: softprops/action-gh-release@v2
+#         if: startsWith(github.ref, 'refs/tags/')
+#         with:
+#           body: |
+#             Release ${{ github.ref }}.
+#             Download / deploy with
+#             `curl -fsSL -o clu https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu`
+
+#             `python clu`
+#             or
+#             `chmod +x clu`
+#             `./clu`
+#           files: dist/clu
+#           fail_on_unmatched_files: true
+
+# - name: Build binary
+#   run: |
+#     # Set the output directory and binary name based on OS/Arch
+#     OUTPUT_DIR="./dist/${{ matrix.goos }}_${{ matrix.goarch }}"
+#     BINARY_NAME="myprogram"
+#     if [ "${{ matrix.goos }}" = "windows" ]; then
+#       BINARY_NAME="${BINARY_NAME}.exe"
+#     fi
+#     mkdir -p $OUTPUT_DIR
+#     CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o $OUTPUT_DIR/$BINARY_NAME
+
+# - name: Archive artifacts
+#   run: |
+#     # Create a compressed archive (tar.gz for unix, zip for windows)
+#     cd ./dist/${{ matrix.goos }}_${{ matrix.goarch }}
+#     if [ "${{ matrix.goos }}" = "windows" ]; then
+#       zip ../${{ matrix.goos }}_${{ matrix.goarch }}.zip $BINARY_NAME
+#     else
+#       tar -czf ../${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz $BINARY_NAME
+#     fi
+#     cd - # Return to root directory
+
+# - name: Upload artifacts for release
+#   uses: softprops/action-gh-release@v1
+
+#   # next line: the “Upload artifacts for release” step runs only when the workflow is on a tag ref (e.g., a push of refs/tags/v1.2.3).
+#   if: startsWith(github.ref, 'refs/tags/')
+#   with:
+#     files: |
+#       ./dist/${{ matrix.goos }}_${{ matrix.goarch }}/*.zip
+#       ./dist/${{ matrix.goos }}_${{ matrix.goarch }}/*.tar.gz
+#   env:
+#     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # The default token provided by GitHub
