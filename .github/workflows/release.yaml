@@ -11,8 +11,7 @@ permissions:
 
 jobs:
   build-release:
-    # This insanity is to attempt to be compatible with our oldest systems.
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,7 +62,7 @@ jobs:
 
 # jobs:
 #   build:
-#     runs-on: ubuntu-22.04
+#     runs-on: ubuntu-latest
 #     strategy:
 #       matrix:
 #         goos: [linux, darwin]
