@@ -11,7 +11,8 @@ permissions:
 
 jobs:
   build-release:
-    runs-on: ubuntu-latest
+    # This insanity is to attempt to be compatible with our oldest systems.
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,9 +43,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           body: |
-            Release ${{ github.ref }}.
+            Release ${{ github.ref_name }}.
             Download / deploy with
-            `curl -fsSL -o clu https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu`
+            `curl -fsSL -o clu https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu && chmod +x clu`
           files: |
             build/clu
           fail_on_unmatched_files: true
@@ -62,7 +63,7 @@ jobs:
 
 # jobs:
 #   build:
-#     runs-on: ubuntu-latest
+#     runs-on: ubuntu-22.04
 #     strategy:
 #       matrix:
 #         goos: [linux, darwin]
