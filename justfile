@@ -9,32 +9,40 @@ help:
 
 # build it all
 [group('build')]
-build: clu
+build: clu clu-symlink
 
 # Clean up build artifacts
 [group('build')]
 clean:
-    @rm -rf build/*
+    @rm -rf dist/*
 
 # Build the Go CLI tool
 [group('build')]
-clu: clean
-    #! /usr/bin/env zsh
-    CLU_VERSION=$(git describe --dirty --always --match "v[0-9]*")
-    mkdir -p build
+clu:
+    #!/usr/bin/env zsh
+
     platforms=("darwin:arm64" "linux:amd64")
 
     for plat in "${platforms[@]}"; do
-        os=${plat%:*}
-        arch=${plat#*:}
-        echo "Building for $os on $arch..."
-        GOOS=$os GOARCH=$arch go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${CLU_VERSION}" -o build/clu-$os-$arch ./cmd/main.go
+        export GOOS=${plat%:*}
+        export GOARCH=${plat#*:}
+        echo "Building for $GOOS on $GOARCH..."
+        scripts/build.sh
     done
 
-    LOCAL_OS=$(go env GOOS)
-    LOCAL_ARCH=$(go env GOARCH)
-    echo "Creating symlink for local build: $LOCAL_OS on $LOCAL_ARCH..."
-    ln -s clu-${LOCAL_OS}-${LOCAL_ARCH}  build/clu
+# Build the Go CLI tool
+[group('build')]
+build-manylinux:
+    # biowebdev05 is our build server for ancient Linux compatibility
+    ssh biowebdev05 "cd clu && git pull && ./scripts/build.sh"
+    scp biowebdev05:clu/dist/clu-linux-amd64 dist/clu-manylinux2014
+    scp dist/clu-manylinux2014 itbrepo02.nhgri.nih.gov:/srv/webroot/matthewsht/clu-manylinux2014
+    echo 'curl -fsSL -o clu https://itbrepo02.nhgri.nih.gov/matthewsht/clu-manylinux2014 && chmod +x clu'
+
+# Build the Go CLI tool
+[group('build')]
+clu-symlink:
+    ln -s clu-$(go env GOOS)-$(go env GOARCH)  dist/clu
 
 [group('info')]
 report-build-info:

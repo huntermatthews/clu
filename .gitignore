@@ -17,4 +17,5 @@ go.work
 go.work.sum
 
 # Anything we build goes here
+dist/
 build/
