@@ -5,7 +5,6 @@ on:
   push:
     tags:
       - "v*"
-  workflow_dispatch: # this might allow manual triggering for testing
 
 permissions:
   contents: write
@@ -24,9 +23,7 @@ jobs:
           check-latest: true
 
       - name: Install Just
-        uses: extractions/setup-just@v1
-        with:
-          just-version: latest
+        uses: extractions/setup-just@v3
 
       - name: Build binary
         run: |
