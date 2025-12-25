@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        # If using git commands later, you might need fetch-depth: 0
+        # with:
+        #   fetch-depth: 0
 
       - name: Setup Go (stable)
         uses: actions/setup-go@v5
@@ -22,12 +25,17 @@ jobs:
           go-version: "stable"
           check-latest: true
 
-      - name: Install Just
-        uses: extractions/setup-just@v3
+      - name: Display tag name
+        run: |
+          echo "Tag name using GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name using github.ref_name: ${{ github.ref_name }}"
+          echo "Full ref using github.ref: ${{ github.ref }}"
 
       - name: Build binary
         run: |
-          just build
+          # GOOS=$os GOARCH=$arch go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${CLU_VERSION}" -o
+          # build/clu-$os-$arch ./cmd/main.go
+          go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o build/clu ./cmd/main.go
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
