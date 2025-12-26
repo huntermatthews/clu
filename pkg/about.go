@@ -7,7 +7,7 @@ var Version = "unknown"
 const (
 	Title       = "clu"
 	Summary     = "clu utility"
-	License     = "Apache-2.0"
+	License     = "GPLv2"
 	AuthorEmail = "hunter@unix.haus"
 	AuthorName  = "Hunter Matthews"
 )
@@ -38,7 +38,7 @@ const (
 // 	GitCommit string
 // )
 
-// // The Config struct
+// The Config struct
 // type BuildInfo struct {
 // 	Version   string
 // 	BuildTime string
@@ -52,3 +52,12 @@ const (
 // 		GitCommit: GitCommit,
 // 	}
 // }
+
+// Example of an anonymous struct
+// person := struct {
+//         Name string
+//         Age  int
+//     }{
+//         Name: "Alice",
+//         Age:  30,
+//     }

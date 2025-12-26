@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"strings"
 
@@ -15,8 +16,8 @@ type CLI struct {
 	Debug     bool             `help:"Enable debug logging."`
 	Verbose   bool             `help:"Enable verbose output."`
 	Version   kong.VersionFlag `help:"Print version information and quit."`
-	Facts     FactsCmd         `cmd:"" help:"Show facts (stub)."`
-	Collector CollectorCmd     `cmd:"" help:"Run collector (stub)."`
+	Facts     FactsCmd         `cmd:"" help:"Show facts." default:"withargs"`
+	Collector CollectorCmd     `cmd:"" help:"Run collector."`
 	Requires  RequiresCmd      `cmd:"" help:"Requires actions: list or check."`
 }
 
@@ -83,11 +84,15 @@ func (r *RequiresCmd) Run(cli *CLI) error {
 }
 
 func main() {
+	slog.Debug("Starting clu application")
+	slog.Info("Starting clu application")
+	slog.Warn("Starting clu application")
+	slog.Error("Starting clu application")
+
 	cli := &CLI{}
 	k, err := kong.New(cli,
 		kong.Name("clu"),
 		kong.Description("Kong example with facts/collector/requires subcommands."),
-		kong.DefaultEnvars("CLU"),
 		kong.Bind(cli),
 		kong.UsageOnError(),
 		kong.Vars{"version": "v0.1.0"},
