@@ -33,9 +33,8 @@ jobs:
 
       - name: Build binary
         run: |
-          # GOOS=$os GOARCH=$arch go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${CLU_VERSION}" -o
-          # build/clu-$os-$arch ./cmd/main.go
-          go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o build/clu ./cmd/main.go
+          # GOOS=$os GOARCH=$arch go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${CLU_VERSION}" -o build/clu-$os-$arch ./cmd/main.go
+          CGO_ENABLED=0 go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o build/clu ./cmd/main.go
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
