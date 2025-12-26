@@ -10,6 +10,7 @@ help:
 # build it all
 [group('build')]
 build: clu clu-symlink
+    @mkdir -p dist
 
 # Clean up build artifacts
 [group('build')]
@@ -42,6 +43,7 @@ build-manylinux:
 # Build the Go CLI tool
 [group('build')]
 clu-symlink:
+    rm -f dist/clu
     ln -s clu-$(go env GOOS)-$(go env GOARCH)  dist/clu
 
 [group('info')]
