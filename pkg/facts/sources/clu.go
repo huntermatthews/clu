@@ -48,6 +48,8 @@ func (c *Clu) Parse(f *types.Facts) {
 	f.Add(types.TierThree, "clu.cwd", cwd)
 
 	// User
+	// Note this fact can cause us to be linked dynamically.
+	// We might drop back to reading $USER or $USERNAME env var instead.
 	u, _ := user.Current()
 	if u != nil {
 		f.Add(types.TierThree, "clu.user", u.Username)

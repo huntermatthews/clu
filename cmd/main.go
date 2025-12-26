@@ -26,7 +26,7 @@ func main() {
 		kong.Name("clu"),
 		kong.Description("Kong example with facts/collector/requires subcommands."),
 		kong.UsageOnError(),
-		kong.Vars{"version": pkg.Version},
+		kong.Vars{"version": "clu " + pkg.Version},
 	)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "failed to init CLI:", err)
