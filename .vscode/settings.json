@@ -3,5 +3,7 @@
     "directoryFilters": [
       "-notes"
     ]
-  }
+  },
+  "Justfile": "just"
 }
+
