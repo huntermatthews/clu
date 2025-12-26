@@ -1,0 +1,10 @@
+Package: clu
+Version: 0.1.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Maintainer <maintainer@example.com>
+Homepage: https://github.com/huntermatthews/clu
+Description: Minimal packaging of the clu CLI
+ A simple CLI packaged as a Debian binary.
+ Installs the README and the clu.1 man page alongside the binary.
