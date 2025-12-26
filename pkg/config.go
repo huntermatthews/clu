@@ -9,6 +9,7 @@ type config struct {
 	Debug      bool
 	Verbose    bool
 	NetEnabled bool
+    MockDir   string
 }
 
 // Config is the singleton instance backing global configuration access.

@@ -14,6 +14,7 @@ import (
 type CLI struct {
 	Debug     bool                `help:"Enable debug logging."`
 	Net       bool                `name:"net" help:"Enable network access."`
+	MockDir   string              `help:"Enable mock mode for testing." hidden:""`
 	Version   kong.VersionFlag    `help:"Print version information and quit."`
 	Facts     subcmd.FactsCmd     `cmd:"" help:"Show facts." default:"withargs"`
 	Collector subcmd.CollectorCmd `cmd:"" help:"Run collector."`
@@ -47,6 +48,11 @@ func main() {
 	if cli.Net {
 		fmt.Fprintln(os.Stderr, "net: enabled")
 		pkg.CluConfig.NetEnabled = true
+	}
+
+	if cli.MockDir != "" {
+		fmt.Fprintln(os.Stderr, "mock mode: enabled, dir =", cli.MockDir)
+		pkg.CluConfig.MockDir = cli.MockDir
 	}
 
 	err = ctx.Run()
