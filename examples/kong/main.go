@@ -57,7 +57,7 @@ func (c *CollectorCmd) Run(cli *CLI) error {
 	if cli.Verbose {
 		fmt.Fprintln(os.Stderr, "verbose: collector run")
 	}
-	fmt.Println("collector: running (stub)")
+	fmt.Printf("collector: running (stub) output-dir=%s\n", c.OutputDir)
 	return nil
 }
 
