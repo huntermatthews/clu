@@ -24,7 +24,7 @@ func (l *Lsmem) Requires(r *types.Requires) {
 
 // Parse extracts total online memory from command output. On failure sets ParseFailMsg.
 func (l *Lsmem) Parse(f *types.Facts) {
-	data, rc := pkg.CommandRunner("lsmem --summary --bytes")
+	data, rc, _ := pkg.CommandRunner("lsmem --summary --bytes")
 	if data == "" || rc != 0 {
 		f.Set("phy.ram", types.ParseFailMsg)
 		return

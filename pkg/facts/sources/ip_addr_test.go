@@ -1,6 +1,7 @@
 package sources
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/huntermatthews/clu/pkg"
@@ -24,7 +25,7 @@ func TestIpAddrSuccess(t *testing.T) {
         {"ifname":"lo","address":"","addr_info":[{"family":"inet","local":"127.0.0.1"}]}
     ]`
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int) { return json, 0 }
+	pkg.CommandRunner = func(cmd string) (string, int, error) { return json, 0, nil }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &IpAddr{}
@@ -45,7 +46,7 @@ func TestIpAddrSuccess(t *testing.T) {
 
 func TestIpAddrFailureRC(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int) { return "", 1 }
+	pkg.CommandRunner = func(cmd string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &IpAddr{}
@@ -60,7 +61,7 @@ func TestIpAddrFailureRC(t *testing.T) {
 
 func TestIpAddrEmptyOutput(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int) { return "", 0 }
+	pkg.CommandRunner = func(cmd string) (string, int, error) { return "", 0, nil }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &IpAddr{}
@@ -75,7 +76,7 @@ func TestIpAddrEmptyOutput(t *testing.T) {
 
 func TestIpAddrMalformedJSON(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int) { return "not json", 0 }
+	pkg.CommandRunner = func(cmd string) (string, int, error) { return "not json", 0, nil }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &IpAddr{}

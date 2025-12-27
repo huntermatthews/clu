@@ -1,6 +1,7 @@
 package sources
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/huntermatthews/clu/pkg"
@@ -36,7 +37,7 @@ func TestIpmitoolProvides(t *testing.T) {
 // TestIpmitoolSkipNonPhysical verifies no facts are set when platform != physical.
 func TestIpmitoolSkipNonPhysical(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int) { return sampleLanPrint, 0 }
+	pkg.CommandRunner = func(cmdline string) (string, int, error) { return sampleLanPrint, 0, nil }
 	defer func() { pkg.CommandRunner = orig }()
 
 	f := types.NewFacts()
@@ -51,14 +52,14 @@ func TestIpmitoolSkipNonPhysical(t *testing.T) {
 // TestIpmitoolSuccess ensures proper extraction for both commands.
 func TestIpmitoolSuccess(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int) {
+	pkg.CommandRunner = func(cmdline string) (string, int, error) {
 		switch cmdline {
 		case "ipmitool lan print":
-			return sampleLanPrint, 0
+			return sampleLanPrint, 0, nil
 		case "ipmitool mc info":
-			return sampleMcInfo, 0
+			return sampleMcInfo, 0, nil
 		default:
-			return "", 1
+			return "", 1, fmt.Errorf("fail")
 		}
 	}
 	defer func() { pkg.CommandRunner = orig }()
@@ -88,14 +89,14 @@ func TestIpmitoolSuccess(t *testing.T) {
 // TestIpmitoolLanFailure ensures lan print failure assigns ParseFailMsg to lan keys only.
 func TestIpmitoolLanFailure(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int) {
+	pkg.CommandRunner = func(cmdline string) (string, int, error) {
 		if cmdline == "ipmitool lan print" {
-			return "", 1 // simulate failure
+			return "", 1, fmt.Errorf("fail")
 		}
 		if cmdline == "ipmitool mc info" {
-			return sampleMcInfo, 0
+			return sampleMcInfo, 0, nil
 		}
-		return "", 1
+		return "", 1, fmt.Errorf("fail")
 	}
 	defer func() { pkg.CommandRunner = orig }()
 
@@ -120,14 +121,14 @@ func TestIpmitoolLanFailure(t *testing.T) {
 // TestIpmitoolMcFailure ensures mc info failure assigns ParseFailMsg to mc info keys only.
 func TestIpmitoolMcFailure(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int) {
+	pkg.CommandRunner = func(cmdline string) (string, int, error) {
 		if cmdline == "ipmitool lan print" {
-			return sampleLanPrint, 0
+			return sampleLanPrint, 0, nil
 		}
 		if cmdline == "ipmitool mc info" {
-			return "", 1 // failure
+			return "", 1, fmt.Errorf("fail")
 		}
-		return "", 1
+		return "", 1, fmt.Errorf("fail")
 	}
 	defer func() { pkg.CommandRunner = orig }()
 

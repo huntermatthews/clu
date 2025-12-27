@@ -112,7 +112,7 @@ func collectPrograms(reqs *types.Requires, workDir string) {
 		cmdName, rcName := transformCmdlineToFilename(prog)
 		dataPath := filepath.Join(progDir, cmdName)
 		rcPath := filepath.Join(progDir, rcName)
-		stdout, rc := pkg.CommandRunner(prog)
+		stdout, rc, _ := pkg.CommandRunner(prog)
 		writeFileRaw(dataPath, stdout)
 		if rc != 0 {
 			writeFile(rcPath, "", fmt.Sprintf("%d\n", rc))

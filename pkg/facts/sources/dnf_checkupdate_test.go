@@ -38,8 +38,8 @@ func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
 
 			// Stub command runner.
 			orig := pkg.CommandRunner
-			pkg.CommandRunner = func(cmdline string) (string, int) {
-				return c.want, c.rc
+			pkg.CommandRunner = func(cmdline string) (string, int, error) {
+				return c.want, c.rc, nil
 			}
 			defer func() { pkg.CommandRunner = orig }()
 
@@ -59,7 +59,7 @@ func TestDnfCheckUpdateNetDisabled(t *testing.T) {
 
 	// Stub command runner that would otherwise signal updates.
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int) { return "", 100 }
+	pkg.CommandRunner = func(cmdline string) (string, int, error) { return "", 100, nil }
 	defer func() { pkg.CommandRunner = orig }()
 
 	f := types.NewFacts()

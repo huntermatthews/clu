@@ -1,6 +1,7 @@
 package sources
 
 import (
+	"fmt"
 	"testing"
 
 	pkg "github.com/huntermatthews/clu/pkg"
@@ -24,7 +25,7 @@ func TestLsmemProvides(t *testing.T) {
 // TestLsmemSuccess ensures proper parsing and conversion.
 func TestLsmemSuccess(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int) { return sampleLsmem, 0 }
+	pkg.CommandRunner = func(cmdline string) (string, int, error) { return sampleLsmem, 0, nil }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Lsmem{}
@@ -42,7 +43,7 @@ func TestLsmemSuccess(t *testing.T) {
 // TestLsmemFailure simulates command failure.
 func TestLsmemFailure(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int) { return "", 1 }
+	pkg.CommandRunner = func(cmdline string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Lsmem{}
@@ -56,7 +57,7 @@ func TestLsmemFailure(t *testing.T) {
 // TestLsmemMissingLine ensures absence of target line yields ParseFailMsg.
 func TestLsmemMissingLine(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int) { return "Header\nNo total line here", 0 }
+	pkg.CommandRunner = func(cmdline string) (string, int, error) { return "Header\nNo total line here", 0, nil }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Lsmem{}

@@ -27,9 +27,10 @@ func (n *NoSalt) Requires(r *types.Requires) {
 // Parse reads /no_salt optionally. If missing or empty sets exists False and returns.
 // Otherwise sets exists True and reason to trimmed file content.
 func (n *NoSalt) Parse(f *types.Facts) {
-	// Use TextFile directly with optional semantics; DI FileReader treats empty as error.
-	data := pkg.TextFile("/no_salt", true)
-	if strings.TrimSpace(data) == "" { // missing or empty
+	// Use DI FileReader (returns content,error). Treat any error or empty
+	// trimmed content as missing (optional semantics).
+	data, err := pkg.FileReader("/no_salt")
+	if err != nil || strings.TrimSpace(data) == "" {
 		f.Set("salt.no_salt.exists", "False")
 		return
 	}

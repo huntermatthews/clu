@@ -25,7 +25,7 @@ var uptimeRegex = regexp.MustCompile(`.*up *(.*) \d+ user(?:s)?,? .*`)
 func (u *Uptime) Parse(f *types.Facts) {
 	f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)
 
-	data, rc := pkg.CommandRunner("uptime")
+	data, rc, _ := pkg.CommandRunner("uptime")
 	if data == "" || rc != 0 {
 		return
 	}

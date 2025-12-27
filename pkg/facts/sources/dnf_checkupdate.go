@@ -33,7 +33,7 @@ func (d *DnfCheckUpdate) Parse(f *types.Facts) {
 		return
 	}
 
-	_, rc := pkg.CommandRunner("dnf check-update")
+	_, rc, _ := pkg.CommandRunner("dnf check-update")
 
 	var value string
 	switch rc {
