@@ -1,6 +1,6 @@
 package subcmd
 
-// Go port of src/clu/cmd/archive.py excluding parse_args. Implements system
+// Go port of src/clu/cmd/collection.py excluding parse_args. Implements system
 // snapshot archiving: gathers required files, program outputs, and metadata
 // into a temporary working directory then creates a gzipped tarball.
 // No build/test executed per user instruction.
@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
@@ -24,29 +24,15 @@ import (
 type CollectorCmd struct{}
 
 func (c *CollectorCmd) Run() error {
-	fmt.Println("collector: running (stub)")
-	return nil
-}
+	fmt.Println("collector: running")
 
-// ArchiveConfig controls archive creation (currently only output directory override).
-type ArchiveConfig struct {
-	OutputDir string // where to place final archive (default /tmp)
-}
+	outDir := "/tmp"
 
-// MakeArchive executes the archive workflow and returns exit code (0 success).
-func MakeArchive(cfg *ArchiveConfig) int {
-	if cfg == nil {
-		cfg = &ArchiveConfig{}
-	}
-	outDir := cfg.OutputDir
-	if outDir == "" {
-		outDir = "/tmp"
-	}
 	hostname := hostName()
 	workDir, err := setupWorkdir(hostname)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		return 1
+		return err
 	}
 	defer cleanupWorkdir(workDir)
 
@@ -62,13 +48,14 @@ func MakeArchive(cfg *ArchiveConfig) int {
 	collectMetadata(workDir, hostname)
 	collectFiles(requires, workDir)
 	collectPrograms(requires, workDir)
-	archivePath, err := createArchive(hostname, workDir, outDir)
+	collectionPath, err := createCollection(hostname, workDir, outDir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error creating archive: %v\n", err)
-		return 1
+		fmt.Fprintf(os.Stderr, "error creating collection: %v\n", err)
+		// FIX: wrong type - need an error that represents RC 1
+		return err
 	}
-	fmt.Printf("Archive created at %s\n", archivePath)
-	return 0
+	fmt.Printf("Collection created at %s\n", collectionPath)
+	return nil
 }
 
 // opsysFactory simplified runtime selection.
@@ -149,9 +136,9 @@ func transformCmdlineToFilename(cmd string) (base string, rc string) {
 	return
 }
 
-func createArchive(hostname, workDir, outDir string) (string, error) {
-	archivePath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", pkg.Title, hostname))
-	f, err := os.Create(archivePath)
+func createCollection(hostname, workDir, outDir string) (string, error) {
+	collectionPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", pkg.Title, hostname))
+	f, err := os.Create(collectionPath)
 	if err != nil {
 		return "", err
 	}
@@ -190,8 +177,8 @@ func createArchive(hostname, workDir, outDir string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	_ = os.Chmod(archivePath, 0o644)
-	return archivePath, nil
+	_ = os.Chmod(collectionPath, 0o644)
+	return collectionPath, nil
 }
 
 // Helper to copy file contents.

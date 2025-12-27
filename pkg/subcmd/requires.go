@@ -29,24 +29,6 @@ func (r *RequiresCmd) Run() error {
 	return nil
 }
 
-// // RequiresConfig carries the chosen subcommand name ("list" or "check").
-// type RequiresConfig struct {
-// 	Subcmd string
-// }
-
-// // Run dispatches to list or check logic based on Subcmd. Returns exit code.
-// func (c *RequiresConfig) Run() int {
-// 	switch c.Subcmd {
-// 	case "list":
-// 		return listRequires()
-// 	case "check":
-// 		return checkRequires()
-// 	default:
-// 		fmt.Fprintf(os.Stderr, "Unknown sub-command: %s\n", c.Subcmd)
-// 		return 2
-// 	}
-// }
-
 // listRequires lists all file and program requirements.
 func listRequires() int {
 	reqs := facts.OpSysFactory().Requires()
