@@ -22,7 +22,7 @@ clean:
 clu:
     #!/usr/bin/env zsh
 
-    platforms=("darwin:arm64" "linux:amd64")
+    platforms=("darwin:arm64")# "linux:amd64")
 
     for plat in "${platforms[@]}"; do
         export GOOS=${plat%:*}
