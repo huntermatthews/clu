@@ -22,20 +22,16 @@ import (
 )
 
 // CollectorCmd implements the "collector" subcommand (stub only).
-type CollectorCmd struct{
-	OutDir string `name:"out-dir" help:"Output directory for the tarball (default /tmp)."`
+type CollectorCmd struct {
+	OutDir string `name:"out-dir" help:"Output directory for the tarball." default:"/tmp"`
 }
 
 func (c *CollectorCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
 	fmt.Fprintln(stdout, "collector: running")
 
-	outDir := "/tmp"
-	if c.OutDir != "" {
-		outDir = c.OutDir
-		// ensure directory exists
-		if err := os.MkdirAll(outDir, 0o755); err != nil {
-			return fmt.Errorf("failed to create out-dir %s: %w", outDir, err)
-		}
+	// Ensure output directory exists (Kong provides default via struct tag)
+	if err := os.MkdirAll(c.OutDir, 0o755); err != nil {
+		return fmt.Errorf("failed to create out-dir %s: %w", c.OutDir, err)
 	}
 
 	hostname, _ := os.Hostname()
