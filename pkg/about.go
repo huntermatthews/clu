@@ -7,7 +7,7 @@ var Version = "unknown"
 const (
 	Title       = "clu"
 	Summary     = "clu utility"
-	License     = "GPLv2"
+	License     = "GPL-2.0-only"
 	AuthorEmail = "hunter@unix.haus"
 	AuthorName  = "Hunter Matthews"
 )

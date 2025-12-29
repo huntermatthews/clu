@@ -1,7 +1,7 @@
 .\"
 .\" Copyright (c) 2011 Hunter Matthews <hunter@unix.haus>
 .\"
-.\" SPDX-License-Identifier: Apache-2.0
+.\" SPDX-License-Identifier: GPL-2.0-only
 .\"
 .\" bectl.8 has an excellent mdoc formatted man page...
 .\"
@@ -11,19 +11,17 @@
 .\" ---------------------------------------------------------------------------
 .Sh NAME
 .Nm clu
-.Nd Describes various interesting aspects (facts) about the current system.
+.Nd Describes various interesting facts about the current system.
 .\" ---------------------------------------------------------------------------
 .Sh SYNOPSIS
 .Nm
-.Op Fl -help | -version | -debug
+.Op Fl -help | -version | -debug | -net
 .Nm
-.Cm archive
+.Cm collector
 .Nm
-.Cm report
-.Op Fl 1 | Fl -2 | Fl 3
-.Op Fl -verbose
-.Op Fl -net
-.Op Fl -output Brq Ar dots | Ar shell | Ar json
+.Cm facts
+.Op Fl -tier , t Brq Ar 1 | Ar 2 | Ar 3
+.Op Fl -out Brq Ar dots | Ar shell | Ar json
 .Nm
 .Cm requires
 .Brq Ar list | Ar check
@@ -42,18 +40,23 @@ are pretty much at the opinion of the author.
 The following global options are supported. Individual commands may have their own specific options.
 .Bl -tag
 .It Cm --help -h
-List the help screen for the command.
+List the help screen for the command and exit.
 .It Cm --version
-Print the version of the command.
+Print the version of the command and exit.
 .It Cm --verbose -v
 Run in verbose mode.
+.It Cm --debug
+Print extra debugging output (not really implemented yet).
+.It Cm --net
+Allow access to the network. Some steps require more than just a DNS query (such as talking to Device42 inventory system
+or updating the DNF/APT data - this flag allows such access).
 .El
 .\" ---------------------------------------------------------------------------
 .Sh COMMANDS
 .Bl -tag -width indent
 .\" ------------------------------------
 .It Xo
-.Cm archive
+.Cm collector
 .Xc
 Create a compressed
 .Xr tar 1
@@ -63,26 +66,16 @@ This facilitates both testing and debugging without needing to be fully networke
 remote debugging. The archive will be named /tmp/clu_<hostname>.tgz.
 .\" ------------------------------------
 .It Xo
-.Cm report
-.Op Fl 1 | Fl -2 | Fl 3
-.Op Fl -verbose
-.Op Fl -net
-.Op Fl -output Brq Ar dots | Ar shell | Ar json
+.Cm facts
+.Op Fl -tier , t Brq Ar 1 | Ar 2 | Ar 3
+.Op Fl -out Brq Ar dots | Ar shell | Ar json
 .Xc
 Report various facts about the computer. This includes details of the OS, hardware (virtual
 or physical), networking, etc.
 .Pp
 The
-.Op Fl 1 | 2 | 3
+.Op Fl -tier
 controls tier of facts (more and more details at higher / larger number tiers...) are printed.
-.Pp
-The
-.Op Fl -verbose
-flag can change the formatting of certain facts (networking only at present).
-.Pp
-The
-.Op Fl -net
-enables network access for any facts - without this flag, only the local system itself is queried.
 .Pp
 Output is controlled with the
 .Op Fl -output
@@ -99,7 +92,7 @@ clu is the 4th or 5th incarnation of this idea, going back to 2011. I finally ga
 incarnations of shell script. The deployment is easier but the programming is AWFUL. Pure
 python zipapps solve the deployment problem (mostly).
 (I wish Python had the same deployment model of Go...) Names have varied considerably over the
-years. Earlier incarnations strongly influenced the `archive` command and being able to
+years. Earlier incarnations strongly influenced the `collector` command and being able to
 test the parsers without being logged in to networked systems.
 .\" ---------------------------------------------------------------------------
 .Sh AUTHORS

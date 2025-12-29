@@ -1,13 +1,5 @@
 # Clu
 
-Clu gives us a clue as to what this os / hardware is.
+Clu gives us a clue as to what this os / hardware is. Please see the man page for more details.
 
-
-## TODO List
-
-### Structure
-
-## Testing
-
-```go test ./examples/...```
-```go test ./pkg/facts/sources -run TestLscpu -v```
+Development targets are in the Justfile.
