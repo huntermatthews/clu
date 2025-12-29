@@ -27,7 +27,7 @@ func (s *Selinux) Requires(r *types.Requires) {
 // selinuxenabled: rc 0 -> True, rc 1 -> False, else ParseFailMsg.
 // getenforce: trimmed stdout or ParseFailMsg.
 func (s *Selinux) Parse(f *types.Facts) {
-	_, rc := pkg.CommandRunner("selinuxenabled")
+	_, rc, _ := pkg.CommandRunner("selinuxenabled")
 	switch rc {
 	case 0:
 		f.Set("os.selinux.enable", "True")
@@ -37,7 +37,7 @@ func (s *Selinux) Parse(f *types.Facts) {
 		f.Set("os.selinux.enable", types.ParseFailMsg)
 	}
 
-	data, _ := pkg.CommandRunner("getenforce")
+	data, _, _ := pkg.CommandRunner("getenforce")
 	if strings.TrimSpace(data) == "" {
 		f.Set("os.selinux.mode", types.ParseFailMsg)
 	} else {

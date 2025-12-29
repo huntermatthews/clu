@@ -1,6 +1,7 @@
 package sources
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/huntermatthews/clu/pkg"
@@ -18,7 +19,7 @@ func TestVirtWhatProvides(t *testing.T) {
 
 func TestVirtWhatPhysicalFallback(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int) { return "\n\n", 0 }
+	pkg.CommandRunner = func(cmd string) (string, int, error) { return "\n\n", 0, nil }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &VirtWhat{}
@@ -31,7 +32,7 @@ func TestVirtWhatPhysicalFallback(t *testing.T) {
 
 func TestVirtWhatVirtualizationList(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int) { return "kvm\nvmware", 0 }
+	pkg.CommandRunner = func(cmd string) (string, int, error) { return "kvm\nvmware", 0, nil }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &VirtWhat{}
@@ -44,7 +45,7 @@ func TestVirtWhatVirtualizationList(t *testing.T) {
 
 func TestVirtWhatFailureRc(t *testing.T) {
 	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int) { return "", 5 }
+	pkg.CommandRunner = func(cmd string) (string, int, error) { return "", 5, fmt.Errorf("fail") }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &VirtWhat{}
@@ -58,7 +59,7 @@ func TestVirtWhatFailureRc(t *testing.T) {
 func TestVirtWhatSkipIfPreset(t *testing.T) {
 	orig := pkg.CommandRunner
 	// Would have produced virtualization list, but should be skipped.
-	pkg.CommandRunner = func(cmd string) (string, int) { return "kvm", 0 }
+	pkg.CommandRunner = func(cmd string) (string, int, error) { return "kvm", 0, nil }
 	defer func() { pkg.CommandRunner = orig }()
 	f := types.NewFacts()
 	f.Set("phy.platform", "physical")

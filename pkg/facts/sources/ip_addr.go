@@ -41,7 +41,7 @@ type ipAddrIface struct {
 
 // Parse executes command, decodes JSON and accumulates space-separated lists (trailing space retained for parity).
 func (i *IpAddr) Parse(f *types.Facts) {
-	data, rc := pkg.CommandRunner("ip --json addr")
+	data, rc, _ := pkg.CommandRunner("ip --json addr")
 	if data == "" || rc != 0 {
 		for _, k := range ipAddrKeys {
 			f.Set(k, types.ParseFailMsg)

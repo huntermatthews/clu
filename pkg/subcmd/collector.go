@@ -1,6 +1,6 @@
 package subcmd
 
-// Go port of src/clu/cmd/archive.py excluding parse_args. Implements system
+// Go port of src/clu/cmd/collection.py excluding parse_args. Implements system
 // snapshot archiving: gathers required files, program outputs, and metadata
 // into a temporary working directory then creates a gzipped tarball.
 // No build/test executed per user instruction.
@@ -16,67 +16,44 @@ import (
 	"strings"
 	"time"
 
-	pkg "github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // CollectorCmd implements the "collector" subcommand (stub only).
-type CollectorCmd struct{}
-
-func (c *CollectorCmd) Run() error {
-	fmt.Println("collector: running (stub)")
-	return nil
+type CollectorCmd struct {
+	OutDir string `name:"out-dir" help:"Output directory for the tarball." default:"/tmp"`
 }
 
-// ArchiveConfig controls archive creation (currently only output directory override).
-type ArchiveConfig struct {
-	OutputDir string // where to place final archive (default /tmp)
-}
+func (c *CollectorCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
+	fmt.Fprintln(stdout, "collector: running")
 
-// MakeArchive executes the archive workflow and returns exit code (0 success).
-func MakeArchive(cfg *ArchiveConfig) int {
-	if cfg == nil {
-		cfg = &ArchiveConfig{}
+	// Ensure output directory exists (Kong provides default via struct tag)
+	if err := os.MkdirAll(c.OutDir, 0o755); err != nil {
+		return fmt.Errorf("failed to create out-dir %s: %w", c.OutDir, err)
 	}
-	outDir := cfg.OutputDir
-	if outDir == "" {
-		outDir = "/tmp"
-	}
-	hostname := hostName()
+
+	hostname, _ := os.Hostname()
 	workDir, err := setupWorkdir(hostname)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		return 1
+		return err
 	}
 	defer cleanupWorkdir(workDir)
 
-	// Fallback if detectOpSys not configured externally.
-	var requires *types.Requires
-	osysIface := detectOpSys()
-	if osysIface != nil {
-		requires = osysIface.Requires()
-	} else {
-		requires = types.NewRequires() // empty fallback
-	}
+	osys := facts.OpSysFactory()
+	requires := osys.Requires()
 
 	collectMetadata(workDir, hostname)
 	collectFiles(requires, workDir)
 	collectPrograms(requires, workDir)
-	archivePath, err := createArchive(hostname, workDir, outDir)
+	collectionPath, err := createCollection(hostname, workDir, c.OutDir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error creating archive: %v\n", err)
-		return 1
+		return fmt.Errorf("error creating collection: %w", err)
 	}
-	fmt.Printf("Archive created at %s\n", archivePath)
-	return 0
+	fmt.Fprintf(stdout, "Collection created at %s\n", collectionPath)
+	return nil
 }
-
-// opsysFactory simplified runtime selection.
-// detectOpSys delegates to report command's runtime factory (reuse) to avoid duplicate definition.
-// Provided by requires.go; if refactoring later, centralize in a shared package.
-var detectOpSys = func() interface{ Requires() *types.Requires } { return nil }
-
-func hostName() string { h, _ := os.Hostname(); return h }
 
 func setupWorkdir(hostname string) (string, error) {
 	dir, err := os.MkdirTemp("", fmt.Sprintf("%s.", hostname))
@@ -125,7 +102,7 @@ func collectPrograms(reqs *types.Requires, workDir string) {
 		cmdName, rcName := transformCmdlineToFilename(prog)
 		dataPath := filepath.Join(progDir, cmdName)
 		rcPath := filepath.Join(progDir, rcName)
-		stdout, rc := pkg.CommandRunner(prog)
+		stdout, rc, _ := pkg.CommandRunner(prog)
 		writeFileRaw(dataPath, stdout)
 		if rc != 0 {
 			writeFile(rcPath, "", fmt.Sprintf("%d\n", rc))
@@ -149,51 +126,6 @@ func transformCmdlineToFilename(cmd string) (base string, rc string) {
 	return
 }
 
-func createArchive(hostname, workDir, outDir string) (string, error) {
-	archivePath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", pkg.Title, hostname))
-	f, err := os.Create(archivePath)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-	gw := gzip.NewWriter(f)
-	defer gw.Close()
-	tw := tar.NewWriter(gw)
-	defer tw.Close()
-	// Walk workDir and add files.
-	err = filepath.Walk(workDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.IsDir() {
-			return nil
-		}
-		rel, _ := filepath.Rel(workDir, path)
-		hdr, err := tar.FileInfoHeader(info, "")
-		if err != nil {
-			return err
-		}
-		hdr.Name = rel // ensure relative name
-		if err := tw.WriteHeader(hdr); err != nil {
-			return err
-		}
-		src, err := os.Open(path)
-		if err != nil {
-			return err
-		}
-		defer src.Close()
-		if _, err := io.Copy(tw, src); err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return "", err
-	}
-	_ = os.Chmod(archivePath, 0o644)
-	return archivePath, nil
-}
-
 // Helper to copy file contents.
 func copyFile(src, dst string) {
 	in, err := os.Open(src)
@@ -214,3 +146,64 @@ func writeFile(dir, name, content string) {
 }
 
 func writeFileRaw(path, content string) { _ = os.WriteFile(path, []byte(content), 0o644) }
+
+func createCollection(hostname, workDir, outDir string) (string, error) {
+	outPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", pkg.Title, hostname))
+	f, err := os.Create(outPath)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	gw := gzip.NewWriter(f)
+	defer gw.Close()
+
+	tw := tar.NewWriter(gw)
+	defer tw.Close()
+
+	err = filepath.Walk(workDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		rel, relErr := filepath.Rel(workDir, path)
+		if relErr != nil {
+			return relErr
+		}
+
+		// Skip root entry
+		if rel == "." {
+			return nil
+		}
+
+		hdr, err := tar.FileInfoHeader(info, "")
+		if err != nil {
+			return err
+		}
+		hdr.Name = rel
+
+		if err := tw.WriteHeader(hdr); err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		src, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+
+		if _, err := io.Copy(tw, src); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return "", err
+	}
+	_ = os.Chmod(outPath, 0o644)
+	return outPath, nil
+}

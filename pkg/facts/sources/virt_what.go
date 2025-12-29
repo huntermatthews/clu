@@ -26,7 +26,7 @@ func (v *VirtWhat) Parse(f *types.Facts) {
 		return
 	}
 
-	data, rc := pkg.CommandRunner("virt-what")
+	data, rc, _ := pkg.CommandRunner("virt-what")
 	if rc != 0 {
 		f.Set("phy.platform", types.ParseFailMsg)
 		return

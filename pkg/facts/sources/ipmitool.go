@@ -60,7 +60,7 @@ func (i *Ipmitool) parseLanPrint(f *types.Facts) {
 		`(?m)^Subnet Mask *: (.+)`:       "bmc.ipv4_mask",
 		`(?m)^MAC Address *: (.+)`:       "bmc.mac_address",
 	}
-	data, rc := pkg.CommandRunner("ipmitool lan print")
+	data, rc, _ := pkg.CommandRunner("ipmitool lan print")
 	if data == "" || rc != 0 {
 		for _, k := range ipmitoolLanKeys {
 			f.Set(k, types.ParseFailMsg)
@@ -86,7 +86,7 @@ func (i *Ipmitool) parseMcInfo(f *types.Facts) {
 		`(?m)^Manufacturer ID *: (.+)`:   "bmc.manufacturer_id",
 		`(?m)^Manufacturer Name *: (.+)`: "bmc.manufacturer_name",
 	}
-	data, rc := pkg.CommandRunner("ipmitool mc info")
+	data, rc, _ := pkg.CommandRunner("ipmitool mc info")
 	if data == "" || rc != 0 {
 		for _, k := range ipmitoolMcInfoKeys {
 			f.Set(k, types.ParseFailMsg)

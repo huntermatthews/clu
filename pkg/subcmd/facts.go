@@ -7,9 +7,11 @@ package subcmd
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"sort"
 	"strings"
 
+	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
@@ -21,20 +23,13 @@ type FactsCmd struct {
 	FactNames    []string `arg:"" optional:"true" help:"Zero or more fact names to report on."`
 }
 
-func (f *FactsCmd) Run() error {
-	if len(f.FactNames) > 0 {
-		fmt.Printf("TRACE: facts: tier=%d %s\n", f.Tier, strings.Join(f.FactNames, " "))
-	} else {
-		fmt.Printf("TRACE: facts: tier=%d\n", f.Tier)
-	}
+func (f *FactsCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
 
 	osys := facts.OpSysFactory()
 	provides := osys.Provides()
 	facts := types.NewFacts()
 
 	if len(f.FactNames) == 0 {
-		// an empty slice means all facts
-		// f.FactNames = make([]string, 0, len(provides))
 		for k := range provides {
 			f.FactNames = append(f.FactNames, k)
 		}
@@ -50,7 +45,7 @@ func (f *FactsCmd) Run() error {
 	// Filter down to requested + tier selection.
 	outputFacts := filterFacts(facts, f.FactNames, int(f.Tier))
 	// Output.
-	doOutput(outputFacts, f.OutputFormat)
+	doOutput(stdout, outputFacts, f.OutputFormat)
 
 	return nil
 }
@@ -102,42 +97,42 @@ func filterFacts(parsed *types.Facts, specs []string, tier int) *types.Facts {
 }
 
 // doOutput dispatches to format-specific output functions.
-func doOutput(f *types.Facts, format string) {
+func doOutput(w io.Writer, f *types.Facts, format string) {
 	switch format {
 	case "json":
-		outputJSON(f)
+		outputJSON(w, f)
 	case "shell":
-		outputShell(f)
+		outputShell(w, f)
 	case "dots":
 		fallthrough
 	default:
-		outputDots(f)
+		outputDots(w, f)
 	}
 }
 
 // outputDots prints key: value lines sorted by key.
-func outputDots(f *types.Facts) {
+func outputDots(w io.Writer, f *types.Facts) {
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
 		v, _ := f.Get(k)
-		fmt.Printf("%s: %s\n", k, v)
+		fmt.Fprintf(w, "%s: %s\n", k, v)
 	}
 }
 
 // outputShell prints KEY_WITH_UNDERSCORES="value" lines.
-func outputShell(f *types.Facts) {
+func outputShell(w io.Writer, f *types.Facts) {
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
 		v, _ := f.Get(k)
 		keyVar := strings.ToUpper(strings.ReplaceAll(k, ".", "_"))
-		fmt.Printf("%s=\"%s\"\n", keyVar, v)
+		fmt.Fprintf(w, "%s=\"%s\"\n", keyVar, v)
 	}
 }
 
 // outputJSON prints a JSON map of facts.
-func outputJSON(f *types.Facts) {
+func outputJSON(w io.Writer, f *types.Facts) {
 	data, _ := json.MarshalIndent(f.ToMap(), "", "  ")
-	fmt.Println(string(data))
+	fmt.Fprintln(w, string(data))
 }

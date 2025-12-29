@@ -15,14 +15,30 @@ build: clu clu-symlink
 # Clean up build artifacts
 [group('build')]
 clean:
-    @rm -rf dist/*
+    @rm -rf dist/* coverage.out
+
+# Run Go tests
+[group('build')]
+test:
+    go test ./pkg/... ./cmd/...
+
+# Run tests with coverage and show summary
+[group('build')]
+coverage:
+    go test -coverpkg=./pkg/...,./cmd/... -coverprofile=coverage.out ./pkg/... ./cmd/...
+    go tool cover -func=coverage.out
+
+# Open HTML coverage report
+[group('build')]
+coverage-html: coverage
+    go tool cover -html=coverage.out
 
 # Build the Go CLI tool
 [group('build')]
 clu:
     #!/usr/bin/env zsh
 
-    platforms=("darwin:arm64" "linux:amd64")
+    platforms=("darwin:arm64")# "linux:amd64")
 
     for plat in "${platforms[@]}"; do
         export GOOS=${plat%:*}

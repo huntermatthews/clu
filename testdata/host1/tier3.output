@@ -1,0 +1,30 @@
+clu.binary: dist/clu
+clu.cmdline: dist/clu --mock-dir host1 -t3
+clu.cwd: /Users/hunter/projects/clu
+clu.date: 2025-12-28T06:07:09Z
+clu.user: hunter
+clu.version: v0.7.8-11-g67257bd-dirty
+net.devs: lo ens33 
+net.ipv4: 127.0.0.1 10.136.128.216 
+net.ipv6: ::1 2607:f220:404:2101::42 fe80::250:56ff:fea0:c37 
+net.macs: 00:00:00:00:00:00 00:50:56:a0:0c:37 
+os.distro.name: centos
+os.distro.version: 9
+os.hostname: <hostname1>
+os.kernel.name: Linux
+os.kernel.version: 5.14.0-578.el9.x86_64
+os.selinux.enable: True
+os.selinux.mode: Permissive
+phy.arch: x86_64
+phy.cpu.arch_version: x86_64_v4
+phy.cpu.cores: 2
+phy.cpu.model: Intel(R) Xeon(R) Gold 6342 CPU @ 2.80GHz
+phy.cpu.sockets: 1
+phy.cpu.threads: 2
+phy.cpu.vendor: GenuineIntel
+phy.platform: vmware
+phy.ram: 4.0 GB
+run.update_required: Unknown - Network Queries Disabled
+run.uptime: 1 hour, 1 second
+salt.no_salt.exists: True
+salt.no_salt.reason: matthewsht - 2025-05-04 - This server is full of sadness.

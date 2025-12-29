@@ -40,7 +40,7 @@ func (l *Lscpu) Requires(r *types.Requires) {
 // (matching Python behavior where no facts are set). Computation failures set
 // cores/threads to ParseFailMsg.
 func (l *Lscpu) Parse(f *types.Facts) {
-	data, rc := pkg.CommandRunner("lscpu")
+	data, rc, _ := pkg.CommandRunner("lscpu")
 	if data == "" || rc != 0 {
 		return // mimic Python: skip setting anything
 	}
@@ -84,7 +84,7 @@ func (l *Lscpu) Parse(f *types.Facts) {
 			}
 		}
 	}
-    
+
 	// Set facts (nil/missing -> empty string like Python assignment of None)
 	f.Set("phy.cpu.model", fields["model"])   // may be empty
 	f.Set("phy.cpu.vendor", fields["vendor"]) // may be empty
