@@ -24,19 +24,12 @@ type FactsCmd struct {
 }
 
 func (f *FactsCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
-	// if len(f.FactNames) > 0 {
-	// 	fmt.Printf("TRACE: facts: tier=%d %s\n", f.Tier, strings.Join(f.FactNames, " "))
-	// } else {
-	// 	fmt.Printf("TRACE: facts: tier=%d\n", f.Tier)
-	// }
 
 	osys := facts.OpSysFactory()
 	provides := osys.Provides()
 	facts := types.NewFacts()
 
 	if len(f.FactNames) == 0 {
-		// an empty slice means all facts
-		// f.FactNames = make([]string, 0, len(provides))
 		for k := range provides {
 			f.FactNames = append(f.FactNames, k)
 		}
