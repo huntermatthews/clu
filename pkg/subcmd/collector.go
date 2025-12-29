@@ -10,6 +10,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -44,13 +45,23 @@ func (c *CollectorCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
 	osys := facts.OpSysFactory()
 	requires := osys.Requires()
 
-	collectMetadata(workDir, hostname)
-	collectFiles(requires, workDir)
-	collectPrograms(requires, workDir)
+	if err := collectMetadata(workDir, hostname); err != nil {
+		return fmt.Errorf("collect metadata: %w", err)
+	}
+
+	if err := collectFiles(requires, workDir); err != nil {
+		return fmt.Errorf("collect files: %w", err)
+	}
+
+	if err := collectPrograms(requires, workDir); err != nil {
+		return fmt.Errorf("collect programs: %w", err)
+	}
+
 	collectionPath, err := createCollection(hostname, workDir, c.OutDir)
 	if err != nil {
 		return fmt.Errorf("error creating collection: %w", err)
 	}
+
 	fmt.Fprintf(stdout, "Collection created at %s\n", collectionPath)
 	return nil
 }
@@ -63,19 +74,43 @@ func setupWorkdir(hostname string) (string, error) {
 	return dir, nil
 }
 
-func cleanupWorkdir(dir string) { _ = os.RemoveAll(dir) }
+func cleanupWorkdir(dir string) error { return os.RemoveAll(dir) }
 
-func collectMetadata(workDir, hostname string) {
+func collectMetadata(workDir, hostname string) error {
 	metaDir := filepath.Join(workDir, "_meta")
-	_ = os.MkdirAll(metaDir, 0o755)
-	writeFile(metaDir, "clu_version", pkg.Version+"\n")
-	writeFile(metaDir, "go_version", runtime.Version()+"\n")
-	writeFile(metaDir, "hostname", hostname+"\n")
-	writeFile(metaDir, "path", os.Getenv("PATH")+"\n")
-	writeFile(metaDir, "date", time.Now().Format(time.RFC3339)+"\n")
+	if err := os.MkdirAll(metaDir, 0o755); err != nil {
+		return fmt.Errorf("failed to create metadata dir %s: %w", metaDir, err)
+	}
+
+	path := filepath.Join(metaDir, "clu_version")
+	if err := os.WriteFile(path, []byte(pkg.Version+"\n"), 0o644); err != nil {
+		return fmt.Errorf("write %s: %w", path, err)
+	}
+
+	path = filepath.Join(metaDir, "go_version")
+	if err := os.WriteFile(path, []byte(runtime.Version()+"\n"), 0o644); err != nil {
+		return fmt.Errorf("write %s: %w", path, err)
+	}
+
+	path = filepath.Join(metaDir, "hostname")
+	if err := os.WriteFile(path, []byte(hostname+"\n"), 0o644); err != nil {
+		return fmt.Errorf("write %s: %w", path, err)
+	}
+
+	path = filepath.Join(metaDir, "path")
+	if err := os.WriteFile(path, []byte(os.Getenv("PATH")+"\n"), 0o644); err != nil {
+		return fmt.Errorf("write %s: %w", path, err)
+	}
+
+	path = filepath.Join(metaDir, "date")
+	if err := os.WriteFile(path, []byte(time.Now().Format(time.RFC3339)+"\n"), 0o644); err != nil {
+		return fmt.Errorf("write %s: %w", path, err)
+	}
+
+	return nil
 }
 
-func collectFiles(reqs *types.Requires, workDir string) {
+func collectFiles(reqs *types.Requires, workDir string) error {
 	for _, file := range reqs.Files {
 		if file == "" {
 			continue
@@ -87,14 +122,19 @@ func collectFiles(reqs *types.Requires, workDir string) {
 		// replicate path structure without leading '/'
 		rel := strings.TrimPrefix(file, "/")
 		dest := filepath.Join(workDir, rel)
-		_ = os.MkdirAll(filepath.Dir(dest), 0o755)
+		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
+			return fmt.Errorf("create dir for %s: %w", dest, err)
+		}
 		copyFile(file, dest)
 	}
+	return nil
 }
 
-func collectPrograms(reqs *types.Requires, workDir string) {
+func collectPrograms(reqs *types.Requires, workDir string) error {
 	progDir := filepath.Join(workDir, "_programs")
-	_ = os.MkdirAll(progDir, 0o755)
+	if err := os.MkdirAll(progDir, 0o755); err != nil {
+		return fmt.Errorf("create programs dir %s: %w", progDir, err)
+	}
 	for _, prog := range reqs.Programs {
 		if prog == "" {
 			continue
@@ -102,12 +142,21 @@ func collectPrograms(reqs *types.Requires, workDir string) {
 		cmdName, rcName := transformCmdlineToFilename(prog)
 		dataPath := filepath.Join(progDir, cmdName)
 		rcPath := filepath.Join(progDir, rcName)
-		stdout, rc, _ := pkg.CommandRunner(prog)
-		writeFileRaw(dataPath, stdout)
+		stdout, rc, perr := pkg.CommandRunner(prog)
+		if perr != nil {
+			// Non-fatal: still record whatever output we have and rc below.
+			log.Printf("collector: command runner error for %q: %v", prog, perr)
+		}
+		if err := os.WriteFile(dataPath, []byte(stdout), 0o644); err != nil {
+			return fmt.Errorf("write %s: %w", dataPath, err)
+		}
 		if rc != 0 {
-			writeFile(rcPath, "", fmt.Sprintf("%d\n", rc))
+			if err := os.WriteFile(rcPath, []byte(fmt.Sprintf("%d\n", rc)), 0o644); err != nil {
+				return fmt.Errorf("write %s: %w", rcPath, err)
+			}
 		}
 	}
+	return nil
 }
 
 // transformCmdlineToFilename simplified version mirroring Python input.transform_cmdline_to_filename.
@@ -138,14 +187,12 @@ func copyFile(src, dst string) {
 		return
 	}
 	defer out.Close()
-	_, _ = io.Copy(out, in)
+	if _, err := io.Copy(out, in); err != nil {
+		log.Printf("collector: copy %s -> %s failed: %v", src, dst, err)
+	}
 }
 
-func writeFile(dir, name, content string) {
-	_ = os.WriteFile(filepath.Join(dir, name), []byte(content), 0o644)
-}
-
-func writeFileRaw(path, content string) { _ = os.WriteFile(path, []byte(content), 0o644) }
+// (removed writeFilePath and writeFile helpers; callers use os.WriteFile directly)
 
 func createCollection(hostname, workDir, outDir string) (string, error) {
 	outPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", pkg.Title, hostname))
@@ -156,10 +203,10 @@ func createCollection(hostname, workDir, outDir string) (string, error) {
 	defer f.Close()
 
 	gw := gzip.NewWriter(f)
-	defer gw.Close()
+	// do not defer; close with error handling below
 
 	tw := tar.NewWriter(gw)
-	defer tw.Close()
+	// do not defer; close with error handling below
 
 	err = filepath.Walk(workDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -204,6 +251,14 @@ func createCollection(hostname, workDir, outDir string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	_ = os.Chmod(outPath, 0o644)
+	if cerr := tw.Close(); cerr != nil {
+		return "", fmt.Errorf("closing tar writer: %w", cerr)
+	}
+	if cerr := gw.Close(); cerr != nil {
+		return "", fmt.Errorf("closing gzip writer: %w", cerr)
+	}
+	if err := os.Chmod(outPath, 0o644); err != nil {
+		log.Printf("collector: chmod failed for %s: %v", outPath, err)
+	}
 	return outPath, nil
 }
