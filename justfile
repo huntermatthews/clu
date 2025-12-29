@@ -7,7 +7,7 @@ _default: help
 help:
     @just --list
 
-# build it all
+# Build the program and all its varients.
 [group('build')]
 build: clu clu-symlink
     @mkdir -p dist
@@ -47,14 +47,14 @@ clu:
         scripts/build.sh
     done
 
-# Build the Go CLI tool
-[group('build')]
-build-manylinux:
-    # biowebdev05 is our build server for ancient Linux compatibility
-    ssh biowebdev05 "cd clu && git pull && ./scripts/build.sh"
-    scp biowebdev05:clu/dist/clu-linux-amd64 dist/clu-manylinux2014
-    scp dist/clu-manylinux2014 itbrepo02.nhgri.nih.gov:/srv/webroot/matthewsht/clu-manylinux2014
-    echo 'curl -fsSL -o clu https://itbrepo02.nhgri.nih.gov/matthewsht/clu-manylinux2014 && chmod +x clu'
+# # Build the Go CLI tool
+# [group('build')]
+# build-manylinux:
+#     # biowebdev05 is our build server for ancient Linux compatibility
+#     ssh biowebdev05 "cd clu && git pull && ./scripts/build.sh"
+#     scp biowebdev05:clu/dist/clu-linux-amd64 dist/clu-manylinux2014
+#     scp dist/clu-manylinux2014 itbrepo02.nhgri.nih.gov:/srv/webroot/matthewsht/clu-manylinux2014
+#     echo 'curl -fsSL -o clu https://itbrepo02.nhgri.nih.gov/matthewsht/clu-manylinux2014 && chmod +x clu'
 
 # Build the Go CLI tool
 [group('build')]
@@ -62,6 +62,7 @@ clu-symlink:
     rm -f dist/clu
     ln -s clu-$(go env GOOS)-$(go env GOARCH)  dist/clu
 
-[group('info')]
-report-build-info:
-    @echo "This is a {{os()}} system running on {{arch()}} with {{num_cpus()}} logical CPUs."
+# Show the current version from git
+[group('package')]
+version:
+    git describe --dirty --always --match "v[0-9]*"
