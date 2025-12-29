@@ -57,4 +57,48 @@ func main() {
 
 	err = ctx.Run()
 	ctx.FatalIfErrorf(err)
+
+func EnableMockMode(dir string) error {
+	path, err := resolveMockPath(dir)
+	if err != nil {
+		return err
+	}
+
+	pkg.CluConfig.MockDir = path
+
+	// Change the input functions to the mock versions.
+	pkg.CommandRunner = pkg.MockTextProgram
+	pkg.FileReader = pkg.MockTextFile
+	return nil
+}
+
+func resolveMockPath(dir string) (string, error) {
+	if filepath.IsAbs(dir) {
+		return dir, nil
+	}
+
+	pwd, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("failed to get working directory: %w", err)
+	}
+
+	// Search for testdata/<dir> starting from CWD and walking up
+	searchDir := pwd
+	for {
+		path := filepath.Join(searchDir, "testdata", dir)
+		info, err := os.Stat(path)
+		if err == nil {
+			if info.IsDir() {
+				return path, nil
+			}
+			return "", fmt.Errorf("mock path is not a directory: %s", path)
+		}
+
+		parent := filepath.Dir(searchDir)
+		if parent == searchDir {
+			break
+		}
+		searchDir = parent
+	}
+	return "", fmt.Errorf("mock directory not found: %s", dir)
 }
