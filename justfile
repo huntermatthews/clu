@@ -17,6 +17,11 @@ build: clu clu-symlink
 clean:
     @rm -rf dist/*
 
+# Run Go tests
+[group('build')]
+test:
+    go test ./pkg/... ./cmd/...
+
 # Build the Go CLI tool
 [group('build')]
 clu:

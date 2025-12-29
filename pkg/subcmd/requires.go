@@ -6,9 +6,11 @@ package subcmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
+	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts"
 )
 
@@ -17,54 +19,54 @@ type RequiresCmd struct {
 	Mode string `arg:"" enum:"list,check" help:"Operation to perform: list or check."`
 }
 
-func (r *RequiresCmd) Run() error {
+func (r *RequiresCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
 	switch r.Mode {
 	case "list":
 		// fmt.Println("requires: listing (stub)")
-		listRequires()
+		listRequires(stdout)
 	case "check":
 		// fmt.Println("requires: checking (stub)")
-		checkRequires()
+		checkRequires(stdout)
 	}
 	return nil
 }
 
 // listRequires lists all file and program requirements.
-func listRequires() int {
+func listRequires(w io.Writer) int {
 	reqs := facts.OpSysFactory().Requires()
-	fmt.Println("Listing Requirements:")
-	fmt.Println("----------------------")
-	fmt.Println("Files:")
+	fmt.Fprintln(w, "Listing Requirements:")
+	fmt.Fprintln(w, "----------------------")
+	fmt.Fprintln(w, "Files:")
 	for _, file := range reqs.Files {
-		fmt.Printf("  - %s\n", file)
+		fmt.Fprintf(w, "  - %s\n", file)
 	}
-	fmt.Println("Programs:")
+	fmt.Fprintln(w, "Programs:")
 	for _, prog := range reqs.Programs {
-		fmt.Printf("  - %s\n", prog)
+		fmt.Fprintf(w, "  - %s\n", prog)
 	}
 	// APIs omitted; not used currently.
 	return 0
 }
 
 // checkRequires checks existence of required files and programs.
-func checkRequires() int {
+func checkRequires(w io.Writer) int {
 	reqs := facts.OpSysFactory().Requires()
-	fmt.Println("Checking requirements:")
-	fmt.Println("----------------------")
-	fmt.Println("Files:")
+	fmt.Fprintln(w, "Checking requirements:")
+	fmt.Fprintln(w, "----------------------")
+	fmt.Fprintln(w, "Files:")
 	for _, file := range reqs.Files {
 		if checkFileExists(file) {
-			fmt.Printf("  - [ok] %s\n", file)
+			fmt.Fprintf(w, "  - [ok] %s\n", file)
 		} else {
-			fmt.Printf("  - [MISSING] %s\n", file)
+			fmt.Fprintf(w, "  - [MISSING] %s\n", file)
 		}
 	}
-	fmt.Println("Programs:")
+	fmt.Fprintln(w, "Programs:")
 	for _, prog := range reqs.Programs {
 		if checkProgramExists(prog) {
-			fmt.Printf("  - [ok] %s\n", prog)
+			fmt.Fprintf(w, "  - [ok] %s\n", prog)
 		} else {
-			fmt.Printf("  - [MISSING] %s\n", prog)
+			fmt.Fprintf(w, "  - [MISSING] %s\n", prog)
 		}
 	}
 	return 0

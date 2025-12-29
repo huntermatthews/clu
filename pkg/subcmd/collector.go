@@ -23,15 +23,14 @@ import (
 // CollectorCmd implements the "collector" subcommand (stub only).
 type CollectorCmd struct{}
 
-func (c *CollectorCmd) Run() error {
-	fmt.Println("collector: running")
+func (c *CollectorCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
+	fmt.Fprintln(stdout, "collector: running")
 
 	outDir := "/tmp"
 
 	hostname := hostName()
 	workDir, err := setupWorkdir(hostname)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		return err
 	}
 	defer cleanupWorkdir(workDir)
@@ -50,11 +49,9 @@ func (c *CollectorCmd) Run() error {
 	collectPrograms(requires, workDir)
 	collectionPath, err := createCollection(hostname, workDir, outDir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "error creating collection: %v\n", err)
-		// FIX: wrong type - need an error that represents RC 1
-		return err
+		return fmt.Errorf("error creating collection: %w", err)
 	}
-	fmt.Printf("Collection created at %s\n", collectionPath)
+	fmt.Fprintf(stdout, "Collection created at %s\n", collectionPath)
 	return nil
 }
 
