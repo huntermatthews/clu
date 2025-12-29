@@ -17,50 +17,47 @@ import (
 	"time"
 
 	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/facts"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 )
 
 // CollectorCmd implements the "collector" subcommand (stub only).
-type CollectorCmd struct{}
+type CollectorCmd struct{
+	OutDir string `name:"out-dir" help:"Output directory for the tarball (default /tmp)."`
+}
 
 func (c *CollectorCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
 	fmt.Fprintln(stdout, "collector: running")
 
 	outDir := "/tmp"
+	if c.OutDir != "" {
+		outDir = c.OutDir
+		// ensure directory exists
+		if err := os.MkdirAll(outDir, 0o755); err != nil {
+			return fmt.Errorf("failed to create out-dir %s: %w", outDir, err)
+		}
+	}
 
-	hostname := hostName()
+	hostname, _ := os.Hostname()
 	workDir, err := setupWorkdir(hostname)
 	if err != nil {
 		return err
 	}
 	defer cleanupWorkdir(workDir)
 
-	// Fallback if detectOpSys not configured externally.
-	var requires *types.Requires
-	osysIface := detectOpSys()
-	if osysIface != nil {
-		requires = osysIface.Requires()
-	} else {
-		requires = types.NewRequires() // empty fallback
-	}
+	osys := facts.OpSysFactory()
+	requires := osys.Requires()
 
 	collectMetadata(workDir, hostname)
 	collectFiles(requires, workDir)
 	collectPrograms(requires, workDir)
-	collectionPath, err := createCollection(hostname, workDir, outDir)
+	collectionPath, err := createCollection2(hostname, workDir, outDir)
 	if err != nil {
 		return fmt.Errorf("error creating collection: %w", err)
 	}
 	fmt.Fprintf(stdout, "Collection created at %s\n", collectionPath)
 	return nil
 }
-
-// opsysFactory simplified runtime selection.
-// detectOpSys delegates to report command's runtime factory (reuse) to avoid duplicate definition.
-// Provided by requires.go; if refactoring later, centralize in a shared package.
-var detectOpSys = func() interface{ Requires() *types.Requires } { return nil }
-
-func hostName() string { h, _ := os.Hostname(); return h }
 
 func setupWorkdir(hostname string) (string, error) {
 	dir, err := os.MkdirTemp("", fmt.Sprintf("%s.", hostname))
@@ -133,51 +130,6 @@ func transformCmdlineToFilename(cmd string) (base string, rc string) {
 	return
 }
 
-func createCollection(hostname, workDir, outDir string) (string, error) {
-	collectionPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", pkg.Title, hostname))
-	f, err := os.Create(collectionPath)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-	gw := gzip.NewWriter(f)
-	defer gw.Close()
-	tw := tar.NewWriter(gw)
-	defer tw.Close()
-	// Walk workDir and add files.
-	err = filepath.Walk(workDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if info.IsDir() {
-			return nil
-		}
-		rel, _ := filepath.Rel(workDir, path)
-		hdr, err := tar.FileInfoHeader(info, "")
-		if err != nil {
-			return err
-		}
-		hdr.Name = rel // ensure relative name
-		if err := tw.WriteHeader(hdr); err != nil {
-			return err
-		}
-		src, err := os.Open(path)
-		if err != nil {
-			return err
-		}
-		defer src.Close()
-		if _, err := io.Copy(tw, src); err != nil {
-			return err
-		}
-		return nil
-	})
-	if err != nil {
-		return "", err
-	}
-	_ = os.Chmod(collectionPath, 0o644)
-	return collectionPath, nil
-}
-
 // Helper to copy file contents.
 func copyFile(src, dst string) {
 	in, err := os.Open(src)
@@ -198,3 +150,64 @@ func writeFile(dir, name, content string) {
 }
 
 func writeFileRaw(path, content string) { _ = os.WriteFile(path, []byte(content), 0o644) }
+
+func createCollection2(hostname, workDir, outDir string) (string, error) {
+	outPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", pkg.Title, hostname))
+	f, err := os.Create(outPath)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	gw := gzip.NewWriter(f)
+	defer gw.Close()
+
+	tw := tar.NewWriter(gw)
+	defer tw.Close()
+
+	err = filepath.Walk(workDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		rel, relErr := filepath.Rel(workDir, path)
+		if relErr != nil {
+			return relErr
+		}
+
+		// Skip root entry
+		if rel == "." {
+			return nil
+		}
+
+		hdr, err := tar.FileInfoHeader(info, "")
+		if err != nil {
+			return err
+		}
+		hdr.Name = rel
+
+		if err := tw.WriteHeader(hdr); err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		src, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+
+		if _, err := io.Copy(tw, src); err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return "", err
+	}
+	_ = os.Chmod(outPath, 0o644)
+	return outPath, nil
+}
