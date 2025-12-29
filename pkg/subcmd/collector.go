@@ -47,7 +47,7 @@ func (c *CollectorCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
 	collectMetadata(workDir, hostname)
 	collectFiles(requires, workDir)
 	collectPrograms(requires, workDir)
-	collectionPath, err := createCollection2(hostname, workDir, outDir)
+	collectionPath, err := createCollection(hostname, workDir, c.OutDir)
 	if err != nil {
 		return fmt.Errorf("error creating collection: %w", err)
 	}
@@ -147,7 +147,7 @@ func writeFile(dir, name, content string) {
 
 func writeFileRaw(path, content string) { _ = os.WriteFile(path, []byte(content), 0o644) }
 
-func createCollection2(hostname, workDir, outDir string) (string, error) {
+func createCollection(hostname, workDir, outDir string) (string, error) {
 	outPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", pkg.Title, hostname))
 	f, err := os.Create(outPath)
 	if err != nil {
