@@ -4,14 +4,23 @@ name: Build and Release Clu
 on:
   push:
     tags:
-      - "v*"
+      - "v[0-9]*"
 
 permissions:
   contents: write
 
 jobs:
-  build-release:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: darwin
+            goarch: arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -25,13 +34,40 @@ jobs:
           go-version: "stable"
           check-latest: true
 
-      - name: Build distribution binary
+      - name: Build binaries
         run: |
-          mkdir -p dist
-          CGO_ENABLED=0 go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o dist/clu ./cmd/main.go
+          # Define output names
+          ARTIFACT_NAME="clu-${{ matrix.goos }}-${{ matrix.goarch }}"
+          ARTIFACT_DIR="dist/${ARTIFACT_NAME}"
+          mkdir -p "${ARTIFACT_DIR}"
 
-      - name: Compress binary with xz
-        run: xz --compress dist/clu
+          # Build stripped production binary
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu" ./cmd/main.go
+          # Build binary with debug symbols
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-debug" ./cmd/main.go
+
+      - name: Compress binaries
+        run: |
+          ARTIFACT_NAME="clu-${{ matrix.goos }}-${{ matrix.goarch }}"
+          ARTIFACT_DIR="dist/${ARTIFACT_NAME}"
+          xz --compress "${ARTIFACT_DIR}/clu" "${ARTIFACT_DIR}/clu-debug"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/clu-${{ matrix.goos }}-${{ matrix.goarch }}/*
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download all release assets
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+          pattern: release-assets-*
+          merge-multiple: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -40,7 +76,68 @@ jobs:
           body: |
             Release ${{ github.ref_name }}.
             Download / deploy with
-            `curl -fsSL -o clu https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu.xz && unxz clu.xz && chmod +x clu`
+            `curl -fsSL -o clu.xz https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu.xz && unxz clu.xz && chmod +x clu`
           files: |
-            dist/clu.xz
+            dist/*
           fail_on_unmatched_files: true
+
+          # TODO: Future workflow improvements to consider:
+#
+# 1. Add a 'test' job:
+#    - Should run before the 'build' job.
+#    - Use 'go test -v ./...' to run unit tests.
+#    - Make the 'build' job dependent on the 'test' job passing (needs: test).
+#
+# 2. Generate checksums:
+#    - Add a step in the 'build' job after compression.
+#    - Use 'sha256sum' to create a checksum file (e.g., SHA256SUMS).
+#    - Upload the checksum file as part of the release assets.
+#    - This requires renaming artifacts to be platform-specific to avoid collisions.
+#
+# 3. Automate release notes:
+#    - In the 'release' job, add 'generate_release_notes: true' to the
+#      'softprops/action-gh-release' step.
+#
+# 4. Enable Go module caching:
+#    - In the 'setup-go' step, add 'cache: true' to speed up builds.
+#
+# 5. Implement SLSA Level 3 attestations:
+#    - Remove the top-level 'permissions' block.
+#    - Add job-level permissions to the 'build' job:
+#      permissions:
+#        attestations: write
+#        id-token: write
+#    - Add job-level permissions to the 'release' job:
+#      permissions:
+#        contents: write
+#
+# 6. Replace softprops/action-gh-release with the official 'gh' CLI:
+#    - Replace the 'Create GitHub Release' step with a 'run' step using 'gh'.
+#    - Use 'gh release create <tag> dist/* --notes-file notes.md' to upload assets.
+#    - The release body would be written to 'notes.md' first.
+#    - Requires 'contents: write' permission and GITHUB_TOKEN in the env.
+#
+# 7. Add RPM package build:
+#    - Add a new 'build-rpm' job to the workflow.
+#    - This job should 'need' the 'build' job.
+#    - The 'release' job should 'need' both 'build' and 'build-rpm'.
+#    - The 'build-rpm' job will download the linux binary artifact, install
+#      rpmbuild, and then build the RPM package.
+#    - The final RPM should be uploaded as an artifact to be used by the 'release' job.
+#
+# 8. Add DEB package build:
+#    - Similar to the RPM build, add a 'build-deb' job.
+#    - It would download the linux binary, install 'dpkg', and build the .deb package.
+#    - The 'release' job would also need to depend on this job.
+#
+# 9. Add Homebrew formula support:
+#    - This is typically handled differently. Instead of a binary, you would update a
+#      formula file in a separate repository (a "tap").
+#    - A new job could be added to automatically update the formula (URL, sha256)
+#      and push it to the Homebrew tap repository upon a new release.
+#
+# 10. Add email notification for manual signing:
+#     - Add a final 'notify' job that 'needs: release'.
+#     - Use a marketplace action like 'dawidd6/action-send-mail'.
+#     - Configure it with SMTP server details stored in repository secrets.
+#     - The email body should contain the release URL and a reminder to sign artifacts.
