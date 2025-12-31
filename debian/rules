@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.Version=$(DEB_VERSION_UPSTREAM)" -o clu ./cmd/main.go
+
+override_dh_auto_install:
+	install -D -m 755 clu $(DESTDIR)/usr/bin/clu
+	install -D -m 644 clu.1 $(DESTDIR)/usr/share/man/man1/clu.1
+	install -D -m 644 LICENSE $(DESTDIR)/usr/share/doc/clu/LICENSE
+	install -D -m 644 README.md $(DESTDIR)/usr/share/doc/clu/README.md
+
+override_dh_auto_clean:
+	rm -f clu
+
+override_dh_auto_test:
+	# Skip tests for now

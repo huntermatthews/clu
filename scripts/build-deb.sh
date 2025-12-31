@@ -1,0 +1,72 @@
+#!/bin/bash
+set -euo pipefail
+
+# Script to build DEB package locally from source tarball
+# Usage: ./scripts/build-deb.sh <version>
+
+if [[ ${#} -ne 1 ]]; then
+    echo "Error: Version argument is required"
+    echo "Usage: ${0} <version>"
+    echo "Example: ${0} 1.2.3"
+    exit 1
+fi
+
+VERSION="${1}"
+TARBALL_PATH="clu-${VERSION}.tar.gz"
+ORIG_TARBALL="clu_${VERSION}.orig.tar.gz"
+
+echo "Building DEB for clu version: ${VERSION}"
+
+# Create source tarball if it doesn't exist
+if [[ ! -f "${TARBALL_PATH}" ]]; then
+    echo "Creating source tarball..."
+    git archive --format=tar.gz --prefix=clu-${VERSION}/ HEAD > "${TARBALL_PATH}"
+    echo "Created ${TARBALL_PATH}"
+fi
+
+# Create Debian orig tarball (required naming convention)
+if [[ ! -f "${ORIG_TARBALL}" ]]; then
+    echo "Creating Debian orig tarball..."
+    cp "${TARBALL_PATH}" "${ORIG_TARBALL}"
+fi
+
+# Extract source
+echo "Extracting source..."
+rm -rf "clu-${VERSION}"
+tar -xzf "${ORIG_TARBALL}"
+
+# Copy debian packaging files
+echo "Setting up Debian package files..."
+if [[ ! -d "debian" ]]; then
+    echo "Error: debian/ directory not found"
+    echo "Please create debian/ directory with control files first"
+    exit 1
+fi
+cp -r debian "clu-${VERSION}/"
+
+# Update changelog with correct version
+echo "Updating changelog version to ${VERSION}..."
+cd "clu-${VERSION}"
+sed -i "1s/([^)]*)/(${VERSION}-1)/" debian/changelog
+
+# Build package
+echo "Building DEB package..."
+
+# Check for required build tools
+if ! command -v dpkg-buildpackage >/dev/null 2>&1; then
+    echo "Error: dpkg-buildpackage not found"
+    echo "Install build dependencies with: sudo apt-get install dpkg-dev build-essential golang-go"
+    exit 1
+fi
+
+# Build the package (unsigned for local builds)
+dpkg-buildpackage -us -uc -b
+
+# Show results
+echo ""
+echo "DEB build complete!"
+echo "Generated packages:"
+ls -la ../clu_*.deb ../clu_*.changes 2>/dev/null || true
+echo ""
+echo "To install: sudo dpkg -i ../clu_${VERSION}-1_amd64.deb"
+echo "If dependencies missing: sudo apt-get install -f"
