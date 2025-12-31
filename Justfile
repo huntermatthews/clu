@@ -1,5 +1,8 @@
 # Justfile for Python projects (manage common tasks)
 
+# Get the current version from git
+REPO_VERSION := `scripts/get-version.sh`
+
 # Justfile settings
 _default: help
 
@@ -44,7 +47,7 @@ clu:
         export GOOS=${plat%:*}
         export GOARCH=${plat#*:}
         echo "Building for $GOOS on $GOARCH..."
-        scripts/build.sh
+        go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${REPO_VERSION}" -o ./dist/clu-$(go env GOOS)-$(go env GOARCH) ./cmd/main.go
     done
 
 # # Build the Go CLI tool
@@ -65,4 +68,5 @@ clu-symlink:
 # Show the current version from git
 [group('package')]
 version:
-    git describe --dirty --always --match "v[0-9]*"
+    echo "Current repo version is: {{REPO_VERSION}}"
+#tar cvzf ~/scratch/clu.tgz  --exclude-vcs --exclude testdata --exclude dist . 
