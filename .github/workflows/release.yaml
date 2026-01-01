@@ -42,10 +42,10 @@ jobs:
           ARTIFACT_DIR="dist/${ARTIFACT_NAME}"
           mkdir -p "${ARTIFACT_DIR}"
 
-          # Build stripped production binary
-          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu" ./cmd/main.go
-          # Build binary with debug symbols
-          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-debug" ./cmd/main.go
+          # Build stripped production binary with platform-specific name
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}" ./cmd/main.go
+          # Build binary with debug symbols and platform-specific name
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}-debug" ./cmd/main.go
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -118,7 +118,7 @@ jobs:
         with:
           go-version: "stable"
           check-latest: true
-          cache: true
+          cache: false # Disable cache - no go.sum available in tarball-based build
 
       - name: Setup RPM build directory
         env:
@@ -279,6 +279,7 @@ jobs:
           merge-multiple: true
 
       - name: Download DEB package
+        if: false # DISABLED - no DEB artifacts since build-deb is disabled
         uses: actions/download-artifact@v4
         with:
           path: debs/
@@ -291,7 +292,7 @@ jobs:
         with:
           files: |
             rpms/*
-            debs/*
+          #            debs/*
           fail_on_unmatched_files: true
 
           # TODO: Future workflow improvements to consider:
