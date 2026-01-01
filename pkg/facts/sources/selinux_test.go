@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func TestSelinuxProvides(t *testing.T) {
@@ -29,11 +29,11 @@ func TestSelinuxEnableMapping(t *testing.T) {
 		{"disabled", 1, "False"},
 		{"error", 5, types.ParseFailMsg},
 	}
-	orig := pkg.CommandRunner
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	defer func() { input.CommandRunner = orig }()
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			pkg.CommandRunner = func(cmd string) (string, int, error) {
+			input.CommandRunner = func(cmd string) (string, int, error) {
 				if cmd == "selinuxenabled" {
 					if c.rc == 0 {
 						return "", 0, nil
@@ -61,8 +61,8 @@ func TestSelinuxEnableMapping(t *testing.T) {
 }
 
 func TestSelinuxModeFailure(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) {
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) {
 		if cmd == "selinuxenabled" {
 			return "", 0, nil
 		}
@@ -71,7 +71,7 @@ func TestSelinuxModeFailure(t *testing.T) {
 		}
 		return "", 1, fmt.Errorf("fail")
 	}
-	defer func() { pkg.CommandRunner = orig }()
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Selinux{}
 	src.Parse(f)

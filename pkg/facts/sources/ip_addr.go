@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // IpAddr gathers network interface facts.
@@ -41,7 +41,7 @@ type ipAddrIface struct {
 
 // Parse executes command, decodes JSON and accumulates space-separated lists (trailing space retained for parity).
 func (i *IpAddr) Parse(f *types.Facts) {
-	data, rc, _ := pkg.CommandRunner("ip --json addr")
+	data, rc, _ := input.CommandRunner("ip --json addr")
 	if data == "" || rc != 0 {
 		for _, k := range ipAddrKeys {
 			f.Set(k, types.ParseFailMsg)

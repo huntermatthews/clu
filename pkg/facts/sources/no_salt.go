@@ -6,8 +6,8 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // NoSalt reports whether the /no_salt file exists and its content as a reason.
@@ -29,7 +29,7 @@ func (n *NoSalt) Requires(r *types.Requires) {
 func (n *NoSalt) Parse(f *types.Facts) {
 	// Use DI FileReader (returns content,error). Treat any error or empty
 	// trimmed content as missing (optional semantics).
-	data, err := pkg.FileReader("/no_salt")
+	data, err := input.FileReader("/no_salt")
 	if err != nil || strings.TrimSpace(data) == "" {
 		f.Set("salt.no_salt.exists", "False")
 		return

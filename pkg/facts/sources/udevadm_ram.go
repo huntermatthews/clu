@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // UdevadmRam collects total physical RAM size from udevadm output.
@@ -25,7 +25,7 @@ func (u *UdevadmRam) Requires(r *types.Requires) {
 // Parse executes command, extracts MEMORY_DEVICE_x_SIZE numbers, sums them and converts to SI string.
 // On failure sets ParseFailMsg.
 func (u *UdevadmRam) Parse(f *types.Facts) {
-	data, rc, _ := pkg.CommandRunner("udevadm info --path /devices/virtual/dmi/id")
+	data, rc, _ := input.CommandRunner("udevadm info --path /devices/virtual/dmi/id")
 	if data == "" || rc != 0 {
 		f.Set("phy.ram", types.ParseFailMsg)
 		return
@@ -41,5 +41,5 @@ func (u *UdevadmRam) Parse(f *types.Facts) {
 		}
 	}
 	// If no matches, total remains 0 -> BytesToSI will format "0.0 B" (consistent with Python result for sum([])=0).
-	f.Set("phy.ram", pkg.BytesToSI(total))
+	f.Set("phy.ram", input.BytesToSI(total))
 }

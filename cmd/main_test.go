@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func setupTest(t *testing.T) (string, func()) {
@@ -24,13 +24,13 @@ func setupTest(t *testing.T) (string, func()) {
 	}
 
 	origMockDir := global.CluConfig.MockDir
-	origRunner := pkg.CommandRunner
-	origReader := pkg.FileReader
+	origRunner := input.CommandRunner
+	origReader := input.FileReader
 
 	return testDataDir, func() {
 		global.CluConfig.MockDir = origMockDir
-		pkg.CommandRunner = origRunner
-		pkg.FileReader = origReader
+		input.CommandRunner = origRunner
+		input.FileReader = origReader
 	}
 }
 
@@ -98,11 +98,11 @@ func TestEnableMockMode(t *testing.T) {
 				}
 
 				// Verify function swaps
-				if reflect.ValueOf(pkg.CommandRunner).Pointer() != reflect.ValueOf(pkg.MockTextProgram).Pointer() {
-					t.Error("pkg.CommandRunner was not swapped to pkg.MockTextProgram")
+				if reflect.ValueOf(input.CommandRunner).Pointer() != reflect.ValueOf(input.MockTextProgram).Pointer() {
+					t.Error("input.CommandRunner was not swapped to input.MockTextProgram")
 				}
-				if reflect.ValueOf(pkg.FileReader).Pointer() != reflect.ValueOf(pkg.MockTextFile).Pointer() {
-					t.Error("pkg.FileReader was not swapped to pkg.MockTextFile")
+				if reflect.ValueOf(input.FileReader).Pointer() != reflect.ValueOf(input.MockTextFile).Pointer() {
+					t.Error("input.FileReader was not swapped to input.MockTextFile")
 				}
 			}
 		})
@@ -136,9 +136,9 @@ func TestMockFileReading(t *testing.T) {
 	}
 
 	// Test reading the file via the swapped function
-	content, err := pkg.FileReader("/etc/os-release")
+	content, err := input.FileReader("/etc/os-release")
 	if err != nil {
-		t.Fatalf("pkg.FileReader failed: %v", err)
+		t.Fatalf("input.FileReader failed: %v", err)
 	}
 
 	if content != expectedContent {
@@ -165,7 +165,7 @@ func TestMockCommandExecution(t *testing.T) {
 	expectedOutput := "5.10.0-fake\n"
 
 	// Calculate filename used by mock system
-	cmdFilename, _ := pkg.TransformCmdlineToFilename(cmd)
+	cmdFilename, _ := input.TransformCmdlineToFilename(cmd)
 	outPath := filepath.Join(programsDir, cmdFilename)
 
 	if err := os.WriteFile(outPath, []byte(expectedOutput), 0644); err != nil {
@@ -178,9 +178,9 @@ func TestMockCommandExecution(t *testing.T) {
 	}
 
 	// Test execution
-	out, rc, err := pkg.CommandRunner(cmd)
+	out, rc, err := input.CommandRunner(cmd)
 	if err != nil {
-		t.Fatalf("pkg.CommandRunner failed: %v", err)
+		t.Fatalf("input.CommandRunner failed: %v", err)
 	}
 
 	if rc != 0 {

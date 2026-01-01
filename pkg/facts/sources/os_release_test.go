@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 var sampleOsRelease = `NAME="Test Linux"
@@ -27,9 +27,9 @@ func TestOsReleaseProvides(t *testing.T) {
 
 // TestOsReleaseSuccess simulates a typical os-release file.
 func TestOsReleaseSuccess(t *testing.T) {
-	orig := pkg.FileReader
-	pkg.FileReader = func(path string) (string, error) { return sampleOsRelease, nil }
-	defer func() { pkg.FileReader = orig }()
+	orig := input.FileReader
+	input.FileReader = func(path string) (string, error) { return sampleOsRelease, nil }
+	defer func() { input.FileReader = orig }()
 	f := types.NewFacts()
 	src := &OsRelease{}
 	src.Parse(f)
@@ -41,9 +41,9 @@ func TestOsReleaseSuccess(t *testing.T) {
 }
 
 func TestOsReleaseMissing(t *testing.T) {
-	orig := pkg.FileReader
-	pkg.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
-	defer func() { pkg.FileReader = orig }()
+	orig := input.FileReader
+	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
+	defer func() { input.FileReader = orig }()
 	f := types.NewFacts()
 	src := &OsRelease{}
 	src.Parse(f)

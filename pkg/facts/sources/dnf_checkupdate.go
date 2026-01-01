@@ -7,9 +7,9 @@ package sources
 //   other -> error / parsing failure
 
 import (
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // DnfCheckUpdate reports if updates are required (True/False) or an error state.
@@ -34,7 +34,7 @@ func (d *DnfCheckUpdate) Parse(f *types.Facts) {
 		return
 	}
 
-	_, rc, _ := pkg.CommandRunner("dnf check-update")
+	_, rc, _ := input.CommandRunner("dnf check-update")
 
 	var value string
 	switch rc {

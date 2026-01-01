@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 var sampleLsmem = `RANGE   SIZE   STATE
@@ -24,9 +24,9 @@ func TestLsmemProvides(t *testing.T) {
 
 // TestLsmemSuccess ensures proper parsing and conversion.
 func TestLsmemSuccess(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) { return sampleLsmem, 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return sampleLsmem, 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Lsmem{}
 	src.Parse(f)
@@ -35,16 +35,16 @@ func TestLsmemSuccess(t *testing.T) {
 		t.Fatalf("expected phy.ram set got %q ok=%v", got, ok)
 	}
 	// 4294967296 bytes -> 4.00G (assuming BytesToSI formatting)
-	if got != pkg.BytesToSI(4294967296) {
+	if got != input.BytesToSI(4294967296) {
 		t.Fatalf("unexpected conversion got %q", got)
 	}
 }
 
 // TestLsmemFailure simulates command failure.
 func TestLsmemFailure(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Lsmem{}
 	src.Parse(f)
@@ -56,9 +56,9 @@ func TestLsmemFailure(t *testing.T) {
 
 // TestLsmemMissingLine ensures absence of target line yields ParseFailMsg.
 func TestLsmemMissingLine(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) { return "Header\nNo total line here", 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return "Header\nNo total line here", 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Lsmem{}
 	src.Parse(f)

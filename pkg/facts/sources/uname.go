@@ -3,8 +3,8 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // Uname collects simple uname-derived facts by running `uname -snrm`.
@@ -36,7 +36,7 @@ func (u *Uname) Parse(f *types.Facts) {
 	if f.Contains("os.kernel.name") {
 		return
 	}
-	data, rc, _ := pkg.CommandRunner("uname -snrm")
+	data, rc, _ := input.CommandRunner("uname -snrm")
 	if data == "" || rc != 0 {
 		for _, k := range unameKeys {
 			f.Add(types.TierOne, k, types.ParseFailMsg)

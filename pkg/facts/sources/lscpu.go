@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // Lscpu collects CPU topology and identification facts.
@@ -40,7 +40,7 @@ func (l *Lscpu) Requires(r *types.Requires) {
 // (matching Python behavior where no facts are set). Computation failures set
 // cores/threads to ParseFailMsg.
 func (l *Lscpu) Parse(f *types.Facts) {
-	data, rc, _ := pkg.CommandRunner("lscpu")
+	data, rc, _ := input.CommandRunner("lscpu")
 	if data == "" || rc != 0 {
 		return // mimic Python: skip setting anything
 	}

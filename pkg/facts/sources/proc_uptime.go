@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // ProcUptime parses /proc/uptime for run.uptime fact.
@@ -21,7 +21,7 @@ func (p *ProcUptime) Requires(r *types.Requires) { r.Files = append(r.Files, "/p
 
 // Parse extracts uptime seconds and formats via SecondsToText. Failure yields ParseFailMsg.
 func (p *ProcUptime) Parse(f *types.Facts) {
-	data, err := pkg.FileReader("/proc/uptime")
+	data, err := input.FileReader("/proc/uptime")
 	if err != nil || data == "" {
 		f.Set("run.uptime", types.ParseFailMsg)
 		return
@@ -41,5 +41,5 @@ func (p *ProcUptime) Parse(f *types.Facts) {
 	}
 
 	secs := int64(val)
-	f.Set("run.uptime", pkg.SecondsToText(secs))
+	f.Set("run.uptime", input.SecondsToText(secs))
 }

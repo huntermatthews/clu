@@ -4,8 +4,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // Uptime parses system uptime via `uptime` command.
@@ -25,7 +25,7 @@ var uptimeRegex = regexp.MustCompile(`.*up *(.*) \d+ user(?:s)?,? .*`)
 func (u *Uptime) Parse(f *types.Facts) {
 	f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)
 
-	data, rc, _ := pkg.CommandRunner("uptime")
+	data, rc, _ := input.CommandRunner("uptime")
 	if data == "" || rc != 0 {
 		return
 	}

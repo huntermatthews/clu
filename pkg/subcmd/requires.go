@@ -10,8 +10,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // RequiresCmd implements the "requires" subcommand (stub only).
@@ -19,7 +19,7 @@ type RequiresCmd struct {
 	Mode string `arg:"" enum:"list,check" help:"Operation to perform: list or check."`
 }
 
-func (r *RequiresCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
+func (r *RequiresCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	switch r.Mode {
 	case "list":
 		// fmt.Println("requires: listing (stub)")

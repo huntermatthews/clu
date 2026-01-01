@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func TestSysDmiProvides(t *testing.T) {
@@ -21,9 +21,9 @@ func TestSysDmiProvides(t *testing.T) {
 }
 
 func TestSysDmiSkipNonPhysical(t *testing.T) {
-	orig := pkg.FileReader
-	pkg.FileReader = func(path string) (string, error) { return "Dummy", nil }
-	defer func() { pkg.FileReader = orig }()
+	orig := input.FileReader
+	input.FileReader = func(path string) (string, error) { return "Dummy", nil }
+	defer func() { input.FileReader = orig }()
 	f := types.NewFacts()
 	f.Set("phy.platform", "virtual")
 	src := &SysDmi{}
@@ -43,14 +43,14 @@ func TestSysDmiSuccess(t *testing.T) {
 		"/sys/devices/virtual/dmi/id/chassis_vendor":    "ChassisCo\n",
 		"/sys/devices/virtual/dmi/id/chassis_asset_tag": "Asset42\n",
 	}
-	orig := pkg.FileReader
-	pkg.FileReader = func(path string) (string, error) {
+	orig := input.FileReader
+	input.FileReader = func(path string) (string, error) {
 		if v, ok := contents[path]; ok {
 			return v, nil
 		}
 		return "", errors.New("missing")
 	}
-	defer func() { pkg.FileReader = orig }()
+	defer func() { input.FileReader = orig }()
 	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
 	src := &SysDmi{}
@@ -73,9 +73,9 @@ func TestSysDmiSuccess(t *testing.T) {
 }
 
 func TestSysDmiMissingFiles(t *testing.T) {
-	orig := pkg.FileReader
-	pkg.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
-	defer func() { pkg.FileReader = orig }()
+	orig := input.FileReader
+	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
+	defer func() { input.FileReader = orig }()
 	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
 	src := &SysDmi{}

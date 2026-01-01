@@ -1,4 +1,4 @@
-package pkg
+package input
 
 // Port of src/clu/input.py providing utilities for reading text files and running
 // simple text-based programs, plus helper transformations.

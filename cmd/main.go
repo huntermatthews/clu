@@ -8,8 +8,8 @@ import (
 
 	"github.com/alecthomas/kong"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/huntermatthews/clu/pkg/input"
 	"github.com/huntermatthews/clu/pkg/subcmd"
 )
 
@@ -37,8 +37,8 @@ func run(args []string, stdout, stderr io.Writer) int {
 		kong.UsageOnError(),
 		kong.Vars{"version": "clu " + global.Version},
 		kong.Writers(stdout, stderr),
-		kong.BindTo(stdout, (*pkg.Stdout)(nil)),
-		kong.BindTo(stderr, (*pkg.Stderr)(nil)),
+		kong.BindTo(stdout, (*input.Stdout)(nil)),
+		kong.BindTo(stderr, (*input.Stderr)(nil)),
 	)
 	if err != nil {
 		fmt.Fprintln(stderr, "failed to init CLI:", err)
@@ -90,8 +90,8 @@ func EnableMockMode(dir string) error {
 	global.CluConfig.MockDir = path
 
 	// Change the input functions to the mock versions.
-	pkg.CommandRunner = pkg.MockTextProgram
-	pkg.FileReader = pkg.MockTextFile
+	input.CommandRunner = input.MockTextProgram
+	input.FileReader = input.MockTextFile
 	return nil
 }
 

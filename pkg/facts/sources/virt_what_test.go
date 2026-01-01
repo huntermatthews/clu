@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func TestVirtWhatProvides(t *testing.T) {
@@ -18,9 +18,9 @@ func TestVirtWhatProvides(t *testing.T) {
 }
 
 func TestVirtWhatPhysicalFallback(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return "\n\n", 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) { return "\n\n", 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &VirtWhat{}
 	src.Parse(f)
@@ -31,9 +31,9 @@ func TestVirtWhatPhysicalFallback(t *testing.T) {
 }
 
 func TestVirtWhatVirtualizationList(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return "kvm\nvmware", 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) { return "kvm\nvmware", 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &VirtWhat{}
 	src.Parse(f)
@@ -44,9 +44,9 @@ func TestVirtWhatVirtualizationList(t *testing.T) {
 }
 
 func TestVirtWhatFailureRc(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return "", 5, fmt.Errorf("fail") }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) { return "", 5, fmt.Errorf("fail") }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &VirtWhat{}
 	src.Parse(f)
@@ -57,10 +57,10 @@ func TestVirtWhatFailureRc(t *testing.T) {
 }
 
 func TestVirtWhatSkipIfPreset(t *testing.T) {
-	orig := pkg.CommandRunner
+	orig := input.CommandRunner
 	// Would have produced virtualization list, but should be skipped.
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return "kvm", 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	input.CommandRunner = func(cmd string) (string, int, error) { return "kvm", 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
 	src := &VirtWhat{}
