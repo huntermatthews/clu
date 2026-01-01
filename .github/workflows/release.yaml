@@ -268,14 +268,15 @@ jobs:
           # Build the DEB package (override dependency check since Go is installed via apt)
           dpkg-buildpackage -us -uc -b -d
 
-          # Move the .deb file to a predictable location
-          mv ../clu_${VERSION}-1_amd64.deb ./clu_${VERSION}-1_amd64.deb
+          # Move the .deb file to a predictable location at the root
+          mkdir -p debs
+          mv ../clu_${VERSION}-1_amd64.deb debs/clu_${VERSION}-1_amd64.deb
 
       - name: Upload DEB artifact
         uses: actions/upload-artifact@v4
         with:
           name: deb-package
-          path: clu-*/clu_*_amd64.deb
+          path: debs/*
 
   update-release:
     runs-on: ubuntu-latest
