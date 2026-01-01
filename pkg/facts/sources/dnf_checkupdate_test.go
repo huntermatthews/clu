@@ -34,8 +34,8 @@ func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			// Ensure net not disabled.
-			global.CluConfig.NetEnabled = true
-			defer func() { global.CluConfig.NetEnabled = false }()
+			global.Config.NetEnabled = true
+			defer func() { global.Config.NetEnabled = false }()
 
 			// Stub command runner.
 			orig := input.CommandRunner

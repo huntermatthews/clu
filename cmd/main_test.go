@@ -23,12 +23,12 @@ func setupTest(t *testing.T) (string, func()) {
 		t.Fatalf("failed to create testdata dir: %v", err)
 	}
 
-	origMockDir := global.CluConfig.MockDir
+	origMockDir := global.Config.MockDir
 	origRunner := input.CommandRunner
 	origReader := input.FileReader
 
 	return testDataDir, func() {
-		global.CluConfig.MockDir = origMockDir
+		global.Config.MockDir = origMockDir
 		input.CommandRunner = origRunner
 		input.FileReader = origReader
 	}
@@ -93,8 +93,8 @@ func TestEnableMockMode(t *testing.T) {
 			} else {
 				// Verify success state
 				expected := filepath.Join(testDataDir, tt.dirArg)
-				if global.CluConfig.MockDir != expected {
-					t.Errorf("global.CluConfig.MockDir = %q, want %q", global.CluConfig.MockDir, expected)
+				if global.Config.MockDir != expected {
+					t.Errorf("global.Config.MockDir = %q, want %q", global.Config.MockDir, expected)
 				}
 
 				// Verify function swaps

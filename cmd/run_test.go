@@ -15,18 +15,18 @@ import (
 
 func TestRun_Hosts(t *testing.T) {
 	// Save global state to restore after test
-	origMockDir := global.CluConfig.MockDir
+	origMockDir := global.Config.MockDir
 	origRunner := input.CommandRunner
 	origReader := input.FileReader
-	origDebug := global.CluConfig.Debug
-	origNet := global.CluConfig.NetEnabled
+	origDebug := global.Config.Debug
+	origNet := global.Config.NetEnabled
 
 	defer func() {
-		global.CluConfig.MockDir = origMockDir
+		global.Config.MockDir = origMockDir
 		input.CommandRunner = origRunner
 		input.FileReader = origReader
-		global.CluConfig.Debug = origDebug
-		global.CluConfig.NetEnabled = origNet
+		global.Config.Debug = origDebug
+		global.Config.NetEnabled = origNet
 	}()
 
 	hosts := []string{"host1", "host2", "host3"}
@@ -78,18 +78,18 @@ func TestRun_Hosts(t *testing.T) {
 
 func TestRun_Requires(t *testing.T) {
 	// Save global state to restore after test
-	origMockDir := global.CluConfig.MockDir
+	origMockDir := global.Config.MockDir
 	origRunner := input.CommandRunner
 	origReader := input.FileReader
-	origDebug := global.CluConfig.Debug
-	origNet := global.CluConfig.NetEnabled
+	origDebug := global.Config.Debug
+	origNet := global.Config.NetEnabled
 
 	defer func() {
-		global.CluConfig.MockDir = origMockDir
+		global.Config.MockDir = origMockDir
 		input.CommandRunner = origRunner
 		input.FileReader = origReader
-		global.CluConfig.Debug = origDebug
-		global.CluConfig.NetEnabled = origNet
+		global.Config.Debug = origDebug
+		global.Config.NetEnabled = origNet
 	}()
 
 	// Test list mode
@@ -131,18 +131,18 @@ func showDiff(t *testing.T, host string, tier int, got, want string) {
 
 func TestRun_Collector(t *testing.T) {
 	// Save global state
-	origMockDir := global.CluConfig.MockDir
+	origMockDir := global.Config.MockDir
 	origRunner := input.CommandRunner
 	origReader := input.FileReader
-	origDebug := global.CluConfig.Debug
-	origNet := global.CluConfig.NetEnabled
+	origDebug := global.Config.Debug
+	origNet := global.Config.NetEnabled
 
 	defer func() {
-		global.CluConfig.MockDir = origMockDir
+		global.Config.MockDir = origMockDir
 		input.CommandRunner = origRunner
 		input.FileReader = origReader
-		global.CluConfig.Debug = origDebug
-		global.CluConfig.NetEnabled = origNet
+		global.Config.Debug = origDebug
+		global.Config.NetEnabled = origNet
 	}()
 
 	args := []string{"collector", "--mock-dir", "host1"}

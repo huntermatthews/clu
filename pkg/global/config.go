@@ -13,4 +13,4 @@ type config struct {
 }
 
 // Config is the singleton instance backing global configuration access.
-var CluConfig = &config{}
+var Config = &config{}

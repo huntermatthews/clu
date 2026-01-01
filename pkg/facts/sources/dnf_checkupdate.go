@@ -29,7 +29,7 @@ func (d *DnfCheckUpdate) Requires(r *types.Requires) {
 // It respects a config key `net` (bool). If present and false, network queries
 // are disabled and a placeholder value is stored.
 func (d *DnfCheckUpdate) Parse(f *types.Facts) {
-	if !global.CluConfig.NetEnabled {
+	if !global.Config.NetEnabled {
 		f.Set("run.update_required", types.NetDisabledMsg)
 		return
 	}

@@ -54,18 +54,18 @@ func run(args []string, stdout, stderr io.Writer) int {
 	if cli.Debug {
 		fmt.Fprintln(stderr, "debug: enabled")
 		// see comment in pkg/config.go about this
-		global.CluConfig.Debug = true
+		global.Config.Debug = true
 	}
 
 	if cli.Net {
 		fmt.Fprintln(stderr, "net: enabled")
-		global.CluConfig.NetEnabled = true
+		global.Config.NetEnabled = true
 	}
 
 	if cli.MockDir != "" {
 		fmt.Fprintln(stderr, "mock mode: enabled, dir =", cli.MockDir)
 
-		// global.CluConfig.MockDir = cli.MockDir
+		// global.Config.MockDir = cli.MockDir
 		if err := EnableMockMode(cli.MockDir); err != nil {
 			fmt.Fprintln(stderr, err)
 			return 1
@@ -87,7 +87,7 @@ func EnableMockMode(dir string) error {
 		return err
 	}
 
-	global.CluConfig.MockDir = path
+	global.Config.MockDir = path
 
 	// Change the input functions to the mock versions.
 	input.CommandRunner = input.MockTextProgram

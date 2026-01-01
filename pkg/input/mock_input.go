@@ -1,6 +1,6 @@
 package input
 
-// MockTextFile reads a file from a per-host mock directory set in global.CluConfig.MockDir.
+// MockTextFile reads a file from a per-host mock directory set in global.Config.MockDir.
 // The mock directory is expected to contain files laid out by their absolute
 // path (e.g. MockDir + "/proc/cpuinfo"). The function mirrors the behavior of
 // `TextFile` but does not call it — it implements the same error checks and
@@ -17,16 +17,16 @@ import (
 )
 
 // MockTextFile reads the mock file corresponding to `fname` under the
-// configured `global.CluConfig.MockDir`. `fname` is treated like an absolute
+// configured `global.Config.MockDir`. `fname` is treated like an absolute
 // path; its leading path separator will be removed before joining with the
 // mock directory to ensure the mock file layout mirrors the real filesystem.
 func MockTextFile(fname string) (string, error) {
 	// Build the path under the mock dir. If MockDir is empty, fall back to fname.
-	if global.CluConfig.MockDir == "" {
-		panic("global.CluConfig.MockDir is not set for MockTextFile")
+	if global.Config.MockDir == "" {
+		panic("global.Config.MockDir is not set for MockTextFile")
 	}
 	cleaned := strings.TrimPrefix(fname, string(os.PathSeparator))
-	path := filepath.Join(global.CluConfig.MockDir, cleaned)
+	path := filepath.Join(global.Config.MockDir, cleaned)
 
 	info, err := os.Stat(path)
 	if err != nil {
@@ -57,14 +57,14 @@ func MockTextFile(fname string) (string, error) {
 
 // MockTextProgram returns mocked program output and return code for a given
 // command line. It looks up the mock files under
-// `global.CluConfig.MockDir/_programs/<name>` where <name> comes from
+// `global.Config.MockDir/_programs/<name>` where <name> comes from
 // `TransformCmdlineToFilename(cmdline)`; the output file is `<name>` and the
 // return-code file is `<name>_rc`. Both files are optional; if the output file
 // is missing, this function returns an error similar to running the command
 // failing to produce output. If the rc file is missing, rc defaults to 0.
 func MockTextProgram(cmdline string) (string, int, error) {
-	if global.CluConfig.MockDir == "" {
-		panic("global.CluConfig.MockDir is not set for MockTextProgram")
+	if global.Config.MockDir == "" {
+		panic("global.Config.MockDir is not set for MockTextProgram")
 	}
 	if strings.TrimSpace(cmdline) == "" {
 		return "", 1, fmt.Errorf("empty command line")
@@ -72,7 +72,7 @@ func MockTextProgram(cmdline string) (string, int, error) {
 
 	name, rcName := TransformCmdlineToFilename(cmdline)
 	// program outputs are under _programs directory
-	base := filepath.Join(global.CluConfig.MockDir, "_programs")
+	base := filepath.Join(global.Config.MockDir, "_programs")
 	outPath := filepath.Join(base, name)
 	rcPath := filepath.Join(base, rcName)
 
