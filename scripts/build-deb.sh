@@ -84,9 +84,9 @@ dpkg-buildpackage -us -uc -b
 echo ""
 echo "DEB build complete!"
 echo "Generated packages:"
-ls -la ../clu_*.deb ../clu_*.changes 2>/dev/null || true
+ls -la clu_*.deb clu_*.changes 2>/dev/null || true
 echo ""
-echo "To install: sudo dpkg -i ../clu_${VERSION}-1_amd64.deb"
+echo "To install: sudo dpkg -i clu_${VERSION}-1_amd64.deb"
 echo "If dependencies missing: sudo apt-get install -f"
 
 # DEBUG: Alternative Go 1.20 check method (package-based)
