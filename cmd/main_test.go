@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/global"
 )
 
 func setupTest(t *testing.T) (string, func()) {
@@ -22,12 +23,12 @@ func setupTest(t *testing.T) (string, func()) {
 		t.Fatalf("failed to create testdata dir: %v", err)
 	}
 
-	origMockDir := pkg.CluConfig.MockDir
+	origMockDir := global.CluConfig.MockDir
 	origRunner := pkg.CommandRunner
 	origReader := pkg.FileReader
 
 	return testDataDir, func() {
-		pkg.CluConfig.MockDir = origMockDir
+		global.CluConfig.MockDir = origMockDir
 		pkg.CommandRunner = origRunner
 		pkg.FileReader = origReader
 	}
@@ -92,8 +93,8 @@ func TestEnableMockMode(t *testing.T) {
 			} else {
 				// Verify success state
 				expected := filepath.Join(testDataDir, tt.dirArg)
-				if pkg.CluConfig.MockDir != expected {
-					t.Errorf("pkg.CluConfig.MockDir = %q, want %q", pkg.CluConfig.MockDir, expected)
+				if global.CluConfig.MockDir != expected {
+					t.Errorf("global.CluConfig.MockDir = %q, want %q", global.CluConfig.MockDir, expected)
 				}
 
 				// Verify function swaps

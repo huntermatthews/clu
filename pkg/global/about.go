@@ -1,4 +1,4 @@
-package pkg
+package global
 
 // Version of the program, set at build time -- consts won't work with -ldflags
 var Version = "unknown"

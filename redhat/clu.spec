@@ -18,7 +18,7 @@ A command-line tool for collecting and analyzing system facts.
 %setup -q
 
 %build
-CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.Version=%{_version}" -o clu ./cmd/main.go
+CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.global.Version=%{_version}" -o clu ./cmd/main.go
 
 %install
 mkdir -p %{buildroot}%{_bindir}

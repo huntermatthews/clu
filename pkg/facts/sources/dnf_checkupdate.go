@@ -9,6 +9,7 @@ package sources
 import (
 	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/global"
 )
 
 // DnfCheckUpdate reports if updates are required (True/False) or an error state.
@@ -28,7 +29,7 @@ func (d *DnfCheckUpdate) Requires(r *types.Requires) {
 // It respects a config key `net` (bool). If present and false, network queries
 // are disabled and a placeholder value is stored.
 func (d *DnfCheckUpdate) Parse(f *types.Facts) {
-	if !pkg.CluConfig.NetEnabled {
+	if !global.CluConfig.NetEnabled {
 		f.Set("run.update_required", types.NetDisabledMsg)
 		return
 	}
