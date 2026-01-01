@@ -225,7 +225,7 @@ jobs:
           APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: "1"
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends ca-certificates curl git dpkg-dev build-essential debhelper
+          apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-go dpkg-dev build-essential debhelper
 
       - name: Download source tarball
         env:
@@ -244,13 +244,6 @@ jobs:
 
           # Create Debian orig tarball (required naming convention)
           cp clu-$VERSION.tar.gz clu_$VERSION.orig.tar.gz
-
-      - name: Setup Go (stable)
-        uses: actions/setup-go@v6
-        with:
-          go-version: "stable"
-          check-latest: true
-          cache: true
 
       - name: Verify build dependencies
         env:
