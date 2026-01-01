@@ -295,6 +295,17 @@ jobs:
           pattern: deb-package*
           merge-multiple: true
 
+      - name: Debug artifact contents
+        run: |
+          echo "Contents of current directory:"
+          ls -la
+          echo "Contents of rpms/:"
+          ls -la rpms/ || echo "rpms/ directory not found"
+          echo "Contents of debs/:"
+          ls -la debs/ || echo "debs/ directory not found"
+          echo "All .deb files:"
+          find . -name "*.deb" || echo "No .deb files found"
+
       - name: Upload packages to existing release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
