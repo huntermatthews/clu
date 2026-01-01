@@ -5,6 +5,7 @@ import (
 
 	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/global"
 )
 
 // TestDnfCheckUpdateProvides ensures the source registers its fact key.
@@ -33,8 +34,8 @@ func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			// Ensure net not disabled.
-			pkg.CluConfig.NetEnabled = true
-			defer func() { pkg.CluConfig.NetEnabled = false }()
+			global.CluConfig.NetEnabled = true
+			defer func() { global.CluConfig.NetEnabled = false }()
 
 			// Stub command runner.
 			orig := pkg.CommandRunner

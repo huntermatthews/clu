@@ -20,6 +20,7 @@ import (
 	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/global"
 )
 
 // CollectorCmd implements the "collector" subcommand (stub only).
@@ -83,7 +84,7 @@ func collectMetadata(workDir, hostname string) error {
 	}
 
 	path := filepath.Join(metaDir, "clu_version")
-	if err := os.WriteFile(path, []byte(pkg.Version+"\n"), 0o644); err != nil {
+	if err := os.WriteFile(path, []byte(global.Version+"\n"), 0o644); err != nil {
 		return fmt.Errorf("write %s: %w", path, err)
 	}
 
@@ -195,7 +196,7 @@ func copyFile(src, dst string) {
 // (removed writeFilePath and writeFile helpers; callers use os.WriteFile directly)
 
 func createCollection(hostname, workDir, outDir string) (string, error) {
-	outPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", pkg.Title, hostname))
+	outPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", global.Title, hostname))
 	f, err := os.Create(outPath)
 	if err != nil {
 		return "", err

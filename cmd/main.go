@@ -9,6 +9,7 @@ import (
 	"github.com/alecthomas/kong"
 
 	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/global"
 	"github.com/huntermatthews/clu/pkg/subcmd"
 )
 
@@ -34,7 +35,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 		kong.Name("clu"),
 		kong.Description("Kong example with facts/collector/requires subcommands."),
 		kong.UsageOnError(),
-		kong.Vars{"version": "clu " + pkg.Version},
+		kong.Vars{"version": "clu " + global.Version},
 		kong.Writers(stdout, stderr),
 		kong.BindTo(stdout, (*pkg.Stdout)(nil)),
 		kong.BindTo(stderr, (*pkg.Stderr)(nil)),
@@ -53,18 +54,18 @@ func run(args []string, stdout, stderr io.Writer) int {
 	if cli.Debug {
 		fmt.Fprintln(stderr, "debug: enabled")
 		// see comment in pkg/config.go about this
-		pkg.CluConfig.Debug = true
+		global.CluConfig.Debug = true
 	}
 
 	if cli.Net {
 		fmt.Fprintln(stderr, "net: enabled")
-		pkg.CluConfig.NetEnabled = true
+		global.CluConfig.NetEnabled = true
 	}
 
 	if cli.MockDir != "" {
 		fmt.Fprintln(stderr, "mock mode: enabled, dir =", cli.MockDir)
 
-		// pkg.CluConfig.MockDir = cli.MockDir
+		// global.CluConfig.MockDir = cli.MockDir
 		if err := EnableMockMode(cli.MockDir); err != nil {
 			fmt.Fprintln(stderr, err)
 			return 1
@@ -86,7 +87,7 @@ func EnableMockMode(dir string) error {
 		return err
 	}
 
-	pkg.CluConfig.MockDir = path
+	global.CluConfig.MockDir = path
 
 	// Change the input functions to the mock versions.
 	pkg.CommandRunner = pkg.MockTextProgram

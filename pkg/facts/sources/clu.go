@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/global"
 )
 
 // Clu provides runtime-related facts about the running CLI and environment.
@@ -35,7 +35,7 @@ func (c *Clu) Parse(f *types.Facts) {
 	f.Add(types.TierTwo, "clu.binary", argv0)
 
 	// Version from about.go
-	f.Add(types.TierOne, "clu.version", pkg.Version)
+	f.Add(types.TierOne, "clu.version", global.Version)
 
 	// Go runtime version
 	f.Add(types.TierThree, "clu.golang.version", runtime.Version())

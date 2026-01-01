@@ -10,22 +10,23 @@ import (
 	"testing"
 
 	"github.com/huntermatthews/clu/pkg"
+	"github.com/huntermatthews/clu/pkg/global"
 )
 
 func TestRun_Hosts(t *testing.T) {
 	// Save global state to restore after test
-	origMockDir := pkg.CluConfig.MockDir
+	origMockDir := global.CluConfig.MockDir
 	origRunner := pkg.CommandRunner
 	origReader := pkg.FileReader
-	origDebug := pkg.CluConfig.Debug
-	origNet := pkg.CluConfig.NetEnabled
+	origDebug := global.CluConfig.Debug
+	origNet := global.CluConfig.NetEnabled
 
 	defer func() {
-		pkg.CluConfig.MockDir = origMockDir
+		global.CluConfig.MockDir = origMockDir
 		pkg.CommandRunner = origRunner
 		pkg.FileReader = origReader
-		pkg.CluConfig.Debug = origDebug
-		pkg.CluConfig.NetEnabled = origNet
+		global.CluConfig.Debug = origDebug
+		global.CluConfig.NetEnabled = origNet
 	}()
 
 	hosts := []string{"host1", "host2", "host3"}
@@ -77,18 +78,18 @@ func TestRun_Hosts(t *testing.T) {
 
 func TestRun_Requires(t *testing.T) {
 	// Save global state to restore after test
-	origMockDir := pkg.CluConfig.MockDir
+	origMockDir := global.CluConfig.MockDir
 	origRunner := pkg.CommandRunner
 	origReader := pkg.FileReader
-	origDebug := pkg.CluConfig.Debug
-	origNet := pkg.CluConfig.NetEnabled
+	origDebug := global.CluConfig.Debug
+	origNet := global.CluConfig.NetEnabled
 
 	defer func() {
-		pkg.CluConfig.MockDir = origMockDir
+		global.CluConfig.MockDir = origMockDir
 		pkg.CommandRunner = origRunner
 		pkg.FileReader = origReader
-		pkg.CluConfig.Debug = origDebug
-		pkg.CluConfig.NetEnabled = origNet
+		global.CluConfig.Debug = origDebug
+		global.CluConfig.NetEnabled = origNet
 	}()
 
 	// Test list mode
@@ -130,18 +131,18 @@ func showDiff(t *testing.T, host string, tier int, got, want string) {
 
 func TestRun_Collector(t *testing.T) {
 	// Save global state
-	origMockDir := pkg.CluConfig.MockDir
+	origMockDir := global.CluConfig.MockDir
 	origRunner := pkg.CommandRunner
 	origReader := pkg.FileReader
-	origDebug := pkg.CluConfig.Debug
-	origNet := pkg.CluConfig.NetEnabled
+	origDebug := global.CluConfig.Debug
+	origNet := global.CluConfig.NetEnabled
 
 	defer func() {
-		pkg.CluConfig.MockDir = origMockDir
+		global.CluConfig.MockDir = origMockDir
 		pkg.CommandRunner = origRunner
 		pkg.FileReader = origReader
-		pkg.CluConfig.Debug = origDebug
-		pkg.CluConfig.NetEnabled = origNet
+		global.CluConfig.Debug = origDebug
+		global.CluConfig.NetEnabled = origNet
 	}()
 
 	args := []string{"collector", "--mock-dir", "host1"}

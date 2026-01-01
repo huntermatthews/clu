@@ -1,4 +1,4 @@
-package pkg
+package global
 
 // NOTE: I'm not super happy with this global mutable state design, but it's
 // simple and effective for now. We can refactor later if needed.
@@ -9,7 +9,7 @@ type config struct {
 	Debug      bool
 	Verbose    bool
 	NetEnabled bool
-    MockDir   string
+	MockDir    string
 }
 
 // Config is the singleton instance backing global configuration access.
