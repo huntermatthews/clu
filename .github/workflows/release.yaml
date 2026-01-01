@@ -225,7 +225,7 @@ jobs:
           APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: "1"
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-go dpkg-dev build-essential debhelper
+          apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-1.20-go dpkg-dev build-essential debhelper
 
       - name: Download source tarball
         env:
