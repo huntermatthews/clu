@@ -2,14 +2,13 @@ Source: clu
 Section: utils
 Priority: optional
 Maintainer: Your Name <your.email@example.com>
-Build-Depends: debhelper-compat (= 13), golang-go (>= 2:1.19)
+Build-Depends: debhelper-compat (= 12), golang-1.20-go
 Standards-Version: 4.6.0
 Homepage: https://github.com/huntermatthews/clu
 
 Package: clu
 Architecture: amd64
 Depends: ${misc:Depends}
-License: GPL-2.0-only
 Description: System facts collector and analyzer
     A command-line tool for collecting and analyzing system facts.
     .

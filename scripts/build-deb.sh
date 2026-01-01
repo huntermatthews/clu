@@ -64,7 +64,16 @@ echo "Building DEB package..."
 # Check for required build tools
 if ! command -v dpkg-buildpackage >/dev/null 2>&1; then
     echo "Error: dpkg-buildpackage not found"
-    echo "Install build dependencies with: sudo apt-get install dpkg-dev build-essential golang-go"
+    echo "Install build dependencies with: sudo apt-get install dpkg-dev build-essential golang-go-1.20"
+    exit 1
+fi
+
+# Check for Go 1.20 specifically (required for Ubuntu 20.04)
+if [[ ! -x /usr/lib/go-1.20/bin/go ]]; then
+    echo "Error: Go 1.20 compiler not found at /usr/lib/go-1.20/bin/go"
+    echo "Install Go 1.20 with: sudo apt-get install golang-1.20-go"
+    echo "Debug: Check available Go versions:"
+    echo "  ls -la /usr/lib/go-*/bin/go 2>/dev/null || echo 'No Go versions found'"
     exit 1
 fi
 
@@ -79,3 +88,12 @@ ls -la ../clu_*.deb ../clu_*.changes 2>/dev/null || true
 echo ""
 echo "To install: sudo dpkg -i ../clu_${VERSION}-1_amd64.deb"
 echo "If dependencies missing: sudo apt-get install -f"
+
+# DEBUG: Alternative Go 1.20 check method (package-based)
+# if ! dpkg -l | grep -qE "^ii.*(golang-1\.20|golang-1\.20-go)"; then
+#     echo "Error: golang-1.20 not found"
+#     echo "Install Go 1.20 with: sudo apt-get install golang-1.20"
+#     echo "Or install the compiler directly: sudo apt-get install golang-1.20-go"
+#     echo "Note: golang-1.20 is available in Ubuntu 20.04 main repositories"
+#     exit 1
+# fi
