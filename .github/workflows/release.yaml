@@ -219,9 +219,13 @@ jobs:
     needs: create-release
     steps:
       - name: Install dependencies and DEB build tools
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          TZ: UTC
+          APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: "1"
         run: |
-          apt-get update
-          apt-get install -y curl dpkg-dev build-essential debhelper
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends curl dpkg-dev build-essential debhelper
 
       - name: Download source tarball
         env:
