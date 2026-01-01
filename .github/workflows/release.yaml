@@ -233,7 +233,7 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           curl -fsSL -o clu-$VERSION.tar.gz \
-            https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu-$VERSION.tar.gz
+            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
 
       - name: Extract and prepare source
         env:
