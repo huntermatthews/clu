@@ -265,8 +265,8 @@ jobs:
           # Update debian/changelog with current version
           sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
 
-          # Build the DEB package
-          dpkg-buildpackage -us -uc -b
+          # Build the DEB package (override dependency check since Go is installed via apt)
+          dpkg-buildpackage -us -uc -b -d
 
           # Move the .deb file to a predictable location
           mv ../clu_${VERSION}-1_amd64.deb ./clu_${VERSION}-1_amd64.deb
