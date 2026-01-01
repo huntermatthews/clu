@@ -218,6 +218,11 @@ jobs:
     container: ubuntu:20.04
     needs: create-release
     steps:
+      - name: Install dependencies and DEB build tools
+        run: |
+          apt-get update
+          apt-get install -y curl dpkg-dev build-essential debhelper
+
       - name: Download source tarball
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
@@ -235,11 +240,6 @@ jobs:
 
           # Create Debian orig tarball (required naming convention)
           cp clu-$VERSION.tar.gz clu_$VERSION.orig.tar.gz
-
-      - name: Install DEB build tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y dpkg-dev build-essential debhelper
 
       - name: Setup Go (stable)
         uses: actions/setup-go@v6
@@ -292,7 +292,6 @@ jobs:
           merge-multiple: true
 
       - name: Download DEB package
-        if: false # DISABLED - no DEB artifacts since build-deb is disabled
         uses: actions/download-artifact@v4
         with:
           path: debs/
