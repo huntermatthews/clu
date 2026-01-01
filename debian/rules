@@ -5,7 +5,8 @@
 
 override_dh_auto_build:
 	$(eval VERSION := $(shell dpkg-parsechangelog -SVersion | cut -d- -f1))
-	CGO_ENABLED=0 /usr/lib/go-1.20/bin/go build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.Version=$(VERSION)" -o clu ./cmd/main.go
+	$(eval GOCMD := $(shell which go 2>/dev/null || echo /usr/lib/go-1.20/bin/go))
+	CGO_ENABLED=0 $(GOCMD) build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.Version=$(VERSION)" -o clu ./cmd/main.go
 
 override_dh_auto_install:
 	install -D -m 755 clu debian/clu/usr/bin/clu

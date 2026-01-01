@@ -68,12 +68,13 @@ if ! command -v dpkg-buildpackage >/dev/null 2>&1; then
     exit 1
 fi
 
-# Check for Go 1.20 specifically (required for Ubuntu 20.04)
-if [[ ! -x /usr/lib/go-1.20/bin/go ]]; then
-    echo "Error: Go 1.20 compiler not found at /usr/lib/go-1.20/bin/go"
-    echo "Install Go 1.20 with: sudo apt-get install golang-1.20-go"
-    echo "Debug: Check available Go versions:"
-    echo "  ls -la /usr/lib/go-*/bin/go 2>/dev/null || echo 'No Go versions found'"
+# Check for Go compiler (flexible approach)
+if ! command -v go >/dev/null 2>&1 && [[ ! -x /usr/lib/go-1.20/bin/go ]]; then
+    echo "Error: Go compiler not found"
+    echo "Install Go with one of these options:"
+    echo "  Ubuntu 20.04: sudo apt-get install golang-1.20-go"
+    echo "  Ubuntu 22.04+: sudo apt-get install golang-go"
+    echo "  Or use official installer from https://golang.org/dl/"
     exit 1
 fi
 
