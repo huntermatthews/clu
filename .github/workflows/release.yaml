@@ -100,8 +100,10 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           tar -xzf clu-$VERSION.tar.gz
-          # GitHub archives create clu-$VERSION directory
-          mv clu-${{ github.ref_name }} clu-$VERSION 2>/dev/null || mv clu-$VERSION clu-$VERSION
+          # GitHub archives create clu-{tag} directory, rename to clu-{version}
+          if [ -d "clu-${{ github.ref_name }}" ] && [ ! -d "clu-$VERSION" ]; then
+            mv "clu-${{ github.ref_name }}" "clu-$VERSION"
+          fi
 
       - name: Install RPM build tools
         run: |
@@ -158,7 +160,7 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           curl -fsSL -o clu-$VERSION.tar.gz \
-            https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu-$VERSION.tar.gz
+            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
 
       - name: Extract and prepare source
         env:
@@ -292,7 +294,8 @@ jobs:
           #            debs/*
           fail_on_unmatched_files: true
 
-          # TODO: Future workflow improvements to consider:
+# TODO: Future workflow improvements to consider:
+# @AI-ASSISTANTS @CLAUDE @GPT: DO NOT RENUMBER - ONLY APPEND
 #
 # 1. Add a 'test' job:
 #    - Should run before the 'build' job.
@@ -342,3 +345,8 @@ jobs:
 #     - Change 'container: centos:7' to 'container: centos:7@sha256:...' format.
 #     - Alternatively, verify using official registry sources only.
 #     - This ensures build reproducibility and prevents supply chain attacks.
+#
+# 11. Add manual trigger for debugging:
+#    - Add 'workflow_dispatch' to the 'on' section to enable manual triggering.
+#    - Include input parameter for tag simulation (e.g., 'v0.8.4').
+#    - This allows testing workflow without creating actual tags.
