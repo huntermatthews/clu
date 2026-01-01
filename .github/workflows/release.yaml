@@ -42,10 +42,8 @@ jobs:
           ARTIFACT_DIR="dist/${ARTIFACT_NAME}"
           mkdir -p "${ARTIFACT_DIR}"
 
-          # Build stripped production binary with platform-specific name
-          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}" ./cmd/main.go
           # Build binary with debug symbols and platform-specific name
-          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}-debug" ./cmd/main.go
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}" ./cmd/main.go
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -208,7 +206,7 @@ jobs:
         run: |
           # Install GitHub CLI in CentOS 7
           yum install -y https://github.com/cli/cli/releases/download/v2.40.1/gh_2.40.1_linux_amd64.rpm
-          
+
           # Upload RPM directly to the existing release
           cd ~/rpmbuild/RPMS/x86_64/
           for rpm in *.rpm; do
@@ -216,7 +214,6 @@ jobs:
           done
 
   build-deb:
-    if: false # DISABLED FOR DEBUGGING
     runs-on: ubuntu-20.04
     needs: create-release
     steps:
@@ -307,7 +304,7 @@ jobs:
         with:
           files: |
             rpms/*
-          #            debs/*
+            debs/*
           fail_on_unmatched_files: true
 # TODO: Future workflow improvements to consider:
 # @AI-ASSISTANTS @CLAUDE @GPT: DO NOT RENUMBER - ONLY APPEND
