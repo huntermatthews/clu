@@ -6,7 +6,7 @@ License:        GPL-2.0-only
 URL:            https://github.com/huntermatthews/clu
 Source0:        %{name}-%{version}.tar.gz
 BuildArch:      x86_64
-BuildRequires:  golang >= 1.19
+# BuildRequires:  golang >= 1.20  # Disabled - Go provided by GitHub Actions setup-go
 
 %description
 A command-line tool for collecting and analyzing system facts.

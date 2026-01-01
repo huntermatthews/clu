@@ -113,6 +113,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y rpm
 
+      - name: Setup Go (stable)
+        uses: actions/setup-go@v6
+        with:
+          go-version: "stable"
+          check-latest: true
+          cache: true
+
       - name: Setup RPM build directory
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
