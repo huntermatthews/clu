@@ -269,8 +269,9 @@ jobs:
           dpkg-buildpackage -us -uc -b -d
 
           # Move the .deb file to a predictable location at the root
+          cd ..
           mkdir -p debs
-          mv ../clu_${VERSION}-1_amd64.deb debs/clu_${VERSION}-1_amd64.deb
+          mv clu_${VERSION}-1_amd64.deb debs/clu_${VERSION}-1_amd64.deb
 
       - name: Upload DEB artifact
         uses: actions/upload-artifact@v4
