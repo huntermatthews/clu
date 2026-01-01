@@ -27,7 +27,8 @@ echo "Building RPM for clu version: ${VERSION}"
 
 # Create source tarball if it doesn't exist
 if [[ ! -f "${TARBALL_PATH}" ]]; then
-    echo "Creating source tarball..."
+    echo "Creating source tarball from git..."
+    # Use same approach as GitHub archives (common pattern)
     git archive --format=tar.gz --prefix=clu-${VERSION}/ HEAD > "${TARBALL_PATH}"
     echo "Created ${TARBALL_PATH}"
 fi

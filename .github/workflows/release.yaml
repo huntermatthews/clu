@@ -69,13 +69,6 @@ jobs:
           pattern: release-assets-*
           merge-multiple: true
 
-      - name: Create source tarball
-        env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          git archive --format=tar.gz --prefix=clu-$VERSION/ HEAD > dist/clu-$VERSION.tar.gz
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -83,7 +76,7 @@ jobs:
           body: |
             Release ${{ github.ref_name }}.
             Download / deploy with
-            `curl -fsSL -o clu https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu && chmod +x clu`
+            `curl -fsSL -o clu https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu-linux-amd64 && chmod +x clu`
           files: |
             dist/*
           fail_on_unmatched_files: true
@@ -97,8 +90,9 @@ jobs:
           GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
           VERSION=${GITHUB_REF_NAME#v}
+          # Note: Cannot use download-artifact here - GitHub archives are external to workflow artifacts
           curl -fsSL -o clu-$VERSION.tar.gz \
-            https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu-$VERSION.tar.gz
+            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
 
       - name: Extract and prepare source
         env:
@@ -106,7 +100,8 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           tar -xzf clu-$VERSION.tar.gz
-          cd clu-$VERSION
+          # GitHub archives create clu-$VERSION directory
+          mv clu-${{ github.ref_name }} clu-$VERSION 2>/dev/null || mv clu-$VERSION clu-$VERSION
 
       - name: Install RPM build tools
         run: |
@@ -125,27 +120,26 @@ jobs:
           GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          cp clu-$VERSION.tar.gz rpmbuild/SOURCES/
-          cp clu-$VERSION/redhat/clu.spec rpmbuild/SPECS/
+          # Create RPM build directory manually - rpmdevtools not available in Ubuntu repositories
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          cp clu-$VERSION.tar.gz ~/rpmbuild/SOURCES/
+          cp clu-$VERSION/redhat/clu.spec ~/rpmbuild/SPECS/
 
       - name: Build RPM
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          rpmbuild --define "_topdir $(pwd)/rpmbuild" \
-                   --define "_version $VERSION" \
-                   -bb rpmbuild/SPECS/clu.spec
+          rpmbuild --define "_version $VERSION" \
+                   -bb ~/rpmbuild/SPECS/clu.spec
 
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v4
         with:
           name: rpm-package
-          path: rpmbuild/RPMS/x86_64/*.rpm
+          path: ~/rpmbuild/RPMS/x86_64/*.rpm
 
   build-rpm-el7:
-    if: false # DISABLED FOR DEBUGGING
     runs-on: ubuntu-latest
     container: centos:7
     needs: create-release
@@ -269,7 +263,7 @@ jobs:
 
   update-release:
     runs-on: ubuntu-latest
-    needs: [build-rpm] # SIMPLIFIED FOR DEBUGGING - only wait for RPM build
+    needs: [build-rpm, build-rpm-el7]
     steps:
       - name: Download RPM packages
         uses: actions/download-artifact@v4
