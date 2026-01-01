@@ -201,11 +201,19 @@ jobs:
             mv "$rpm" "${rpm%.rpm}.el7.rpm"
           done
 
-      - name: Upload RHEL7 RPM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: rpm-package-el7
-          path: ~/rpmbuild/RPMS/x86_64/*.rpm
+      - name: Install GitHub CLI and upload RPM
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          # Install GitHub CLI in CentOS 7
+          yum install -y https://github.com/cli/cli/releases/download/v2.40.1/gh_2.40.1_linux_amd64.rpm
+          
+          # Upload RPM directly to the existing release
+          cd ~/rpmbuild/RPMS/x86_64/
+          for rpm in *.rpm; do
+            gh release upload $GITHUB_REF_NAME "$rpm" --repo ${{ github.repository }}
+          done
 
   build-deb:
     if: false # DISABLED FOR DEBUGGING
