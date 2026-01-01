@@ -12,6 +12,15 @@ if [[ ${#} -ne 1 ]]; then
 fi
 
 VERSION="${1}"
+
+# Validate version format (RPM/DEB compatible)
+if ! [[ "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*(-[a-zA-Z0-9]+)*$ ]]; then
+    echo "Error: Invalid version format '${VERSION}'"
+    echo "Use compatible patterns: 1.2.3, 1.2.3-alpha, 1.2.3-rc1, etc."
+    echo "Avoid: tildes (~), colons (:), or plus signs (+)"
+    exit 1
+fi
+
 TARBALL_PATH="clu-${VERSION}.tar.gz"
 ORIG_TARBALL="clu_${VERSION}.orig.tar.gz"
 
