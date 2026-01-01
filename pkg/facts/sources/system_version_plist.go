@@ -3,8 +3,8 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // SystemVersionPlist parses macOS SystemVersion.plist for OS info.
@@ -33,7 +33,7 @@ func (s *SystemVersionPlist) Parse(f *types.Facts) {
 	}
 
 	path := "/System/Library/CoreServices/SystemVersion.plist"
-	data, err := pkg.FileReader(path)
+	data, err := input.FileReader(path)
 	if err != nil {
 		return
 	}

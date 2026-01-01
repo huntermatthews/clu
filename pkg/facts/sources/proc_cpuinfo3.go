@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // ProcCpuinfo3 provides topology and identification facts from /proc/cpuinfo.
@@ -46,7 +46,7 @@ func (p *ProcCpuinfo3) Requires(r *types.Requires) {
 //     available, attempt to derive from "cpu cores" * sockets; otherwise fall back
 //     to ParseFailMsg.
 func (p *ProcCpuinfo3) Parse(f *types.Facts) {
-	data, err := pkg.FileReader("/proc/cpuinfo")
+	data, err := input.FileReader("/proc/cpuinfo")
 	if err != nil || data == "" {
 		// Mirror other parsers: set counts to ParseFailMsg to indicate failure.
 		f.Set("phy.cpu.cores", types.ParseFailMsg)

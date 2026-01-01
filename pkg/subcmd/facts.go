@@ -11,9 +11,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // FactsCmd implements the "facts" subcommand.
@@ -23,7 +23,7 @@ type FactsCmd struct {
 	FactNames    []string `arg:"" optional:"true" help:"Zero or more fact names to report on."`
 }
 
-func (f *FactsCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
+func (f *FactsCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 
 	osys := facts.OpSysFactory()
 	provides := osys.Provides()

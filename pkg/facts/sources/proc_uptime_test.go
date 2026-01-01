@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func TestProcUptimeProvides(t *testing.T) {
@@ -18,23 +18,23 @@ func TestProcUptimeProvides(t *testing.T) {
 }
 
 func TestProcUptimeSuccess(t *testing.T) {
-	orig := pkg.FileReader
-	pkg.FileReader = func(path string) (string, error) { return "12345.67 54321.00", nil }
-	defer func() { pkg.FileReader = orig }()
+	orig := input.FileReader
+	input.FileReader = func(path string) (string, error) { return "12345.67 54321.00", nil }
+	defer func() { input.FileReader = orig }()
 	f := types.NewFacts()
 	src := &ProcUptime{}
 	src.Parse(f)
 	got, _ := f.Get("run.uptime")
-	expected := pkg.SecondsToText(12345)
+	expected := input.SecondsToText(12345)
 	if got != expected {
 		t.Fatalf("want %q got %q", expected, got)
 	}
 }
 
 func TestProcUptimeMissing(t *testing.T) {
-	orig := pkg.FileReader
-	pkg.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
-	defer func() { pkg.FileReader = orig }()
+	orig := input.FileReader
+	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
+	defer func() { input.FileReader = orig }()
 	f := types.NewFacts()
 	src := &ProcUptime{}
 	src.Parse(f)
@@ -45,9 +45,9 @@ func TestProcUptimeMissing(t *testing.T) {
 }
 
 func TestProcUptimeMalformed(t *testing.T) {
-	orig := pkg.FileReader
-	pkg.FileReader = func(path string) (string, error) { return "not_a_number", nil }
-	defer func() { pkg.FileReader = orig }()
+	orig := input.FileReader
+	input.FileReader = func(path string) (string, error) { return "not_a_number", nil }
+	defer func() { input.FileReader = orig }()
 	f := types.NewFacts()
 	src := &ProcUptime{}
 	src.Parse(f)

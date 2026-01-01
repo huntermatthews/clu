@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	pkg "github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func TestProcCpuinfo3Provides(t *testing.T) {
@@ -29,8 +29,8 @@ func cpuBlock(entries map[string]string) string {
 }
 
 func TestProcCpuinfo3ParseCases(t *testing.T) {
-	orig := pkg.FileReader
-	defer func() { pkg.FileReader = orig }()
+	orig := input.FileReader
+	defer func() { input.FileReader = orig }()
 
 	// Case: single logical CPU
 	single := cpuBlock(map[string]string{
@@ -66,7 +66,7 @@ func TestProcCpuinfo3ParseCases(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			pkg.FileReader = func(path string) (string, error) { return c.data, nil }
+			input.FileReader = func(path string) (string, error) { return c.data, nil }
 			f := types.NewFacts()
 			src := &ProcCpuinfo3{}
 			src.Parse(f)
@@ -81,9 +81,9 @@ func TestProcCpuinfo3ParseCases(t *testing.T) {
 }
 
 func TestProcCpuinfo3MissingFile(t *testing.T) {
-	orig := pkg.FileReader
-	pkg.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
-	defer func() { pkg.FileReader = orig }()
+	orig := input.FileReader
+	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
+	defer func() { input.FileReader = orig }()
 
 	f := types.NewFacts()
 	src := &ProcCpuinfo3{}

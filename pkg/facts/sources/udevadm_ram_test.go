@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func TestUdevadmRamProvides(t *testing.T) {
@@ -18,40 +18,40 @@ func TestUdevadmRamProvides(t *testing.T) {
 }
 
 func TestUdevadmRamSuccess(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) {
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) {
 		return "MEMORY_DEVICE_0_SIZE=1048576\nMEMORY_DEVICE_1_SIZE=2097152\n", 0, nil
 	}
-	defer func() { pkg.CommandRunner = orig }()
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &UdevadmRam{}
 	src.Parse(f)
 	got, _ := f.Get("phy.ram")
 	// total = 3145728 bytes
-	expected := pkg.BytesToSI(3145728)
+	expected := input.BytesToSI(3145728)
 	if got != expected {
 		t.Fatalf("want %q got %q", expected, got)
 	}
 }
 
 func TestUdevadmRamNoMatches(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return "OTHER=1", 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) { return "OTHER=1", 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &UdevadmRam{}
 	src.Parse(f)
 	got, _ := f.Get("phy.ram")
-	expected := pkg.BytesToSI(0)
+	expected := input.BytesToSI(0)
 	if got != expected {
 		t.Fatalf("expected zero formatting %q got %q", expected, got)
 	}
 }
 
 func TestUdevadmRamFailure(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &UdevadmRam{}
 	src.Parse(f)

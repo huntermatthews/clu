@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // ProcCpuinfo determines phy.cpu.arch_version for x86_64/amd64 platforms.
@@ -56,7 +56,7 @@ func (p *ProcCpuinfo) Parse(f *types.Facts) {
 		"avx512f avx512bw avx512cd avx512dq avx512vl",
 	}
 
-	data, err := pkg.FileReader("/proc/cpuinfo")
+	data, err := input.FileReader("/proc/cpuinfo")
 	flagsField := ""
 	if err == nil && data != "" {
 		for _, line := range strings.Split(data, "\n") {

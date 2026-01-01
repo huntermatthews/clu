@@ -3,8 +3,8 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // SwVers collects macOS version info via `sw_vers` program.
@@ -28,7 +28,7 @@ func (s *SwVers) Parse(f *types.Facts) {
 	if f.Contains("os.name") {
 		return
 	}
-	data, rc, _ := pkg.CommandRunner("sw_vers")
+	data, rc, _ := input.CommandRunner("sw_vers")
 	if data == "" || rc != 0 {
 		for _, k := range swKeys {
 			f.Set(k, types.ParseFailMsg)

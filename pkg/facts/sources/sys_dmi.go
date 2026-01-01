@@ -7,8 +7,8 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // SysDmi collects hardware identity facts from sysfs.
@@ -46,7 +46,7 @@ func (s *SysDmi) Parse(f *types.Facts) {
 	}
 
 	for key, path := range sysDmiMap {
-		data, err := pkg.FileReader(path)
+		data, err := input.FileReader(path)
 		if err != nil || data == "" {
 			f.Set(key, "")
 			continue

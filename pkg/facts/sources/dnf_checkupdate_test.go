@@ -3,9 +3,9 @@ package sources
 import (
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // TestDnfCheckUpdateProvides ensures the source registers its fact key.
@@ -38,11 +38,11 @@ func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
 			defer func() { global.CluConfig.NetEnabled = false }()
 
 			// Stub command runner.
-			orig := pkg.CommandRunner
-			pkg.CommandRunner = func(cmdline string) (string, int, error) {
+			orig := input.CommandRunner
+			input.CommandRunner = func(cmdline string) (string, int, error) {
 				return c.want, c.rc, nil
 			}
-			defer func() { pkg.CommandRunner = orig }()
+			defer func() { input.CommandRunner = orig }()
 
 			f := types.NewFacts()
 			src := &DnfCheckUpdate{}
@@ -59,9 +59,9 @@ func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
 func TestDnfCheckUpdateNetDisabled(t *testing.T) {
 
 	// Stub command runner that would otherwise signal updates.
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) { return "", 100, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return "", 100, nil }
+	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFacts()
 	src := &DnfCheckUpdate{}

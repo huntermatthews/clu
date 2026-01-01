@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func TestIpAddrProvides(t *testing.T) {
@@ -24,9 +24,9 @@ func TestIpAddrSuccess(t *testing.T) {
         {"ifname":"eth0","address":"00:11:22:33:44:55","addr_info":[{"family":"inet","local":"192.168.1.10"},{"family":"inet6","local":"fe80::1234"}]},
         {"ifname":"lo","address":"","addr_info":[{"family":"inet","local":"127.0.0.1"}]}
     ]`
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return json, 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) { return json, 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &IpAddr{}
 	src.Parse(f)
@@ -45,9 +45,9 @@ func TestIpAddrSuccess(t *testing.T) {
 }
 
 func TestIpAddrFailureRC(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &IpAddr{}
 	src.Parse(f)
@@ -60,9 +60,9 @@ func TestIpAddrFailureRC(t *testing.T) {
 }
 
 func TestIpAddrEmptyOutput(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return "", 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) { return "", 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &IpAddr{}
 	src.Parse(f)
@@ -75,9 +75,9 @@ func TestIpAddrEmptyOutput(t *testing.T) {
 }
 
 func TestIpAddrMalformedJSON(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmd string) (string, int, error) { return "not json", 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmd string) (string, int, error) { return "not json", 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &IpAddr{}
 	src.Parse(f)

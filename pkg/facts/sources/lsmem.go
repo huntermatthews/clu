@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // Lsmem collects physical RAM size.
@@ -24,7 +24,7 @@ func (l *Lsmem) Requires(r *types.Requires) {
 
 // Parse extracts total online memory from command output. On failure sets ParseFailMsg.
 func (l *Lsmem) Parse(f *types.Facts) {
-	data, rc, _ := pkg.CommandRunner("lsmem --summary --bytes")
+	data, rc, _ := input.CommandRunner("lsmem --summary --bytes")
 	if data == "" || rc != 0 {
 		f.Set("phy.ram", types.ParseFailMsg)
 		return
@@ -48,7 +48,7 @@ func (l *Lsmem) Parse(f *types.Facts) {
 
 	// Convert using BytesToSI; input expects a float64 number of bytes.
 	if v, err := strconv.ParseFloat(byteCount, 64); err == nil {
-		f.Set("phy.ram", pkg.BytesToSI(v))
+		f.Set("phy.ram", input.BytesToSI(v))
 	} else {
 		f.Set("phy.ram", types.ParseFailMsg)
 	}

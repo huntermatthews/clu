@@ -6,8 +6,8 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // VirtWhat determines phy.platform if not already set.
@@ -26,7 +26,7 @@ func (v *VirtWhat) Parse(f *types.Facts) {
 		return
 	}
 
-	data, rc, _ := pkg.CommandRunner("virt-what")
+	data, rc, _ := input.CommandRunner("virt-what")
 	if rc != 0 {
 		f.Set("phy.platform", types.ParseFailMsg)
 		return

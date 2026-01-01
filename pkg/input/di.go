@@ -1,4 +1,4 @@
-package pkg
+package input
 
 // Dependency injection points for external command and file access to enable deterministic tests.
 // Tests can override these variables to supply canned outputs without invoking the real system.

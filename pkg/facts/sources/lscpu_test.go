@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // Representative lscpu output snippet.
@@ -32,9 +32,9 @@ func TestLscpuProvides(t *testing.T) {
 
 // TestLscpuSuccess verifies parsing and derived computations.
 func TestLscpuSuccess(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) { return sampleLscpu, 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return sampleLscpu, 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Lscpu{}
 	src.Parse(f)
@@ -55,9 +55,9 @@ func TestLscpuSuccess(t *testing.T) {
 
 // TestLscpuFailure ensures no facts set on command failure.
 func TestLscpuFailure(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Lscpu{}
 	src.Parse(f)
@@ -70,9 +70,9 @@ func TestLscpuFailure(t *testing.T) {
 func TestLscpuPartialMissing(t *testing.T) {
 	// Output missing threads_per_core -> threads should be ParseFailMsg.
 	partial := `Model name: Intel(R) Sample CPU\nCore(s) per socket: 4\nSocket(s): 2\nVendor ID: VendorX`
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) { return partial, 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return partial, 0, nil }
+	defer func() { input.CommandRunner = orig }()
 	f := types.NewFacts()
 	src := &Lscpu{}
 	src.Parse(f)

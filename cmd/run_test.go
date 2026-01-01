@@ -9,22 +9,22 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func TestRun_Hosts(t *testing.T) {
 	// Save global state to restore after test
 	origMockDir := global.CluConfig.MockDir
-	origRunner := pkg.CommandRunner
-	origReader := pkg.FileReader
+	origRunner := input.CommandRunner
+	origReader := input.FileReader
 	origDebug := global.CluConfig.Debug
 	origNet := global.CluConfig.NetEnabled
 
 	defer func() {
 		global.CluConfig.MockDir = origMockDir
-		pkg.CommandRunner = origRunner
-		pkg.FileReader = origReader
+		input.CommandRunner = origRunner
+		input.FileReader = origReader
 		global.CluConfig.Debug = origDebug
 		global.CluConfig.NetEnabled = origNet
 	}()
@@ -79,15 +79,15 @@ func TestRun_Hosts(t *testing.T) {
 func TestRun_Requires(t *testing.T) {
 	// Save global state to restore after test
 	origMockDir := global.CluConfig.MockDir
-	origRunner := pkg.CommandRunner
-	origReader := pkg.FileReader
+	origRunner := input.CommandRunner
+	origReader := input.FileReader
 	origDebug := global.CluConfig.Debug
 	origNet := global.CluConfig.NetEnabled
 
 	defer func() {
 		global.CluConfig.MockDir = origMockDir
-		pkg.CommandRunner = origRunner
-		pkg.FileReader = origReader
+		input.CommandRunner = origRunner
+		input.FileReader = origReader
 		global.CluConfig.Debug = origDebug
 		global.CluConfig.NetEnabled = origNet
 	}()
@@ -132,15 +132,15 @@ func showDiff(t *testing.T, host string, tier int, got, want string) {
 func TestRun_Collector(t *testing.T) {
 	// Save global state
 	origMockDir := global.CluConfig.MockDir
-	origRunner := pkg.CommandRunner
-	origReader := pkg.FileReader
+	origRunner := input.CommandRunner
+	origReader := input.FileReader
 	origDebug := global.CluConfig.Debug
 	origNet := global.CluConfig.NetEnabled
 
 	defer func() {
 		global.CluConfig.MockDir = origMockDir
-		pkg.CommandRunner = origRunner
-		pkg.FileReader = origReader
+		input.CommandRunner = origRunner
+		input.FileReader = origReader
 		global.CluConfig.Debug = origDebug
 		global.CluConfig.NetEnabled = origNet
 	}()

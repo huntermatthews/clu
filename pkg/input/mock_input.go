@@ -1,4 +1,4 @@
-package pkg
+package input
 
 // MockTextFile reads a file from a per-host mock directory set in global.CluConfig.MockDir.
 // The mock directory is expected to contain files laid out by their absolute

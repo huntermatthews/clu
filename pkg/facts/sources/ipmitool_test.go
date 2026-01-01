@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // sample outputs modeled after ipmitool output patterns
@@ -36,9 +36,9 @@ func TestIpmitoolProvides(t *testing.T) {
 
 // TestIpmitoolSkipNonPhysical verifies no facts are set when platform != physical.
 func TestIpmitoolSkipNonPhysical(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) { return sampleLanPrint, 0, nil }
-	defer func() { pkg.CommandRunner = orig }()
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return sampleLanPrint, 0, nil }
+	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFacts()
 	f.Set("phy.platform", "virtual")
@@ -51,8 +51,8 @@ func TestIpmitoolSkipNonPhysical(t *testing.T) {
 
 // TestIpmitoolSuccess ensures proper extraction for both commands.
 func TestIpmitoolSuccess(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) {
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) {
 		switch cmdline {
 		case "ipmitool lan print":
 			return sampleLanPrint, 0, nil
@@ -62,7 +62,7 @@ func TestIpmitoolSuccess(t *testing.T) {
 			return "", 1, fmt.Errorf("fail")
 		}
 	}
-	defer func() { pkg.CommandRunner = orig }()
+	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
@@ -88,8 +88,8 @@ func TestIpmitoolSuccess(t *testing.T) {
 
 // TestIpmitoolLanFailure ensures lan print failure assigns ParseFailMsg to lan keys only.
 func TestIpmitoolLanFailure(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) {
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) {
 		if cmdline == "ipmitool lan print" {
 			return "", 1, fmt.Errorf("fail")
 		}
@@ -98,7 +98,7 @@ func TestIpmitoolLanFailure(t *testing.T) {
 		}
 		return "", 1, fmt.Errorf("fail")
 	}
-	defer func() { pkg.CommandRunner = orig }()
+	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFacts()
 	f.Set("phy.platform", "physical")
@@ -120,8 +120,8 @@ func TestIpmitoolLanFailure(t *testing.T) {
 
 // TestIpmitoolMcFailure ensures mc info failure assigns ParseFailMsg to mc info keys only.
 func TestIpmitoolMcFailure(t *testing.T) {
-	orig := pkg.CommandRunner
-	pkg.CommandRunner = func(cmdline string) (string, int, error) {
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) {
 		if cmdline == "ipmitool lan print" {
 			return sampleLanPrint, 0, nil
 		}
@@ -130,7 +130,7 @@ func TestIpmitoolMcFailure(t *testing.T) {
 		}
 		return "", 1, fmt.Errorf("fail")
 	}
-	defer func() { pkg.CommandRunner = orig }()
+	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFacts()
 	f.Set("phy.platform", "physical")

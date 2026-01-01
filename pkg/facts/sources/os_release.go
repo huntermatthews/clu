@@ -6,8 +6,8 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // OsRelease parses the /etc/os-release file for distro identification.
@@ -24,13 +24,13 @@ func (o *OsRelease) Requires(r *types.Requires) { r.Files = append(r.Files, "/et
 
 // Parse reads /etc/os-release, setting types.ParseFailMsg on failure. Only ID and VERSION_ID are used.
 func (o *OsRelease) Parse(f *types.Facts) {
-	data, err := pkg.FileReader("/etc/os-release")
+	data, err := input.FileReader("/etc/os-release")
 	if err != nil || data == "" { // treat empty/error uniformly
 		f.Set("os.distro.name", types.ParseFailMsg)
 		f.Set("os.distro.version", types.ParseFailMsg)
 		return
 	}
-    
+
 	var id, version string
 	for _, line := range strings.Split(data, "\n") {
 		if !strings.Contains(line, "=") {

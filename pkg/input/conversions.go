@@ -1,4 +1,4 @@
-package pkg
+package input
 
 // Port of src/clu/conversions.py providing byte size and time formatting
 // plus parsing of simple SI size strings.

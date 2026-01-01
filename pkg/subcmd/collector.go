@@ -17,10 +17,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/huntermatthews/clu/pkg"
 	"github.com/huntermatthews/clu/pkg/facts"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 // CollectorCmd implements the "collector" subcommand (stub only).
@@ -28,7 +28,7 @@ type CollectorCmd struct {
 	OutDir string `name:"out-dir" help:"Output directory for the tarball." default:"/tmp"`
 }
 
-func (c *CollectorCmd) Run(stdout pkg.Stdout, stderr pkg.Stderr) error {
+func (c *CollectorCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	fmt.Fprintln(stdout, "collector: running")
 
 	// Ensure output directory exists (Kong provides default via struct tag)
@@ -143,7 +143,7 @@ func collectPrograms(reqs *types.Requires, workDir string) error {
 		cmdName, rcName := transformCmdlineToFilename(prog)
 		dataPath := filepath.Join(progDir, cmdName)
 		rcPath := filepath.Join(progDir, rcName)
-		stdout, rc, perr := pkg.CommandRunner(prog)
+		stdout, rc, perr := input.CommandRunner(prog)
 		if perr != nil {
 			// Non-fatal: still record whatever output we have and rc below.
 			log.Printf("collector: command runner error for %q: %v", prog, perr)
