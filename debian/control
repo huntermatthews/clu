@@ -1,7 +1,7 @@
 Source: clu
 Section: utils
 Priority: optional
-Maintainer: Your Name <your.email@example.com>
+Maintainer: Hunter Matthews <hunter@unix.haus>
 Build-Depends: debhelper-compat (= 12), golang-1.20-go | golang-1.21-go | golang-1.22-go | golang-go (>= 2:1.20)
 Standards-Version: 4.6.0
 Homepage: https://github.com/huntermatthews/clu
