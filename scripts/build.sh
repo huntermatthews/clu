@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -6,7 +6,7 @@ cd "$(git rev-parse --show-toplevel)"
 
 mkdir -p dist
 
-REPO_VERSION=$(git describe --dirty --always --match "v[0-9]*")
+REPO_VERSION=$(./scripts/get-version.sh)
 
 # Define output names to match GitHub workflow
 ARTIFACT_NAME="clu-$(go env GOOS)-$(go env GOARCH)"

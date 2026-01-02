@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -euo pipefail
 
 # Script to build RPM package locally from source tarball
@@ -50,7 +51,7 @@ cp redhat/clu.spec ~/rpmbuild/SPECS/
 
 # Build RPM
 echo "Building RPM from source..."
-rpmbuild --define "_version ${VERSION}" -bb ~/rpmbuild/SPECS/clu.spec
+rpmbuild --define "_version ${VERSION}" --define "_buildhost $(hostname -f)" -bb ~/rpmbuild/SPECS/clu.spec
 
 # Show results
 echo "Generated RPM:"

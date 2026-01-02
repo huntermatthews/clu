@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -euo pipefail
 
 # Script to build DEB package locally from source tarball
