@@ -1,0 +1,157 @@
+---
+# Homebrew Formula Update Workflow
+#
+# MANUAL SETUP REQUIRED:
+# 1. Create a separate GitHub repository for your Homebrew tap:
+#    - Repository name: huntermatthews/homebrew-clu (or homebrew-tools)
+#    - Make it public
+#    - Initialize with README
+#
+# 2. Create the Formula directory and initial formula:
+#    mkdir Formula
+#    touch Formula/clu.rb
+#    # Add initial formula content (will be overwritten by this workflow)
+#
+# 3. Generate Personal Access Token:
+#    - Go to GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens
+#    - Create token with access to your tap repository
+#    - Give it "Contents: Write" permission
+#    - Add token as repository secret: HOMEBREW_TAP_TOKEN
+#
+# 4. Add this workflow call to your main release workflow:
+#    update-homebrew-tap:
+#      uses: ./.github/workflows/macos-brew.yaml
+#      needs: update-release
+#      secrets:
+#        HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+#      with:
+#        tap_repository: huntermatthews/homebrew-clu
+#
+# USER INSTALLATION INSTRUCTIONS:
+# After setup, users can install via Homebrew:
+#
+#   # Add the custom tap
+#   brew tap huntermatthews/clu
+#
+#   # Install clu
+#   brew install clu
+#
+#   # Or install directly without adding tap
+#   brew install huntermatthews/clu/clu
+#
+#   # Update to latest version
+#   brew update && brew upgrade clu
+#
+#   # Uninstall
+#   brew uninstall clu
+#   brew untap huntermatthews/clu  # optional: remove tap
+#
+# WORKFLOW BEHAVIOR:
+# - Automatically triggered after successful releases
+# - Downloads source tarball and calculates SHA256
+# - Updates Homebrew formula with new version and hash
+# - Commits and pushes changes to tap repository
+# - Formula builds from source (secure and follows Homebrew best practices)
+
+# WORKFLOW CALL EXAMPLE:
+# Add this job to your main release workflow (e.g., .github/workflows/release.yaml):
+#
+#   update-homebrew-tap:
+#     uses: ./.github/workflows/macos-brew.yaml
+#     needs: update-release
+#     secrets:
+#       HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+#     with:
+#       tap_repository: huntermatthews/homebrew-clu
+
+name: Update Homebrew Formula
+
+on:
+  workflow_call:
+    inputs:
+      tap_repository:
+        required: true
+        type: string
+        description: "Homebrew tap repository (owner/repo format)"
+    secrets:
+      HOMEBREW_TAP_TOKEN:
+        required: true
+        description: "Personal access token with write access to tap repository"
+
+jobs:
+  update-homebrew-tap:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Set VERSION variable
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+
+      - name: Download and hash source tarball
+        run: |
+          # Download the GitHub source archive (same as used in RPM builds)
+          curl -fsSL -o clu-$VERSION.tar.gz \
+            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
+
+          # Calculate SHA256 for Homebrew formula
+          SHA256=$(sha256sum clu-$VERSION.tar.gz | cut -d' ' -f1)
+          echo "TARBALL_SHA256=$SHA256" >> $GITHUB_ENV
+          echo "Source tarball SHA256: $SHA256"
+
+      - name: Checkout Homebrew tap
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ inputs.tap_repository }}
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: homebrew-tap
+
+      - name: Update Homebrew formula
+        run: |
+          cd homebrew-tap
+
+          # Ensure Formula directory exists
+          mkdir -p Formula
+
+          # Update the formula file
+          cat > Formula/clu.rb << EOF
+          class Clu < Formula
+            desc "System facts collector and analyzer"
+            homepage "https://github.com/${{ github.repository }}"
+            url "https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz"
+            sha256 "$TARBALL_SHA256"
+            license "GPL-2.0-only"
+
+            depends_on "go" => :build
+
+            def install
+              system "go", "build", *std_go_args(ldflags: "-X github.com/${{ github.repository }}/pkg.Version=$VERSION"), "./cmd/main.go"
+            end
+
+            test do
+              system "#{bin}/clu", "--version"
+            end
+          end
+          EOF
+
+      - name: Commit and push formula update
+        run: |
+          cd homebrew-tap
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Check if there are changes to commit
+          if git diff --quiet Formula/clu.rb; then
+            echo "No changes to formula, skipping commit"
+            exit 0
+          fi
+
+          git add Formula/clu.rb
+          git commit -m "Update clu to $VERSION
+
+          - Updated URL and SHA256 for version $VERSION
+          - Auto-generated by GitHub Actions"
+          git push origin main
