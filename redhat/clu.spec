@@ -8,6 +8,9 @@ Source0:        %{name}-%{version}.tar.gz
 BuildArch:      x86_64
 # BuildRequires:  golang >= 1.20  # Disabled - Go provided by GitHub Actions setup-go
 
+# Disable debuginfo package generation
+%global debug_package %{nil}
+
 %description
 A command-line tool for collecting and analyzing system facts.
 

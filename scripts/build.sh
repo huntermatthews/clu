@@ -13,7 +13,4 @@ ARTIFACT_NAME="clu-$(go env GOOS)-$(go env GOARCH)"
 ARTIFACT_DIR="dist/${ARTIFACT_NAME}"
 mkdir -p "${ARTIFACT_DIR}"
 
-# Build stripped production binary
-CGO_ENABLED=0 go build -ldflags "-s -w -X github.com/huntermatthews/clu/pkg.Version=${REPO_VERSION}" -o "${ARTIFACT_DIR}/clu" ./cmd/main.go
-# Build binary with debug symbols
-CGO_ENABLED=0 go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${REPO_VERSION}" -o "${ARTIFACT_DIR}/clu-debug" ./cmd/main.go
+CGO_ENABLED=0 go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${REPO_VERSION}" -o "${ARTIFACT_DIR}/clu" ./cmd/main.go
