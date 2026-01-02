@@ -21,6 +21,9 @@ jobs:
             goarch: arm64
           - goos: darwin
             goarch: arm64
+          - goos: windows
+            goarch: amd64
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -80,6 +83,7 @@ jobs:
           fail_on_unmatched_files: true
 
   build-rpm:
+  build-rpm-x86_64:
     runs-on: ubuntu-latest
     needs: create-release
     steps:
@@ -137,9 +141,74 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rpm-package
+          name: rpm-package-x86_64
           path: ~/rpmbuild/RPMS/x86_64/*.rpm
 
   build-rpm-el7:
+  build-rpm-arm64:
+    runs-on: ubuntu-latest-arm
+    needs: create-release
+    permissions:
+      attestations: write
+      id-token: write
+    env:
+      GITHUB_REF_NAME: ${{ github.ref_name }}
+    steps:
+      - name: Set VERSION variable
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Download source tarball
+        run: |
+          # Note: Cannot use download-artifact here - GitHub archives are external to workflow artifacts
+          curl -fsSL -o clu-$VERSION.tar.gz \
+            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
+
+      - name: Extract and prepare source
+        run: |
+          tar -xzf clu-$VERSION.tar.gz
+          # GitHub archives create clu-{tag} directory, rename to clu-{version}
+          if [ -d "clu-${{ github.ref_name }}" ] && [ ! -d "clu-$VERSION" ]; then
+            mv "clu-${{ github.ref_name }}" "clu-$VERSION"
+          fi
+
+      - name: Install RPM build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm
+
+      - name: Setup Go (stable)
+        uses: actions/setup-go@v6
+        with:
+          go-version: "stable"
+          check-latest: true
+          cache: false # Disable cache - no go.sum available in tarball-based build
+
+      - name: Setup RPM build directory
+        run: |
+          # Create RPM build directory manually - rpmdevtools not available in Ubuntu repositories
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          cp clu-$VERSION.tar.gz ~/rpmbuild/SOURCES/
+          cp clu-$VERSION/redhat/clu.spec ~/rpmbuild/SPECS/
+
+      - name: Build RPM
+        run: |
+          rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" --target aarch64 \
+                   -bb ~/rpmbuild/SPECS/clu.spec
+
+      - name: Generate SLSA attestation for RPM
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: ~/rpmbuild/RPMS/aarch64/*.rpm
+
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpm-package-arm64
+          path: ~/rpmbuild/RPMS/aarch64/*.rpm
+
+  build-rpm-el7-x86_64:
     runs-on: ubuntu-latest
     container: centos:7
     needs: create-release
@@ -214,6 +283,7 @@ jobs:
           done
 
   build-deb:
+  build-deb-x86_64:
     runs-on: ubuntu-latest
     container: ubuntu:20.04
     needs: create-release
@@ -279,9 +349,81 @@ jobs:
           name: deb-package
           path: debs/*
 
+  build-deb-arm64:
+    runs-on: ubuntu-latest-arm
+    container: ubuntu:20.04
+    needs: create-release
+    permissions:
+      attestations: write
+      id-token: write
+    env:
+      GITHUB_REF_NAME: ${{ github.ref_name }}
+    steps:
+      - name: Set VERSION variable
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Install dependencies and DEB build tools
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          TZ: UTC
+          # Suppress an apt-key warning about standard out not being a terminal.  This is safe.
+          APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: DontWarn
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-1.20-go dpkg-dev build-essential debhelper
+
+      - name: Download source tarball
+        run: |
+          curl -fsSL -o clu-$VERSION.tar.gz \
+            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
+
+      - name: Extract and prepare source
+        run: |
+          tar -xzf clu-$VERSION.tar.gz
+
+          # Create Debian orig tarball (required naming convention)
+          cp clu-$VERSION.tar.gz clu_$VERSION.orig.tar.gz
+
+      - name: Verify build dependencies
+        run: |
+          cd clu-$VERSION
+
+          # Verify we can satisfy build dependencies
+          dpkg-checkbuilddeps || echo "Warning: Some build deps may not be satisfied by apt packages, but Go is available via actions/setup-go"
+
+      - name: Build DEB package
+        run: |
+          cd clu-$VERSION
+
+          # Update debian/changelog with current version
+          sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
+
+          # Build the DEB package (override dependency check since Go is installed via apt)
+          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -b -d
+
+          # Move the .deb file to a predictable location at the root
+          cd ..
+          mkdir -p debs
+          mv clu_${VERSION}-1_arm64.deb debs/clu_${VERSION}-1_arm64.deb
+
+      - name: Upload DEB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-package-arm64
+          path: debs/*
+
+      - name: Generate SLSA attestation for DEB
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: debs/*.deb
+
   update-release:
     runs-on: ubuntu-latest
     needs: [build-rpm, build-rpm-el7, build-deb]
+    needs:
+      [build-rpm-x86_64, build-rpm-arm64, build-rpm-el7-x86_64, build-deb-x86_64, build-deb-arm64]
     steps:
       - name: Download RPM packages
         uses: actions/download-artifact@v4

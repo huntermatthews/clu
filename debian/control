@@ -7,7 +7,7 @@ Standards-Version: 4.6.0
 Homepage: https://github.com/huntermatthews/clu
 
 Package: clu
-Architecture: amd64
+Architecture: any
 Depends: ${misc:Depends}
 Description: System facts collector and analyzer
     A command-line tool for collecting and analyzing system facts.

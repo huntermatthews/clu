@@ -5,7 +5,7 @@ Summary:        System facts collector and analyzer
 License:        GPL-2.0-only
 URL:            https://github.com/huntermatthews/clu
 Source0:        %{name}-%{version}.tar.gz
-BuildArch:      x86_64
+BuildArch:      %{_target_cpu}
 # BuildRequires:  golang >= 1.20  # Disabled - Go provided by GitHub Actions setup-go
 
 # Disable debuginfo package generation
