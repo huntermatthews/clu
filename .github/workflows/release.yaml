@@ -290,7 +290,8 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
           TZ: UTC
-          APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: "1"
+          # Suppress an apt-key warning about standard out not being a terminal.  This is safe.
+          APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: DontWarn
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-1.20-go dpkg-dev build-essential debhelper
