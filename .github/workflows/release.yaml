@@ -6,8 +6,8 @@ on:
     tags:
       - "v[0-9]*"
 
-permissions:
-  contents: write
+env:
+  BUILD_HOST: action-runner.github.com
 
 jobs:
   build:
@@ -135,6 +135,7 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           rpmbuild --define "_version $VERSION" \
+          rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" --target x86_64 \
                    -bb ~/rpmbuild/SPECS/clu.spec
 
       - name: Upload RPM artifact
@@ -254,11 +255,8 @@ jobs:
           cp clu-$VERSION/redhat/clu.spec ~/rpmbuild/SPECS/
 
       - name: Build RHEL7 RPM
-        env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          rpmbuild --define "_version $VERSION" \
+          rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" --target x86_64 \
                    -bb ~/rpmbuild/SPECS/clu.spec
 
       - name: Rename RPM for EL7
@@ -336,7 +334,7 @@ jobs:
           sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
 
           # Build the DEB package (override dependency check since Go is installed via apt)
-          dpkg-buildpackage -us -uc -b -d
+          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -b -d
 
           # Move the .deb file to a predictable location at the root
           cd ..
