@@ -42,25 +42,18 @@ coverage-html: coverage
 # Build the Go CLI tool
 [group('build')]
 clu:
-    #!/usr/bin/env zsh
+    #!/usr/bin/env bash
 
-    platforms=("darwin:arm64")# "linux:amd64")
+    set -euo pipefail
+
+    platforms=("darwin:arm64")
 
     for plat in "${platforms[@]}"; do
         export GOOS=${plat%:*}
         export GOARCH=${plat#*:}
         echo "Building for $GOOS on $GOARCH..."
-        go build -ldflags "-X github.com/huntermatthews/clu/pkg.global.Version=${REPO_VERSION}" -o ./dist/clu-$(go env GOOS)-$(go env GOARCH) ./cmd/main.go
+        go build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version={{REPO_VERSION}}" -o ./dist/clu-$(go env GOOS)-$(go env GOARCH) ./cmd/main.go
     done
-
-# # Build the Go CLI tool
-# [group('build')]
-# build-manylinux:
-#     # biowebdev05 is our build server for ancient Linux compatibility
-#     ssh biowebdev05 "cd clu && git pull && ./scripts/build.sh"
-#     scp biowebdev05:clu/dist/clu-linux-amd64 dist/clu-manylinux2014
-#     scp dist/clu-manylinux2014 itbrepo02.nhgri.nih.gov:/srv/webroot/matthewsht/clu-manylinux2014
-#     echo 'curl -fsSL -o clu https://itbrepo02.nhgri.nih.gov/matthewsht/clu-manylinux2014 && chmod +x clu'
 
 # Build the Go CLI tool
 [group('build')]

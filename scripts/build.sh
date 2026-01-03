@@ -13,4 +13,4 @@ ARTIFACT_NAME="clu-$(go env GOOS)-$(go env GOARCH)"
 ARTIFACT_DIR="dist/${ARTIFACT_NAME}"
 mkdir -p "${ARTIFACT_DIR}"
 
-CGO_ENABLED=0 go build -ldflags "-X github.com/huntermatthews/clu/pkg.global.Version=${REPO_VERSION}" -o "${ARTIFACT_DIR}/clu" ./cmd/main.go
+CGO_ENABLED=0 go build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version=${REPO_VERSION}" -o "${ARTIFACT_DIR}/clu" ./cmd/main.go
