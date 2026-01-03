@@ -3,6 +3,9 @@
 # Get the current version from git
 REPO_VERSION := `scripts/get-version.sh`
 
+# Required programs
+go-md2man := require("go-md2man")
+
 # Justfile settings
 _default: help
 
@@ -65,8 +68,16 @@ clu-symlink:
     rm -f dist/clu
     ln -s clu-$(go env GOOS)-$(go env GOARCH)  dist/clu
 
+# Generate man page from markdown using go-md2man
+[group('build')]
+manpage:
+    {{go-md2man}} -in clu.1.md -out clu.1
+# Generate man page from AsciiDoc using asciidoctor
+[group('build')]
+manpage-asciidoc:
+    asciidoctor -b manpage clu.1.adoc -o clu.2
+
 # Show the current version from git
 [group('package')]
 version:
     echo "Current repo version is: {{REPO_VERSION}}"
-#tar cvzf ~/scratch/clu.tgz  --exclude-vcs --exclude testdata --exclude dist . 
