@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 
@@ -29,7 +28,7 @@ func main() {
 	os.Exit(run(os.Args[1:], os.Stdout, os.Stderr))
 }
 
-func run(args []string, stdout, stderr io.Writer) int {
+func run(args []string, stdout, stderr input.Stdout) int {
 	cli := &CLI{}
 	k, err := kong.New(cli,
 		kong.Name("clu"),

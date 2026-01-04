@@ -6,7 +6,6 @@ package subcmd
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"strings"
 
@@ -23,50 +22,50 @@ func (r *RequiresCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	switch r.Mode {
 	case "list":
 		// fmt.Println("requires: listing (stub)")
-		listRequires(stdout)
+		listRequires(stdout, stderr)
 	case "check":
 		// fmt.Println("requires: checking (stub)")
-		checkRequires(stdout)
+		checkRequires(stdout, stderr)
 	}
 	return nil
 }
 
 // listRequires lists all file and program requirements.
-func listRequires(w io.Writer) int {
+func listRequires(stdout input.Stdout, stderr input.Stderr) int {
 	reqs := facts.OpSysFactory().Requires()
-	fmt.Fprintln(w, "Listing Requirements:")
-	fmt.Fprintln(w, "----------------------")
-	fmt.Fprintln(w, "Files:")
+	fmt.Fprintln(stdout, "Listing Requirements:")
+	fmt.Fprintln(stdout, "----------------------")
+	fmt.Fprintln(stdout, "Files:")
 	for _, file := range reqs.Files {
-		fmt.Fprintf(w, "  - %s\n", file)
+		fmt.Fprintf(stdout, "  - %s\n", file)
 	}
-	fmt.Fprintln(w, "Programs:")
+	fmt.Fprintln(stdout, "Programs:")
 	for _, prog := range reqs.Programs {
-		fmt.Fprintf(w, "  - %s\n", prog)
+		fmt.Fprintf(stdout, "  - %s\n", prog)
 	}
 	// APIs omitted; not used currently.
 	return 0
 }
 
 // checkRequires checks existence of required files and programs.
-func checkRequires(w io.Writer) int {
+func checkRequires(stdout input.Stdout, stderr input.Stderr) int {
 	reqs := facts.OpSysFactory().Requires()
-	fmt.Fprintln(w, "Checking requirements:")
-	fmt.Fprintln(w, "----------------------")
-	fmt.Fprintln(w, "Files:")
+	fmt.Fprintln(stdout, "Checking requirements:")
+	fmt.Fprintln(stdout, "----------------------")
+	fmt.Fprintln(stdout, "Files:")
 	for _, file := range reqs.Files {
 		if checkFileExists(file) {
-			fmt.Fprintf(w, "  - [ok] %s\n", file)
+			fmt.Fprintf(stdout, "  - [ok] %s\n", file)
 		} else {
-			fmt.Fprintf(w, "  - [MISSING] %s\n", file)
+			fmt.Fprintf(stdout, "  - [MISSING] %s\n", file)
 		}
 	}
-	fmt.Fprintln(w, "Programs:")
+	fmt.Fprintln(stdout, "Programs:")
 	for _, prog := range reqs.Programs {
 		if checkProgramExists(prog) {
-			fmt.Fprintf(w, "  - [ok] %s\n", prog)
+			fmt.Fprintf(stdout, "  - [ok] %s\n", prog)
 		} else {
-			fmt.Fprintf(w, "  - [MISSING] %s\n", prog)
+			fmt.Fprintf(stdout, "  - [MISSING] %s\n", prog)
 		}
 	}
 	return 0

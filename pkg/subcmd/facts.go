@@ -7,7 +7,6 @@ package subcmd
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"sort"
 	"strings"
 
@@ -45,7 +44,7 @@ func (f *FactsCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	// Filter down to requested + tier selection.
 	outputFacts := filterFacts(facts, f.FactNames, int(f.Tier))
 	// Output.
-	doOutput(stdout, outputFacts, f.OutputFormat)
+	doOutput(stdout, stderr, outputFacts, f.OutputFormat)
 
 	return nil
 }
@@ -97,42 +96,42 @@ func filterFacts(parsed *types.Facts, specs []string, tier int) *types.Facts {
 }
 
 // doOutput dispatches to format-specific output functions.
-func doOutput(w io.Writer, f *types.Facts, format string) {
+func doOutput(stdout input.Stdout, stderr input.Stderr, f *types.Facts, format string) {
 	switch format {
 	case "json":
-		outputJSON(w, f)
+		outputJSON(stdout, stderr, f)
 	case "shell":
-		outputShell(w, f)
+		outputShell(stdout, stderr, f)
 	case "dots":
 		fallthrough
 	default:
-		outputDots(w, f)
+		outputDots(stdout, stderr, f)
 	}
 }
 
 // outputDots prints key: value lines sorted by key.
-func outputDots(w io.Writer, f *types.Facts) {
+func outputDots(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
 		v, _ := f.Get(k)
-		fmt.Fprintf(w, "%s: %s\n", k, v)
+		fmt.Fprintf(stdout, "%s: %s\n", k, v)
 	}
 }
 
 // outputShell prints KEY_WITH_UNDERSCORES="value" lines.
-func outputShell(w io.Writer, f *types.Facts) {
+func outputShell(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
 		v, _ := f.Get(k)
 		keyVar := strings.ToUpper(strings.ReplaceAll(k, ".", "_"))
-		fmt.Fprintf(w, "%s=\"%s\"\n", keyVar, v)
+		fmt.Fprintf(stdout, "%s=\"%s\"\n", keyVar, v)
 	}
 }
 
 // outputJSON prints a JSON map of facts.
-func outputJSON(w io.Writer, f *types.Facts) {
+func outputJSON(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
 	data, _ := json.MarshalIndent(f.ToMap(), "", "  ")
-	fmt.Fprintln(w, string(data))
+	fmt.Fprintln(stdout, string(data))
 }
