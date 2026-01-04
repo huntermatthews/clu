@@ -3,6 +3,7 @@ package sources
 import (
 	"os"
 	"os/user"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -32,6 +33,7 @@ func (c *Clu) Requires(r *types.Requires) { /* no external requirements */ }
 func (c *Clu) Parse(f *types.Facts) {
 	// Binary name (argv0)
 	argv0 := os.Args[0]
+	argv0, _ = filepath.Abs(argv0)
 	f.Add(types.TierTwo, "clu.binary", argv0)
 
 	// Version from about.go
