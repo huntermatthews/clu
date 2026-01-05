@@ -62,24 +62,22 @@ jobs:
       - name: Rename RPM for EL7
         run: |
           cd ~/rpmbuild/RPMS/x86_64/
-          for rpm in clu-*.rpm; do
-            mv "$rpm" "${rpm%.rpm}.el7.rpm"
-          done
+          mv clu-*.rpm clu-$VERSION-1.x86_64.el7.rpm
 
-      - name: Generate SLSA attestation for EL7 RPM
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: ~/rpmbuild/RPMS/x86_64/*.el7.rpm
-
-      - name: Install GitHub CLI and upload RPM
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install GitHub CLI
         run: |
           # Install GitHub CLI in CentOS 7
           yum install -y https://github.com/cli/cli/releases/download/v2.40.1/gh_2.40.1_linux_amd64.rpm
 
-          # Upload RPM directly to the existing release
+      - name: Generate SLSA attestation and upload RPM
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
           cd ~/rpmbuild/RPMS/x86_64/
-          for rpm in *.rpm; do
-            gh release upload $GITHUB_REF_NAME "$rpm" --repo ${{ github.repository }}
-          done
+          RPM_FILE="clu-$VERSION-1.x86_64.el7.rpm"
+
+          # Generate SLSA attestation for the RPM
+          gh attestation create --type "build-provenance" --subject "$RPM_FILE" --repo ${{ github.repository }}
+
+          # Upload RPM to the existing release
+          gh release upload $GITHUB_REF_NAME "$RPM_FILE" --repo ${{ github.repository }}
