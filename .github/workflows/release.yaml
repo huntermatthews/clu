@@ -11,6 +11,7 @@ env:
 
 jobs:
   build:
+    name: "Compile Go Binaries"
     runs-on: ubuntu-latest
     permissions:
       attestations: write
@@ -75,6 +76,7 @@ jobs:
             dist/SHA256SUMS-${{ matrix.goos }}-${{ matrix.goarch }}
 
   create-release:
+    name: "Create GitHub Release"
     runs-on: ubuntu-latest
     needs: build
     permissions:
@@ -115,352 +117,48 @@ jobs:
             dist/*
           fail_on_unmatched_files: true
 
-  build-rpm-x86_64:
-    runs-on: ubuntu-latest
+  build-rpm-packages:
+    name: "Build RPM Packages (Ubuntu)"
     needs: create-release
-    permissions:
-      attestations: write
-      id-token: write
-    env:
-      GITHUB_REF_NAME: ${{ github.ref_name }}
-    steps:
-      - name: Set VERSION variable
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+    strategy:
+      matrix:
+        include:
+          - architecture: x86_64
+            runner: ubuntu-latest
+            rpm_target: x86_64
+          - architecture: aarch64
+            runner: ubuntu-latest-arm
+            rpm_target: aarch64
+    uses: ./.github/workflows/build-rpm.yaml
+    with:
+      architecture: ${{ matrix.architecture }}
+      runner: ${{ matrix.runner }}
+      rpm_target: ${{ matrix.rpm_target }}
 
-      - name: Download source tarball
-        run: |
-          # Note: Cannot use download-artifact here - GitHub archives are external to workflow artifacts
-          curl -fsSL -o clu-$VERSION.tar.gz \
-            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
-
-      - name: Extract and prepare source
-        run: |
-          tar -xzf clu-$VERSION.tar.gz
-          # GitHub archives create clu-{tag} directory, rename to clu-{version}
-          if [ -d "clu-${{ github.ref_name }}" ] && [ ! -d "clu-$VERSION" ]; then
-            mv "clu-${{ github.ref_name }}" "clu-$VERSION"
-          fi
-
-      - name: Install RPM build tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rpm
-
-      - name: Setup Go (stable)
-        uses: actions/setup-go@v6
-        with:
-          go-version: "stable"
-          check-latest: true
-          cache: false # Disable cache - no go.sum available in tarball-based build
-
-      - name: Setup RPM build directory
-        run: |
-          # Create RPM build directory manually - rpmdevtools not available in Ubuntu repositories
-          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          cp clu-$VERSION.tar.gz ~/rpmbuild/SOURCES/
-          cp clu-$VERSION/redhat/clu.spec ~/rpmbuild/SPECS/
-
-      - name: Build RPM
-        run: |
-          rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" --target x86_64 \
-                   -bb ~/rpmbuild/SPECS/clu.spec
-
-      - name: Generate SLSA attestation for RPM
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: ~/rpmbuild/RPMS/x86_64/*.rpm
-
-      - name: Upload RPM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: rpm-package-x86_64
-          path: ~/rpmbuild/RPMS/x86_64/*.rpm
-
-  build-rpm-arm64:
-    runs-on: ubuntu-latest-arm
+  build-rpm-el7:
+    name: "Build RPM Package (CentOS 7)"
     needs: create-release
-    permissions:
-      attestations: write
-      id-token: write
-    env:
-      GITHUB_REF_NAME: ${{ github.ref_name }}
-    steps:
-      - name: Set VERSION variable
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+    uses: ./.github/workflows/build-rpm-el7.yaml
 
-      - name: Download source tarball
-        run: |
-          # Note: Cannot use download-artifact here - GitHub archives are external to workflow artifacts
-          curl -fsSL -o clu-$VERSION.tar.gz \
-            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
-
-      - name: Extract and prepare source
-        run: |
-          tar -xzf clu-$VERSION.tar.gz
-          # GitHub archives create clu-{tag} directory, rename to clu-{version}
-          if [ -d "clu-${{ github.ref_name }}" ] && [ ! -d "clu-$VERSION" ]; then
-            mv "clu-${{ github.ref_name }}" "clu-$VERSION"
-          fi
-
-      - name: Install RPM build tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rpm
-
-      - name: Setup Go (stable)
-        uses: actions/setup-go@v6
-        with:
-          go-version: "stable"
-          check-latest: true
-          cache: false # Disable cache - no go.sum available in tarball-based build
-
-      - name: Setup RPM build directory
-        run: |
-          # Create RPM build directory manually - rpmdevtools not available in Ubuntu repositories
-          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          cp clu-$VERSION.tar.gz ~/rpmbuild/SOURCES/
-          cp clu-$VERSION/redhat/clu.spec ~/rpmbuild/SPECS/
-
-      - name: Build RPM
-        run: |
-          rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" --target aarch64 \
-                   -bb ~/rpmbuild/SPECS/clu.spec
-
-      - name: Generate SLSA attestation for RPM
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: ~/rpmbuild/RPMS/aarch64/*.rpm
-
-      - name: Upload RPM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: rpm-package-arm64
-          path: ~/rpmbuild/RPMS/aarch64/*.rpm
-
-  build-rpm-el7-x86_64:
-    runs-on: ubuntu-latest
-    container: centos:7
+  build-deb-packages:
+    name: "Build DEB Packages"
     needs: create-release
-    permissions:
-      attestations: write
-      id-token: write
-    env:
-      GITHUB_REF_NAME: ${{ github.ref_name }}
-    steps:
-      - name: Set VERSION variable
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Configure EPEL repository
-        run: |
-          # Install EPEL for CentOS 7 using archived repository
-          yum install -y https://archives.fedoraproject.org/pub/archive/epel/7/x86_64/Packages/e/epel-release-7-14.noarch.rpm
-          # Update EPEL repo to use archived URLs
-          sed -i 's|^#baseurl=https://download.fedoraproject.org/pub/epel|baseurl=https://archives.fedoraproject.org/pub/archive/epel|g' /etc/yum.repos.d/epel.repo
-          sed -i 's|^mirrorlist|#mirrorlist|g' /etc/yum.repos.d/epel.repo
-
-      - name: Install dependencies
-        run: |
-          # Fix CentOS 7 EOL mirror issues by using vault archives
-          sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*.repo
-          sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*.repo
-          yum update -y
-          yum install -y rpm-build rpmdevtools git curl golang
-
-      - name: Download source tarball
-        run: |
-          curl -fsSL -o clu-$VERSION.tar.gz \
-            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
-
-      - name: Extract and prepare source
-        run: |
-          tar -xzf clu-$VERSION.tar.gz
-
-      - name: Setup RPM build directory
-        run: |
-          rpmdev-setuptree
-          cp clu-$VERSION.tar.gz ~/rpmbuild/SOURCES/
-          cp clu-$VERSION/redhat/clu.spec ~/rpmbuild/SPECS/
-
-      - name: Build RHEL7 RPM
-        run: |
-          rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" --target x86_64 \
-                   -bb ~/rpmbuild/SPECS/clu.spec
-
-      - name: Rename RPM for EL7
-        run: |
-          cd ~/rpmbuild/RPMS/x86_64/
-          for rpm in clu-*.rpm; do
-            mv "$rpm" "${rpm%.rpm}.el7.rpm"
-          done
-
-      - name: Generate SLSA attestation for EL7 RPM
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: ~/rpmbuild/RPMS/x86_64/*.el7.rpm
-
-      - name: Install GitHub CLI and upload RPM
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Install GitHub CLI in CentOS 7
-          yum install -y https://github.com/cli/cli/releases/download/v2.40.1/gh_2.40.1_linux_amd64.rpm
-
-          # Upload RPM directly to the existing release
-          cd ~/rpmbuild/RPMS/x86_64/
-          for rpm in *.rpm; do
-            gh release upload $GITHUB_REF_NAME "$rpm" --repo ${{ github.repository }}
-          done
-
-  build-deb-x86_64:
-    runs-on: ubuntu-latest
-    container: ubuntu:20.04
-    needs: create-release
-    permissions:
-      attestations: write
-      id-token: write
-    env:
-      GITHUB_REF_NAME: ${{ github.ref_name }}
-    steps:
-      - name: Set VERSION variable
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Install dependencies and DEB build tools
-        env:
-          DEBIAN_FRONTEND: noninteractive
-          TZ: UTC
-          # Suppress an apt-key warning about standard out not being a terminal.  This is safe.
-          APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: DontWarn
-        run: |
-          apt-get update -qq
-          apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-1.20-go dpkg-dev build-essential debhelper
-
-      - name: Download source tarball
-        run: |
-          curl -fsSL -o clu-$VERSION.tar.gz \
-            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
-
-      - name: Extract and prepare source
-        run: |
-          tar -xzf clu-$VERSION.tar.gz
-
-          # Create Debian orig tarball (required naming convention)
-          cp clu-$VERSION.tar.gz clu_$VERSION.orig.tar.gz
-
-      - name: Verify build dependencies
-        run: |
-          cd clu-$VERSION
-
-          # Verify we can satisfy build dependencies
-          dpkg-checkbuilddeps || echo "Warning: Some build deps may not be satisfied by apt packages, but Go is available via actions/setup-go"
-
-      - name: Build DEB package
-        run: |
-          cd clu-$VERSION
-
-          # Update debian/changelog with current version
-          sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
-
-          # Build the DEB package (override dependency check since Go is installed via apt)
-          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -b -d
-
-          # Move the .deb file to a predictable location at the root
-          cd ..
-          mkdir -p debs
-          mv clu_${VERSION}-1_amd64.deb debs/clu_${VERSION}-1_amd64.deb
-
-      - name: Upload DEB artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: deb-package
-          path: debs/*
-
-      - name: Generate SLSA attestation for DEB
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: debs/*.deb
-
-  build-deb-arm64:
-    runs-on: ubuntu-latest-arm
-    container: ubuntu:20.04
-    needs: create-release
-    permissions:
-      attestations: write
-      id-token: write
-    env:
-      GITHUB_REF_NAME: ${{ github.ref_name }}
-    steps:
-      - name: Set VERSION variable
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Install dependencies and DEB build tools
-        env:
-          DEBIAN_FRONTEND: noninteractive
-          TZ: UTC
-          # Suppress an apt-key warning about standard out not being a terminal.  This is safe.
-          APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: DontWarn
-        run: |
-          apt-get update -qq
-          apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-1.20-go dpkg-dev build-essential debhelper
-
-      - name: Download source tarball
-        run: |
-          curl -fsSL -o clu-$VERSION.tar.gz \
-            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
-
-      - name: Extract and prepare source
-        run: |
-          tar -xzf clu-$VERSION.tar.gz
-
-          # Create Debian orig tarball (required naming convention)
-          cp clu-$VERSION.tar.gz clu_$VERSION.orig.tar.gz
-
-      - name: Verify build dependencies
-        run: |
-          cd clu-$VERSION
-
-          # Verify we can satisfy build dependencies
-          dpkg-checkbuilddeps || echo "Warning: Some build deps may not be satisfied by apt packages, but Go is available via actions/setup-go"
-
-      - name: Build DEB package
-        run: |
-          cd clu-$VERSION
-
-          # Update debian/changelog with current version
-          sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
-
-          # Build the DEB package (override dependency check since Go is installed via apt)
-          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -b -d
-
-          # Move the .deb file to a predictable location at the root
-          cd ..
-          mkdir -p debs
-          mv clu_${VERSION}-1_arm64.deb debs/clu_${VERSION}-1_arm64.deb
-
-      - name: Upload DEB artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: deb-package-arm64
-          path: debs/*
-
-      - name: Generate SLSA attestation for DEB
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: debs/*.deb
+    strategy:
+      matrix:
+        include:
+          - architecture: amd64
+            runner: ubuntu-latest
+          - architecture: arm64
+            runner: ubuntu-latest-arm
+    uses: ./.github/workflows/build-deb.yaml
+    with:
+      architecture: ${{ matrix.architecture }}
+      runner: ${{ matrix.runner }}
 
   update-release:
+    name: "Upload Packages to Release"
     runs-on: ubuntu-latest
-    needs:
-      [build-rpm-x86_64, build-rpm-arm64, build-rpm-el7-x86_64, build-deb-x86_64, build-deb-arm64]
+    needs: [build-rpm-packages, build-rpm-el7, build-deb-packages]
     permissions:
       contents: write
     steps:
@@ -509,3 +207,15 @@ jobs:
 #     - DEB packages work on Proxmox hosts
 #     - no relationship between workflows and scripts/ - scripts just there for debugging/local builds.
 #
+
+## SNIPPETS
+#
+#      - name: Get OS and arch info
+# run: |
+#   GOOSARCH=${{matrix.goosarch}}
+#   GOOS=${GOOSARCH%/*}
+#   GOARCH=${GOOSARCH#*/}
+#   BINARY_NAME=${{github.repository}}-$GOOS-$GOARCH
+#   echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
+#   echo "GOOS=$GOOS" >> $GITHUB_ENV
+#   echo "GOARCH=$GOARCH" >> $GITHUB_ENV

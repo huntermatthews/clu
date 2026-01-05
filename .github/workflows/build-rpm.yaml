@@ -1,0 +1,85 @@
+---
+name: Build RPM Package (Ubuntu-based)
+
+on:
+  workflow_call:
+    inputs:
+      architecture:
+        description: "Target architecture (x86_64, aarch64)"
+        required: true
+        type: string
+      runner:
+        description: "GitHub runner to use"
+        required: true
+        type: string
+      rpm_target:
+        description: "RPM target architecture"
+        required: true
+        type: string
+
+env:
+  BUILD_HOST: action-runner.github.com
+
+jobs:
+  build-rpm:
+    name: "Package RPM (Ubuntu-based)"
+    runs-on: ${{ inputs.runner }}
+    permissions:
+      attestations: write
+      id-token: write
+    env:
+      GITHUB_REF_NAME: ${{ github.ref_name }}
+    steps:
+      - name: Set VERSION variable
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Install RPM build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm
+
+      - name: Setup Go (stable)
+        uses: actions/setup-go@v6
+        with:
+          go-version: "stable"
+          check-latest: true
+          cache: false # Disable cache - no go.sum available in tarball-based build
+
+      - name: Download source tarball
+        run: |
+          # Note: Cannot use download-artifact here - GitHub archives are external to workflow artifacts
+          curl -fsSL -o clu-$VERSION.tar.gz \
+            https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
+
+      - name: Extract and prepare source
+        run: |
+          tar -xzf clu-$VERSION.tar.gz
+          # GitHub archives create clu-{tag} directory, rename to clu-{version}
+          if [ -d "clu-${{ github.ref_name }}" ] && [ ! -d "clu-$VERSION" ]; then
+            mv "clu-${{ github.ref_name }}" "clu-$VERSION"
+          fi
+
+      - name: Setup RPM build directory
+        run: |
+          # Create RPM build directory manually - rpmdevtools not available in Ubuntu repositories
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          cp clu-$VERSION.tar.gz ~/rpmbuild/SOURCES/
+          cp clu-$VERSION/redhat/clu.spec ~/rpmbuild/SPECS/
+
+      - name: Build RPM
+        run: |
+          rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" --target ${{ inputs.rpm_target }} \
+                   -bb ~/rpmbuild/SPECS/clu.spec
+
+      - name: Generate SLSA attestation for RPM
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: ~/rpmbuild/RPMS/${{ inputs.architecture }}/*.rpm
+
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpm-package-${{ inputs.architecture }}
+          path: ~/rpmbuild/RPMS/${{ inputs.architecture }}/*.rpm
