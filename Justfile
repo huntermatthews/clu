@@ -65,10 +65,6 @@ clu-symlink:
 [group('build')]
 manpage:
     {{go-md2man}} -in clu.1.md -out clu.1
-# Generate man page from AsciiDoc using asciidoctor
-[group('build')]
-manpage-asciidoc:
-    asciidoctor -b manpage clu.1.adoc -o clu.2
 
 # Show the current version from git
 [group('package')]

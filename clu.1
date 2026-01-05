@@ -1,0 +1,126 @@
+.nh
+.TH clu 1 "January 2011" clu "NHGRI Sysadmin Commands"
+.SH NAME
+clu \- Describes various interesting facts about the current system.
+
+.SH SYNOPSIS
+\fBclu\fP [\fB--help\fP | \fB--version\fP | \fB--debug\fP | \fB--net\fP]
+
+.PP
+\fBclu\fP \fBcollector\fP
+
+.PP
+\fBclu\fP \fBfacts\fP [\fBfact-names\fP ...] [\fB--tier\fP, \fB-t\fP {\fB1\fP | \fB2\fP | \fB3\fP}] [\fB--out\fP {\fBdots\fP | \fBshell\fP | \fBjson\fP}]
+
+.PP
+\fBclu\fP \fBrequires\fP {\fBlist\fP | \fBcheck\fP}
+
+.SH DESCRIPTION
+\fBclu\fP is a tool for reporting various facts about a system. It reads well known system files and programs to collect the information. It was created because other tools in this category (and there are \fImany\fP) either tried to report too much (overwhelming a busy sysadmin) or far too little (causing the sysadmin to have to run other commands for a complete picture). It is therefore strongly opinionated - what it outputs and how that is formatted are pretty much at the opinion of the author.
+
+.SH OPTIONS
+The following global options are supported. Individual commands may have their own specific options.
+
+.SS --help, -h
+List the help screen for the command and exit.
+
+.SS --version
+Print the version of the command and exit.
+
+.SS --debug
+Print extra debugging output (not really implemented yet).
+
+.SS --net
+Allow access to the network. Some steps require more than just a DNS query (such as talking to Device42 inventory system or updating the DNF/APT data - this flag allows such access).
+
+.SH COMMANDS
+.SS collector
+Create a compressed \fBtar\fP(1) archive of all the required file and program outputs used by \fBclu\fP\&. This facilitates both testing and debugging without needing to be fully networked all the time or remote debugging. The archive will be named /tmp/clu_<hostname>\&.tgz.
+
+.SS facts [fact-names ...] [--tier, -t {1 | 2 | 3}] [--out {dots | shell | json}]
+Report system facts. Without arguments, reports all facts for the specified tier.
+
+.PP
+\fBfact-names\fP: Optional space-separated list of specific facts to report. Use \fBclu requires list\fR to see available fact names.
+
+.PP
+\fB--tier\fP (\fIdefault: 1\fP): Detail level where higher numbers provide more information.
+
+.PP
+\fB--out\fP (\fIdefault: dots\fP): Output format.
+
+.SS requires {check | list}
+List or check the required files, programs and api's required for the program to run.
+
+.SH EXAMPLES
+Check what system facts are available:
+
+.EX
+$ clu requires list
+.EE
+
+.PP
+Verify all system requirements are met:
+
+.EX
+# clu requires check
+.EE
+
+.PP
+Generate a quick system overview:
+
+.EX
+$ clu facts --tier 1
+.EE
+
+.PP
+Create a detailed system report for troubleshooting:
+
+.EX
+$ clu facts --tier 3 --out json > system-report.json
+.EE
+
+.PP
+Collect diagnostic data for remote analysis:
+
+.EX
+# clu collector
+# scp /tmp/clu_$(hostname).tgz support@example.com:
+.EE
+
+.PP
+Export system facts as shell variables:
+
+.EX
+$ eval "$(clu facts --out shell)"
+$ echo "CPU: $CPU_MODEL, OS: $OS_NAME"
+.EE
+
+.SH EXIT STATUS
+\fBclu\fP exits with one of the following values:
+
+.EX
+0    Success.
+
+1    General error or invalid usage.
+
+2    System requirements not met (for `requires check`).
+.EE
+
+.SH NOTES
+\fBclu\fP attempts to gracefully handle missing system files or programs. Use \fBclu requires check\fR to verify system compatibility.
+
+.PP
+Network access (via \fB--net\fR) is only required for certain advanced facts that query external services.
+
+.PP
+Some facts require root privileges to access system files in \fB/proc\fR, \fB/sys\fR, or hardware interfaces.
+
+.SH SEE ALSO
+\fBlscpu\fP(1), \fBlshw\fP(1), \fBdmidecode\fP(8), \fBhostnamectl\fP(1), \fBsystemd-detect-virt\fP(1), \fBuname\fP(1), \fBfree\fP(1), \fBdf\fP(1), \fBip\fP(8), \fBss\fP(8), \fBtar\fP(1)
+
+.SH HISTORY
+\fBclu\fP is the 4th or 5th incarnation of this idea, going back to 2011. I finally gave up on 2 different incarnations of shell script. The deployment is easier but the programming is AWFUL. Pure python zipapps solve the deployment problem (mostly). (I wish Python had the same deployment model of Go...) Names have varied considerably over the years. Earlier incarnations strongly influenced the \fBcollector\fR command and being able to test the parsers without being logged in to networked systems.
+
+.SH AUTHORS
+Hunter Matthews (hunter@unix.haus) is to blame on this one.
