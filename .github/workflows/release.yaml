@@ -140,8 +140,7 @@ jobs:
     name: "Build RPM Package (CentOS 7)"
     needs: create-release
     permissions:
-      attestations: write
-      id-token: write
+      contents: write
     uses: ./.github/workflows/build-rpm-el7.yaml
 
   build-deb-packages:

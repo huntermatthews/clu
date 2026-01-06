@@ -20,9 +20,7 @@ jobs:
   build-rpm:
     name: "Package RPM (Ubuntu-based)"
     runs-on: ${{ inputs.runner }}
-    permissions:
-      attestations: write
-      id-token: write
+    # Note: Permissions are set in the calling workflow (release.yaml)
     env:
       GITHUB_REF_NAME: ${{ github.ref_name }}
     steps:
