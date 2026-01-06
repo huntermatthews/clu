@@ -81,6 +81,6 @@ jobs:
           path: debs/*
 
       - name: Generate SLSA attestation for DEB
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v3
         with:
           subject-path: debs/*.deb
