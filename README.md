@@ -28,25 +28,28 @@ When creating releases for both RPM and DEB packages, use version strings that a
 All release artifacts include SLSA Level 3 attestations for supply chain verification. You can verify the authenticity and integrity of any downloaded artifact:
 
 ### Verify Raw Binaries
+
 ```bash
 gh attestation verify clu-linux-amd64 --owner NHGRI
-gh attestation verify clu-linux-arm64 --owner NHGRI  
+gh attestation verify clu-linux-arm64 --owner NHGRI
 gh attestation verify clu-darwin-arm64 --owner NHGRI
 ```
 
 ### Verify Package Files
+
 ```bash
 # RPM packages
 gh attestation verify clu-1.0.0-1.x86_64.rpm --owner NHGRI
 gh attestation verify clu-1.0.0-1.aarch64.rpm --owner NHGRI
 gh attestation verify clu-1.0.0-1.x86_64.el7.rpm --owner NHGRI
 
-# DEB packages  
+# DEB packages
 gh attestation verify clu_1.0.0-1_amd64.deb --owner NHGRI
 gh attestation verify clu_1.0.0-1_arm64.deb --owner NHGRI
 ```
 
 ### Verify Checksums
+
 ```bash
 # Download and verify checksums
 curl -fsSL -O https://github.com/NHGRI/clu/releases/download/v1.0.0/SHA256SUMS
