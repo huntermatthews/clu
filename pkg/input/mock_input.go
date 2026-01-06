@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/NHGRI/clu/pkg/global"
 )
 
 // MockTextFile reads the mock file corresponding to `fname` under the

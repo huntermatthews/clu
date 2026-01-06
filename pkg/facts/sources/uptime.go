@@ -4,8 +4,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // Uptime parses system uptime via `uptime` command.

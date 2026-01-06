@@ -50,7 +50,7 @@ jobs:
           mkdir -p "${ARTIFACT_DIR}"
 
           # Build binary with debug symbols and platform-specific name
-          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/huntermatthews/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}" ./cmd/main.go
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/NHGRI/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}" ./cmd/main.go
 
       - name: Generate checksums
         run: |

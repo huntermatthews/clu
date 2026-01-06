@@ -3,7 +3,7 @@
 #
 # MANUAL SETUP REQUIRED:
 # 1. Create a separate GitHub repository for your Homebrew tap:
-#    - Repository name: huntermatthews/homebrew-clu (or homebrew-tools)
+#    - Repository name: NHGRI/homebrew-clu (or homebrew-tools)
 #    - Make it public
 #    - Initialize with README
 #
@@ -25,26 +25,26 @@
 #      secrets:
 #        HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 #      with:
-#        tap_repository: huntermatthews/homebrew-clu
+#        tap_repository: NHGRI/homebrew-clu
 #
 # USER INSTALLATION INSTRUCTIONS:
 # After setup, users can install via Homebrew:
 #
 #   # Add the custom tap
-#   brew tap huntermatthews/clu
+#   brew tap NHGRI/clu
 #
 #   # Install clu
 #   brew install clu
 #
 #   # Or install directly without adding tap
-#   brew install huntermatthews/clu/clu
+#   brew install NHGRI/clu/clu
 #
 #   # Update to latest version
 #   brew update && brew upgrade clu
 #
 #   # Uninstall
 #   brew uninstall clu
-#   brew untap huntermatthews/clu  # optional: remove tap
+#   brew untap NHGRI/clu  # optional: remove tap
 #
 # WORKFLOW BEHAVIOR:
 # - Automatically triggered after successful releases
@@ -62,7 +62,7 @@
 #     secrets:
 #       HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 #     with:
-#       tap_repository: huntermatthews/homebrew-clu
+#       tap_repository: NHGRI/homebrew-clu
 
 name: Update Homebrew Formula
 
@@ -123,7 +123,7 @@ jobs:
             homepage "https://github.com/${{ github.repository }}"
             url "https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz"
             sha256 "$TARBALL_SHA256"
-            license "GPL-2.0-only"
+            license "Non-Distributable"
 
             depends_on "go" => :build
 

@@ -17,10 +17,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/huntermatthews/clu/pkg/facts"
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/global"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/global"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // CollectorCmd implements the "collector" subcommand (stub only).

@@ -40,8 +40,8 @@ git version 1.8.3.1
 
 [matthewsht@biowebdev05]~/projects/clu% scripts/build.sh
 go: downloading github.com/alecthomas/kong v1.13.0
-github.com/huntermatthews/clu/pkg: cannot compile Go 1.25 code
-github.com/huntermatthews/clu/pkg/facts/types: cannot compile Go 1.25 code
+github.com/NHGRI/clu/pkg: cannot compile Go 1.25 code
+github.com/NHGRI/clu/pkg/facts/types: cannot compile Go 1.25 code
 
 Changed the version in go.mod
 Compiled clean.

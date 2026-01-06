@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 func TestProcCpuinfo3Provides(t *testing.T) {

@@ -7,9 +7,9 @@ package sources
 //   other -> error / parsing failure
 
 import (
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/global"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/global"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // DnfCheckUpdate reports if updates are required (True/False) or an error state.

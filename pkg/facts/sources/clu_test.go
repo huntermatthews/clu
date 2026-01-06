@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/facts/types"
 )
 
 // TestCluProvides ensures all expected keys are registered.

@@ -6,8 +6,8 @@ package facts
 // an ordered slice of sources plus default and early fact key lists.
 
 import (
-	"github.com/huntermatthews/clu/pkg/facts/sources"
-	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/facts/sources"
+	"github.com/NHGRI/clu/pkg/facts/types"
 )
 
 // OpSys aggregates a set of fact sources for an operating system.

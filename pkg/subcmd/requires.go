@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/facts"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // RequiresCmd implements the "requires" subcommand (stub only).

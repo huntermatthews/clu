@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // ProcUptime parses /proc/uptime for run.uptime fact.

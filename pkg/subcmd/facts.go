@@ -10,9 +10,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/facts"
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // FactsCmd implements the "facts" subcommand.

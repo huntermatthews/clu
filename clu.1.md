@@ -1,7 +1,7 @@
 <!-- markdownlint-disable -->
 <!--
-Copyright (c) 2011 Hunter Matthews <hunter@unix.haus>
-SPDX-License-Identifier: GPL-2.0-only
+Originally created by Hunter Matthews
+SPDX-License-Identifier: LicenseRef-NonDistributable
 
 The linter is disabled because thats for generic markdown files and this needs to be man page / go-md2man specific.
 -->
@@ -131,7 +131,7 @@ Some facts require root privileges to access system files in `/proc`, `/sys`, or
 
 ## AUTHORS
 
-Hunter Matthews (hunter@unix.haus) is to blame on this one.
+Hunter Matthews (hunter.matthews@nih.gov) is to blame on this one.
 
 <!--
 ALTERNATIVE COMMANDS SECTION FROM V2 (more detailed for complex subcommands):

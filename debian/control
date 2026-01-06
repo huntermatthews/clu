@@ -1,10 +1,10 @@
 Source: clu
-Section: utils
+Section: admin
 Priority: optional
-Maintainer: Hunter Matthews <hunter@unix.haus>
+Maintainer: SSA Team <hunter.matthews@nih.gov>
 Build-Depends: debhelper-compat (= 12), golang-1.20-go | golang-1.21-go | golang-1.22-go | golang-go (>= 2:1.20)
 Standards-Version: 4.6.0
-Homepage: https://github.com/huntermatthews/clu
+Homepage: https://github.com/NHGRI/clu
 
 Package: clu
 Architecture: any

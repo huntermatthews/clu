@@ -3,8 +3,8 @@ package facts
 // Constructs the Linux OpSys with its ordered fact sources and default/early fact lists.
 
 import (
-	"github.com/huntermatthews/clu/pkg/facts/sources"
-	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/facts/sources"
+	"github.com/NHGRI/clu/pkg/facts/types"
 )
 
 // NewLinux constructs the Linux OpSys. Order mirrors Python minus unported AwsImds source.

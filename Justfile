@@ -52,7 +52,7 @@ clu:
         export GOOS=${plat%:*}
         export GOARCH=${plat#*:}
         echo "Building for $GOOS on $GOARCH..."
-        go build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version={{REPO_VERSION}}" -o ./dist/clu-$(go env GOOS)-$(go env GOARCH) ./cmd/main.go
+        go build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version={{REPO_VERSION}}" -o ./dist/clu-$(go env GOOS)-$(go env GOARCH) ./cmd/main.go
     done
 
 # Build the Go CLI tool

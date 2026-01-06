@@ -1,4 +1,4 @@
-module github.com/huntermatthews/clu
+module github.com/NHGRI/clu
 
 go 1.20
 

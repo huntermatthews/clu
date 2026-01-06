@@ -6,12 +6,11 @@
 override_dh_auto_build:
 	$(eval VERSION := $(shell dpkg-parsechangelog -SVersion | cut -d- -f1))
 	$(eval GOCMD := $(shell which go 2>/dev/null || echo /usr/lib/go-1.20/bin/go))
-	CGO_ENABLED=0 $(GOCMD) build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version=$(VERSION)" -o clu ./cmd/main.go
+	CGO_ENABLED=0 $(GOCMD) build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=$(VERSION)" -o clu ./cmd/main.go
 
 override_dh_auto_install:
 	install -D -m 755 clu debian/clu/usr/bin/clu
 	install -D -m 644 clu.1 debian/clu/usr/share/man/man1/clu.1
-	install -D -m 644 LICENSE debian/clu/usr/share/doc/clu/LICENSE
 	install -D -m 644 README.md debian/clu/usr/share/doc/clu/README.md
 
 override_dh_auto_clean:

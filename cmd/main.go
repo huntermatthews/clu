@@ -7,9 +7,9 @@ import (
 
 	"github.com/alecthomas/kong"
 
-	"github.com/huntermatthews/clu/pkg/global"
-	"github.com/huntermatthews/clu/pkg/input"
-	"github.com/huntermatthews/clu/pkg/subcmd"
+	"github.com/NHGRI/clu/pkg/global"
+	"github.com/NHGRI/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/subcmd"
 )
 
 // CLI defines the root command and global flags.
