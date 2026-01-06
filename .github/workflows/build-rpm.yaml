@@ -68,7 +68,7 @@ jobs:
                    --target ${{ inputs.architecture }} -bb ~/rpmbuild/SPECS/clu.spec
 
       - name: Generate SLSA attestation for RPM
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v3
         with:
           subject-path: ~/rpmbuild/RPMS/${{ inputs.architecture }}/*.rpm
 

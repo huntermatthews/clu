@@ -58,7 +58,7 @@ jobs:
           sha256sum dist/clu-${{ matrix.goos }}-${{ matrix.goarch }}/clu-${{ matrix.goos }}-${{ matrix.goarch }} > dist/SHA256SUMS-${{ matrix.goos }}-${{ matrix.goarch }}
 
       - name: Generate SLSA attestation
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v3
         with:
           subject-path: dist/clu-${{ matrix.goos }}-${{ matrix.goarch }}/clu-${{ matrix.goos }}-${{ matrix.goarch }}
 
