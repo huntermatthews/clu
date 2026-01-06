@@ -68,6 +68,7 @@ jobs:
         run: |
           rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" \
                    --target ${{ inputs.architecture }} -bb ~/rpmbuild/SPECS/clu.spec
+
       - name: Generate SLSA attestation for RPM
         uses: actions/attest-build-provenance@v1
         with:

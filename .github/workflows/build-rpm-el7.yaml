@@ -77,15 +77,15 @@ jobs:
           # Install current GitHub CLI version that supports attestation
           yum install -y https://github.com/cli/cli/releases/download/v2.83.0/gh_2.83.0_linux_amd64.rpm
 
-      - name: Upload RPM with attestation
+      # Note: Skipping SLSA attestation - gh CLI in CentOS 7 doesn't support attestation creation
+      # Other workflows provide attestations via GitHub Actions
+
+      - name: Upload RPM to release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd ~/rpmbuild/RPMS/x86_64/
           RPM_FILE="clu-$VERSION-1.x86_64.el7.rpm"
-
-          # Create SLSA attestation with current gh CLI
-          gh attestation create --type "build-provenance" --subject "$RPM_FILE" --repo ${{ github.repository }}
 
           # Upload RPM to the existing release
           gh release upload $GITHUB_REF_NAME "$RPM_FILE" --repo ${{ github.repository }}
