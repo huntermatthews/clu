@@ -52,6 +52,7 @@ func (i *IpAddr) Parse(f *types.Facts) {
 	for _, k := range ipAddrKeys {
 		f.Set(k, "")
 	}
+    
 	// Decode JSON.
 	var ifaces []ipAddrIface
 	if err := json.Unmarshal([]byte(data), &ifaces); err != nil {
@@ -64,6 +65,7 @@ func (i *IpAddr) Parse(f *types.Facts) {
 		// net.devs
 		cur, _ := f.Get("net.devs")
 		f.Set("net.devs", cur+iface.IfName+" ")
+
 		// Addresses
 		for _, addr := range iface.AddrInfo {
 			switch addr.Family {
@@ -75,6 +77,7 @@ func (i *IpAddr) Parse(f *types.Facts) {
 				f.Set("net.ipv6", cur6+addr.Local+" ")
 			}
 		}
+
 		// MAC address (may be empty depending on interface type).
 		if strings.TrimSpace(iface.Address) != "" {
 			curMac, _ := f.Get("net.macs")

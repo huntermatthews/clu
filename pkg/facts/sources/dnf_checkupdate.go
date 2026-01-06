@@ -30,7 +30,7 @@ func (d *DnfCheckUpdate) Requires(r *types.Requires) {
 // are disabled and a placeholder value is stored.
 func (d *DnfCheckUpdate) Parse(f *types.Facts) {
 	if !global.Config.NetEnabled {
-		f.Set("run.update_required", types.NetDisabledMsg)
+		f.Add(types.TierOne,"run.update_required", types.NetDisabledMsg)
 		return
 	}
 
@@ -45,5 +45,5 @@ func (d *DnfCheckUpdate) Parse(f *types.Facts) {
 	default:
 		value = types.ParseFailMsg
 	}
-	f.Set("run.update_required", value)
+	f.Add(types.TierOne,"run.update_required", value)
 }

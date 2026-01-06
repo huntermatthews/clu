@@ -28,6 +28,7 @@ func (s *SwVers) Parse(f *types.Facts) {
 	if f.Contains("os.name") {
 		return
 	}
+
 	data, rc, _ := input.CommandRunner("sw_vers")
 	if data == "" || rc != 0 {
 		for _, k := range swKeys {
@@ -35,6 +36,7 @@ func (s *SwVers) Parse(f *types.Facts) {
 		}
 		return
 	}
+
 	for _, line := range strings.Split(strings.TrimSpace(data), "\n") {
 		if !strings.Contains(line, ":") {
 			continue
