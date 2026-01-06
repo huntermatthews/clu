@@ -126,17 +126,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - goarch: amd64
+          - architecture: x86_64
             runner: ubuntu-latest
-            goos: linux
-          - goarch: arm64
-            runner: ubuntu-latest # Use x86_64 runner for cross-compilation
-            goos: linux
     uses: ./.github/workflows/build-rpm.yaml
     with:
-      goarch: ${{ matrix.goarch }}
+      architecture: ${{ matrix.architecture }}
       runner: ${{ matrix.runner }}
-      goos: ${{ matrix.goos }}
 
   build-rpm-el7:
     name: "Build RPM Package (CentOS 7)"
@@ -155,17 +150,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - goarch: amd64
+          - architecture: amd64
             runner: ubuntu-latest
-            goos: linux
-          - goarch: arm64
-            runner: ubuntu-latest # Cross-compile ARM64 on x86_64
-            goos: linux
     uses: ./.github/workflows/build-deb.yaml
     with:
-      goarch: ${{ matrix.goarch }}
+      architecture: ${{ matrix.architecture }}
       runner: ${{ matrix.runner }}
-      goos: ${{ matrix.goos }}
 
   update-release:
     name: "Upload Packages to Release"

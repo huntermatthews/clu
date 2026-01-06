@@ -6,8 +6,7 @@
 override_dh_auto_build:
 	$(eval VERSION := $(shell dpkg-parsechangelog -SVersion | cut -d- -f1))
 	$(eval GOCMD := $(shell which go 2>/dev/null || echo /usr/lib/go-1.20/bin/go))
-	# Respect GOOS/GOARCH environment variables for cross-compilation
-	GOOS=$${GOOS:-linux} GOARCH=$${GOARCH:-amd64} CGO_ENABLED=0 $(GOCMD) build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version=$(VERSION)" -o clu ./cmd/main.go
+	CGO_ENABLED=0 $(GOCMD) build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version=$(VERSION)" -o clu ./cmd/main.go
 
 override_dh_auto_install:
 	install -D -m 755 clu debian/clu/usr/bin/clu
@@ -25,8 +24,8 @@ override_dh_dwz:
 	# Skip dwz compression for Go binaries (incompatible with CGO_ENABLED=0)
 
 override_dh_strip:
-	# Skip stripping for Go binaries (can break static linking)
-	dh_strip --no-automatic-dbgsym
+	# Skip stripping entirely for Go binaries (can break static linking and cross-compilation)
+	# Go binaries are already optimized and don't benefit from stripping
 
 override_dh_shlibdeps:
 	# Skip shared library dependency detection for static Go binaries

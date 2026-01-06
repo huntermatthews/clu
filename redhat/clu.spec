@@ -18,9 +18,7 @@ A command-line tool for collecting and analyzing system facts.
 %setup -q
 
 %build
-# Environment variables (GOOS/GOARCH) are passed through by rpmbuild
-# Default to native build if not set
-GOOS=${GOOS:-linux} GOARCH=${GOARCH:-amd64} CGO_ENABLED=0 go build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version=%{_version}" -o clu ./cmd/main.go
+CGO_ENABLED=0 go build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version=%{_version}" -o clu ./cmd/main.go
 
 %install
 mkdir -p %{buildroot}%{_bindir}

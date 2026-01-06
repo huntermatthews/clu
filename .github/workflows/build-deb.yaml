@@ -4,17 +4,12 @@ name: Build DEB Package
 on:
   workflow_call:
     inputs:
-      runner:
-        description: "GitHub runner to use"
+      architecture:
+        description: "Target architecture (amd64, arm64)"
         required: true
         type: string
-      goos:
-        description: "Go target OS (for cross-compilation)"
-        required: false
-        type: string
-        default: "linux"
-      goarch:
-        description: "Go target architecture (amd64, arm64)"
+      runner:
+        description: "GitHub runner to use"
         required: true
         type: string
 
@@ -67,34 +62,24 @@ jobs:
           dpkg-checkbuilddeps || echo "Warning: Some build deps may not be satisfied by apt packages, but Go is available via actions/setup-go"
 
       - name: Build DEB package
-        env:
-          GOOS: ${{ inputs.goos }}
-          GOARCH: ${{ inputs.goarch }}
         run: |
           cd clu-$VERSION
-
-          # Convert Go arch to DEB arch
-          case "${{ inputs.goarch }}" in
-            amd64) DEB_ARCH="amd64" ;;
-            arm64) DEB_ARCH="arm64" ;;
-            *) DEB_ARCH="${{ inputs.goarch }}" ;;
-          esac
 
           # Update debian/changelog with current version
           sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
 
-          # Build the DEB package with cross-compilation support
-          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -b -d -a"$DEB_ARCH"
+          # Build the DEB package
+          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -b -d
 
           # Move the .deb file to a predictable location at the root
           cd ..
           mkdir -p debs
-          mv clu_${VERSION}-1_${DEB_ARCH}.deb debs/clu_${VERSION}-1_${DEB_ARCH}.deb
+          mv clu_${VERSION}-1_${{ inputs.architecture }}.deb debs/clu_${VERSION}-1_${{ inputs.architecture }}.deb
 
       - name: Upload DEB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: deb-package-${{ inputs.goarch }}
+          name: deb-package-${{ inputs.architecture }}
           path: debs/*
 
       - name: Generate SLSA attestation for DEB
