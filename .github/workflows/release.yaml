@@ -174,7 +174,7 @@ jobs:
       contents: write
     steps:
       - name: Download binary artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: dist/
           pattern: release-assets-*
@@ -192,14 +192,14 @@ jobs:
           rm -f dist/SHA256SUMS-*
 
       - name: Download RPM packages
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: rpms/
           pattern: rpm-package*
           merge-multiple: true
 
       - name: Download DEB package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: debs/
           pattern: deb-package*
