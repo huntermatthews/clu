@@ -230,25 +230,7 @@ jobs:
 #     - Alternatively, verify using official registry sources only.
 #     - This ensures build reproducibility and prevents supply chain attacks.
 #
-# 14. Split workflow using reusable workflows:
-#     - Create .github/workflows/build-rpm.yaml with workflow_call inputs (architecture, runner, rpm_target, container, is_el7, upload_direct)
-#     - Create .github/workflows/build-deb.yaml with workflow_call inputs (architecture, runner)
-#     - Update main workflow to use matrix strategies: build-rpm-packages (x86_64/arm64), build-rpm-el7 (separate), build-deb-packages (x86_64/arm64)
-#     - This would reduce main workflow from ~400 lines to ~100 lines while maintaining all functionality and improving maintainability
-#
 # 15. Documentation updates:
 #     - DEB packages work on Proxmox hosts
 #     - no relationship between workflows and scripts/ - scripts just there for debugging/local builds.
 #
-
-## SNIPPETS
-#
-#      - name: Get OS and arch info
-# run: |
-#   GOOSARCH=${{matrix.goosarch}}
-#   GOOS=${GOOSARCH%/*}
-#   GOARCH=${GOOSARCH#*/}
-#   BINARY_NAME=${{github.repository}}-$GOOS-$GOARCH
-#   echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
-#   echo "GOOS=$GOOS" >> $GITHUB_ENV
-#   echo "GOARCH=$GOARCH" >> $GITHUB_ENV
