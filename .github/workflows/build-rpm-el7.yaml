@@ -50,10 +50,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          GIT_URL="https://github.com/${{ github.repository }}.git"
-          # Clone the tag using token without leaking it in logs
-          git -c http.extraheader="AUTHORIZATION: Bearer $GITHUB_TOKEN" \
-              clone --depth=1 --branch "$GITHUB_REF_NAME" "$GIT_URL" src
+          # Clone the tag using token (compatible with older git in EL7)
+          git clone --depth=1 --branch "$GITHUB_REF_NAME" \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" src
           # Create deterministic tarball with prefix clu-$VERSION/
           git -C src archive --format=tar.gz --prefix="clu-$VERSION/" \
               -o "clu-$VERSION.tar.gz" HEAD
