@@ -54,9 +54,18 @@ jobs:
             --header 'X-GitHub-Api-Version: 2022-11-28' \
             "https://api.github.com/repos/${{ github.repository }}/tarball/${{ github.ref_name }}"
 
+      - name: Inspect tarball contents (debug)
+        run: |
+          echo "Top-level entries in tarball:"
+          tar -tzf "clu-$VERSION.tar.gz" | cut -d/ -f1 | sort -u
+          echo "Sample of tar listing (first 20):"
+          tar -tzf "clu-$VERSION.tar.gz" | head -n 20
+
       - name: Extract and prepare source
         run: |
+          echo "Before extract, working directory contents:" && ls -la
           tar -xzf clu-$VERSION.tar.gz
+          echo "After extract, working directory contents:" && ls -la
 
       - name: Setup RPM build directory
         run: |
