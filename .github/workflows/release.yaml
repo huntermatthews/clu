@@ -134,8 +134,9 @@ jobs:
         include:
           - architecture: x86_64
             runner: ubuntu-latest
-          - architecture: aarch64
-            runner: ubuntu-latest-arm
+          # Temporarily disabled - ARM runner availability issues
+          # - architecture: aarch64
+          #   runner: ubuntu-latest-arm
     uses: ./.github/workflows/build-rpm.yaml
     with:
       architecture: ${{ matrix.architecture }}
@@ -160,8 +161,9 @@ jobs:
         include:
           - architecture: amd64
             runner: ubuntu-latest
-          - architecture: arm64
-            runner: ubuntu-latest-arm
+          # Temporarily disabled - ARM runner availability issues
+          # - architecture: arm64
+          #   runner: ubuntu-latest-arm
     uses: ./.github/workflows/build-deb.yaml
     with:
       architecture: ${{ matrix.architecture }}

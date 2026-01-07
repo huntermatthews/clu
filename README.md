@@ -56,3 +56,17 @@ curl -fsSL -O https://github.com/NHGRI/clu/releases/download/v1.0.0/SHA256SUMS
 curl -fsSL -O https://github.com/NHGRI/clu/releases/download/v1.0.0/clu-linux-amd64
 sha256sum -c SHA256SUMS
 ```
+
+
+## Private repo download information
+
+```shell
+DOWNLOAD_URL="PASTE_THE_browser_download_url_HERE"
+FILE_NAME="name_of_your_asset.tar.gz"
+
+curl -L \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "Accept: application/octet-stream" \
+  -o "${FILE_NAME}" \
+  "${DOWNLOAD_URL}"
+```
