@@ -45,6 +45,7 @@ jobs:
         run: |
           # Note: Cannot use download-artifact here - GitHub archives are external to workflow artifacts
           curl -fsSL -o clu-$VERSION.tar.gz \
+            --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.ref_name }}.tar.gz
 
       - name: Extract and prepare source
