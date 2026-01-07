@@ -14,6 +14,7 @@ jobs:
     name: "Compile Go Binaries"
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       attestations: write
       id-token: write
     strategy:
@@ -125,6 +126,7 @@ jobs:
     name: "Build RPM Packages (Ubuntu)"
     needs: create-release
     permissions:
+      contents: read
       attestations: write
       id-token: write
     strategy:
@@ -151,6 +153,7 @@ jobs:
     name: "Build DEB Packages"
     needs: create-release
     permissions:
+      contents: read
       attestations: write
       id-token: write
     strategy:
