@@ -64,6 +64,16 @@ echo "Copying source tarball and spec file..."
 cp "${TARBALL_PATH}" ~/rpmbuild/SOURCES/
 cp redhat/clu.spec ~/rpmbuild/SPECS/
 
+# Check for Go compiler (flexible approach)
+if ! command -v go >/dev/null 2>&1 && [[ ! -x /usr/lib/go-1.20/bin/go ]]; then
+    echo "Error: Go compiler not found"
+    echo "Install Go with one of these options:"
+    echo "  Ubuntu 20.04: sudo apt-get install golang-1.20-go"
+    echo "  Ubuntu 22.04+: sudo apt-get install golang-go"
+    echo "  Or use official installer from https://golang.org/dl/"
+    exit 1
+fi
+
 # Build RPM
 echo "Building RPM from source..."
 export GOARCH="${GOARCH}"

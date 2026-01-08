@@ -19,7 +19,16 @@ A command-line tool for collecting and analyzing system facts.
 %setup -q
 
 %build
-CGO_ENABLED=0 go build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=%{_version}" -o clu ./cmd/main.go
+# Use go from PATH or fallback to Ubuntu 20.04 package location
+if command -v go >/dev/null 2>&1; then
+    GOCMD=go
+elif [ -x /usr/lib/go-1.20/bin/go ]; then
+    GOCMD=/usr/lib/go-1.20/bin/go
+else
+    echo "Error: Go compiler not found"
+    exit 1
+fi
+CGO_ENABLED=0 $GOCMD build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=%{_version}" -o clu ./cmd/main.go
 
 %install
 mkdir -p %{buildroot}%{_bindir}
