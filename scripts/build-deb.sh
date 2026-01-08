@@ -94,9 +94,10 @@ if ! command -v go >/dev/null 2>&1 && [[ ! -x /usr/lib/go-1.20/bin/go ]]; then
 fi
 
 # Build the package (unsigned for local builds)
+# Use -d flag to skip build dependency checks when cross-compiling
 export GOARCH="${GOARCH}"
 export CGO_ENABLED=0
-(cd "clu-${VERSION}" && dpkg-buildpackage -us -uc -b -a"${DEB_ARCH}")
+(cd "clu-${VERSION}" && debuild -i -us -uc -b -d --host-arch="${DEB_ARCH}")
 
 # Show results
 echo ""
