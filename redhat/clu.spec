@@ -10,6 +10,7 @@ BuildArch:      %{_target_cpu}
 
 # Disable debuginfo package generation
 %global debug_package %{nil}
+%define __spec_install_post %{nil}
 
 %description
 A command-line tool for collecting and analyzing system facts.

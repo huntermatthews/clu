@@ -29,6 +29,13 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+          # Convert architecture naming: arm64 (team convention) -> aarch64 (RPM)
+          RPM_ARCH="${{ inputs.architecture }}"
+          if [ "$RPM_ARCH" = "arm64" ]; then
+            RPM_ARCH="aarch64"
+          fi
+          echo "RPM_ARCH=$RPM_ARCH" >> $GITHUB_ENV
+
       - name: Install RPM build tools
         run: |
           sudo apt-get update
@@ -80,17 +87,20 @@ jobs:
           cp clu-$VERSION/redhat/clu.spec ~/rpmbuild/SPECS/
 
       - name: Build RPM
+        env:
+          GOARCH: ${{ inputs.architecture }}
+          CGO_ENABLED: 0
         run: |
           rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" \
-                   --target ${{ inputs.architecture }} -bb ~/rpmbuild/SPECS/clu.spec
+                   --target "$RPM_ARCH" --ignorearch -bb ~/rpmbuild/SPECS/clu.spec
 
       - name: Generate SLSA attestation for RPM
         uses: actions/attest-build-provenance@v3
         with:
-          subject-path: ~/rpmbuild/RPMS/${{ inputs.architecture }}/*.rpm
+          subject-path: ~/rpmbuild/RPMS/${{ env.RPM_ARCH }}/*.rpm
 
       - name: Upload RPM artifact
         uses: actions/upload-artifact@v6
         with:
-          name: rpm-package-${{ inputs.architecture }}
-          path: ~/rpmbuild/RPMS/${{ inputs.architecture }}/*.rpm
+          name: rpm-package-${{ env.RPM_ARCH }}
+          path: ~/rpmbuild/RPMS/${{ env.RPM_ARCH }}/*.rpm
