@@ -16,17 +16,17 @@ fi
 VERSION="${1}"
 ARCH="${2:-x86_64}"  # Default to x86_64 if not specified
 
-# Convert team convention (arm64) to RPM convention (aarch64) if needed
-if [[ "${ARCH}" == "arm64" ]]; then
+# Convert architecture naming conventions
+if [[ "${ARCH}" == "arm64" || "${ARCH}" == "aarch64" ]]; then
     RPM_ARCH="aarch64"
     GOARCH="arm64"
-elif [[ "${ARCH}" == "x86_64" ]]; then
+elif [[ "${ARCH}" == "x86_64" || "${ARCH}" == "amd64" ]]; then
     RPM_ARCH="x86_64"
     GOARCH="amd64"
 else
-    # Assume it's already in RPM format
-    RPM_ARCH="${ARCH}"
-    GOARCH="${ARCH}"
+    echo "Error: Unsupported architecture '${ARCH}'"
+    echo "Supported: x86_64, amd64, aarch64, arm64"
+    exit 1
 fi
 
 # Validate version format (RPM/DEB compatible)
