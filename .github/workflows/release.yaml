@@ -122,34 +122,8 @@ jobs:
             gh attestation verify clu_${{ env.VERSION }}-1_arm64.deb --owner ${{ github.repository_owner }}
             ```
 
-  build-rpm-packages:
-    name: "Build RPM Packages (Ubuntu)"
-    needs: create-release
-    permissions:
-      contents: read
-      attestations: write
-      id-token: write
-    strategy:
-      matrix:
-        include:
-          # - architecture: x86_64
-          #   runner: ubuntu-latest
-          - architecture: arm64
-            runner: ubuntu-latest
-    uses: ./.github/workflows/build-rpm.yaml
-    with:
-      architecture: ${{ matrix.architecture }}
-      runner: ${{ matrix.runner }}
-
-  # build-rpm-el7:
-  #   name: "Build RPM Package (CentOS 7)"
-  #   needs: create-release
-  #   permissions:
-  #     contents: write
-  #   uses: ./.github/workflows/build-rpm-el7.yaml
-
-  # build-deb-packages:
-  #   name: "Build DEB Packages"
+  # build-rpm-packages:
+  #   name: "Build RPM Packages (Ubuntu)"
   #   needs: create-release
   #   permissions:
   #     contents: read
@@ -158,15 +132,40 @@ jobs:
   #   strategy:
   #     matrix:
   #       include:
-  #         - architecture: amd64
+  #         # - architecture: x86_64
+  #         #   runner: ubuntu-latest
+  #         - architecture: arm64
   #           runner: ubuntu-latest
-  #         # Temporarily disabled - ARM runner availability issues
-  #         # - architecture: arm64
-  #         #   runner: ubuntu-latest-arm
-  #   uses: ./.github/workflows/build-deb.yaml
+  #   uses: ./.github/workflows/build-rpm.yaml
   #   with:
   #     architecture: ${{ matrix.architecture }}
   #     runner: ${{ matrix.runner }}
+
+  # build-rpm-el7:
+  #   name: "Build RPM Package (CentOS 7)"
+  #   needs: create-release
+  #   permissions:
+  #     contents: write
+  #   uses: ./.github/workflows/build-rpm-el7.yaml
+
+  build-deb-packages:
+    name: "Build DEB Packages"
+    needs: create-release
+    permissions:
+      contents: read
+      attestations: write
+      id-token: write
+    strategy:
+      matrix:
+        include:
+          # - architecture: amd64
+          #   runner: ubuntu-latest
+          - architecture: arm64
+            runner: ubuntu-latest
+    uses: ./.github/workflows/build-deb.yaml
+    with:
+      architecture: ${{ matrix.architecture }}
+      runner: ${{ matrix.runner }}
 
   upload-all-assets:
     name: "Upload All Assets to Release"
@@ -193,19 +192,19 @@ jobs:
           # Clean up individual platform checksum files
           rm -f dist/SHA256SUMS-*
 
-      - name: Download RPM packages
-        uses: actions/download-artifact@v7
-        with:
-          path: rpms/
-          pattern: rpm-package*
-          merge-multiple: true
-
-      # - name: Download DEB package
+      # - name: Download RPM packages
       #   uses: actions/download-artifact@v7
       #   with:
-      #     path: debs/
-      #     pattern: deb-package*
+      #     path: rpms/
+      #     pattern: rpm-package*
       #     merge-multiple: true
+
+      - name: Download DEB package
+        uses: actions/download-artifact@v7
+        with:
+          path: debs/
+          pattern: deb-package*
+          merge-multiple: true
 
       - name: Upload all assets to release
         uses: softprops/action-gh-release@v2
@@ -213,8 +212,8 @@ jobs:
         with:
           files: |
             dist/**/*
-            rpms/*
-            # debs/*
+            # rpms/*
+            debs/*
           fail_on_unmatched_files: true
 #
 #
