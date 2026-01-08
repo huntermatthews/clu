@@ -3,16 +3,31 @@
 set -euo pipefail
 
 # Script to build RPM package locally from source tarball
-# Usage: ./scripts/build-rpm.sh <version>
+# Usage: ./scripts/build-rpm.sh <version> [architecture]
 
-if [[ ${#} -ne 1 ]]; then
-    echo "Error: Version argument is required"
-    echo "Usage: ${0} <version>"
+if [[ ${#} -lt 1 || ${#} -gt 2 ]]; then
+    echo "Error: Version argument is required, architecture is optional"
+    echo "Usage: ${0} <version> [architecture]"
     echo "Example: ${0} 1.2.3"
+    echo "Example: ${0} 1.2.3 aarch64"
     exit 1
 fi
 
 VERSION="${1}"
+ARCH="${2:-x86_64}"  # Default to x86_64 if not specified
+
+# Convert team convention (arm64) to RPM convention (aarch64) if needed
+if [[ "${ARCH}" == "arm64" ]]; then
+    RPM_ARCH="aarch64"
+    GOARCH="arm64"
+elif [[ "${ARCH}" == "x86_64" ]]; then
+    RPM_ARCH="x86_64"
+    GOARCH="amd64"
+else
+    # Assume it's already in RPM format
+    RPM_ARCH="${ARCH}"
+    GOARCH="${ARCH}"
+fi
 
 # Validate version format (RPM/DEB compatible)
 if ! [[ "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*(-[a-zA-Z0-9]+)*$ ]]; then
@@ -24,7 +39,7 @@ fi
 
 TARBALL_PATH="clu-${VERSION}.tar.gz"
 
-echo "Building RPM for clu version: ${VERSION}"
+echo "Building RPM for clu version: ${VERSION}, architecture: ${RPM_ARCH}"
 
 # Create source tarball if it doesn't exist
 if [[ ! -f "${TARBALL_PATH}" ]]; then
@@ -51,10 +66,15 @@ cp redhat/clu.spec ~/rpmbuild/SPECS/
 
 # Build RPM
 echo "Building RPM from source..."
-rpmbuild --define "_version ${VERSION}" --define "_buildhost $(hostname -f)" -bb ~/rpmbuild/SPECS/clu.spec
+export GOARCH="${GOARCH}"
+export CGO_ENABLED=0
+rpmbuild --define "_version ${VERSION}" \
+         --define "_buildhost $(hostname -f)" \
+         --target "${RPM_ARCH}" \
+         -bb ~/rpmbuild/SPECS/clu.spec
 
 # Show results
 echo "Generated RPM:"
-ls -la ~/rpmbuild/RPMS/x86_64/clu-*.rpm
+ls -la ~/rpmbuild/RPMS/${RPM_ARCH}/clu-*.rpm
 
-echo "To install: sudo rpm -i ~/rpmbuild/RPMS/x86_64/clu-${VERSION}-1.*.rpm"
+echo "To install: sudo rpm -i ~/rpmbuild/RPMS/${RPM_ARCH}/clu-${VERSION}-1.*.rpm"

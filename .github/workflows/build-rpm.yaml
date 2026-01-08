@@ -91,9 +91,10 @@ jobs:
           GOARCH: ${{ inputs.architecture }}
           CGO_ENABLED: 0
         run: |
-          rpmbuild --define "_version $VERSION" --define "_buildhost $BUILD_HOST" \
-                   --define "_target_cpu $RPM_ARCH" \
-                   --target "$RPM_ARCH" -bb ~/rpmbuild/SPECS/clu.spec
+          rpmbuild --define "_version $VERSION" \
+                   --define "_buildhost $BUILD_HOST" \
+                   --target "$RPM_ARCH" \
+                   -bb ~/rpmbuild/SPECS/clu.spec
 
       - name: Generate SLSA attestation for RPM
         uses: actions/attest-build-provenance@v3

@@ -5,7 +5,7 @@ Summary:        System facts collector and analyzer
 License:        LicenseRef-NonDistributable
 URL:            https://github.com/NHGRI/clu
 Source0:        %{name}-%{version}.tar.gz
-BuildArch:      %{_target_cpu}
+# BuildArch removed - target architecture specified via rpmbuild --target flag
 # BuildRequires:  golang >= 1.20  # Disabled - Go provided by GitHub Actions setup-go
 
 # Disable debuginfo package generation
