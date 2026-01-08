@@ -95,9 +95,10 @@ fi
 
 # Build the package (unsigned for local builds)
 # Use -d flag to skip build dependency checks when cross-compiling
+# Use dpkg-buildpackage directly to avoid debuild wrapper issues with architecture detection
 export GOARCH="${GOARCH}"
 export CGO_ENABLED=0
-(cd "clu-${VERSION}" && debuild -i -us -uc -b -d --host-arch="${DEB_ARCH}")
+(cd "clu-${VERSION}" && dpkg-buildpackage -us -uc -ui -i -b -d -a"${DEB_ARCH}")
 
 # Show results
 echo ""
