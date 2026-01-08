@@ -8,6 +8,7 @@ package facts
 import (
 	"github.com/NHGRI/clu/pkg/facts/sources"
 	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // OpSys aggregates a set of fact sources for an operating system.
@@ -57,22 +58,28 @@ func (o *OpSys) GetEarlyFacts() []string {
 
 // OpSysFactory replicates Python opsys_factory minimal logic using runtime.GOOS.
 func OpSysFactory() *OpSys {
-	uname := &sources.Uname{}
-	facts := types.NewFacts()
-	uname.Parse(facts)
-	kernel, ok := facts.Get("os.kernel.name")
-	if !ok {
-		panic("unable to determine OS kernel name")
+	// we look for cmd.exe to determine if we are on Windows
+	// ver was my first choice, but its a builtin
+	if input.ProgramChecker("cmd.exe") != "" {
+		return NewWindows()
+	} else {
+		// If its not Windows, use Uname to determine OS.
+		uname := &sources.Uname{}
+		facts := types.NewFacts()
+		uname.Parse(facts)
+		kernel, ok := facts.Get("os.kernel.name")
+		if !ok {
+			panic("unable to determine OS kernel name")
+		}
+
+		switch kernel {
+		case "Darwin":
+			return NewDarwin()
+		case "Linux":
+			return NewLinux()
+		default:
+			panic("unsupported operating system; got " + kernel)
+
+		}
 	}
-
-	switch kernel {
-	case "Darwin":
-		return NewDarwin()
-	case "Linux":
-		return NewLinux()
-	default:
-		panic("unsupported operating system; got " + kernel)
-
-	}
-
 }
