@@ -7,8 +7,8 @@ import (
 	"encoding/csv"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // WindowsSysteminfo collects OS and hardware facts from systeminfo output.
