@@ -26,7 +26,7 @@ func (l *Lsmem) Requires(r *types.Requires) {
 func (l *Lsmem) Parse(f *types.Facts) {
 	data, rc, _ := input.CommandRunner("lsmem --summary --bytes")
 	if data == "" || rc != 0 {
-		f.Set("phy.ram", types.ParseFailMsg)
+		f.Add(types.TierOne, "phy.ram", types.ParseFailMsg)
 		return
 	}
 
@@ -42,14 +42,14 @@ func (l *Lsmem) Parse(f *types.Facts) {
 	}
 
 	if byteCount == "" {
-		f.Set("phy.ram", types.ParseFailMsg)
+		f.Add(types.TierOne, "phy.ram", types.ParseFailMsg)
 		return
 	}
 
 	// Convert using BytesToSI; input expects a float64 number of bytes.
 	if v, err := strconv.ParseFloat(byteCount, 64); err == nil {
-		f.Set("phy.ram", input.BytesToSI(v))
+		f.Add(types.TierOne, "phy.ram", input.BytesToSI(v))
 	} else {
-		f.Set("phy.ram", types.ParseFailMsg)
+		f.Add(types.TierOne, "phy.ram", types.ParseFailMsg)
 	}
 }

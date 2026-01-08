@@ -64,5 +64,5 @@ func (p *ProcCpuinfo2) Parse(f *types.Facts) {
 			break
 		}
 	}
-	f.Set("phy.cpu.arch_version", "x86_64_v"+strconv.Itoa(version))
+	f.Add(types.TierOne, "phy.cpu.arch_version", "x86_64_v"+strconv.Itoa(version))
 }

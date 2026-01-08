@@ -31,9 +31,9 @@ func (n *NoSalt) Parse(f *types.Facts) {
 	// trimmed content as missing (optional semantics).
 	data, err := input.FileReader("/no_salt")
 	if err != nil || strings.TrimSpace(data) == "" {
-		f.Set("salt.no_salt.exists", "False")
+		f.Add(types.TierOne, "salt.no_salt.exists", "False")
 		return
 	}
-	f.Set("salt.no_salt.exists", "True")
-	f.Set("salt.no_salt.reason", strings.TrimSpace(data))
+	f.Add(types.TierOne, "salt.no_salt.exists", "True")
+	f.Add(types.TierOne, "salt.no_salt.reason", strings.TrimSpace(data))
 }

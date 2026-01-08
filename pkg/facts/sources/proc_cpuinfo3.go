@@ -49,11 +49,11 @@ func (p *ProcCpuinfo3) Parse(f *types.Facts) {
 	data, err := input.FileReader("/proc/cpuinfo")
 	if err != nil || data == "" {
 		// Mirror other parsers: set counts to ParseFailMsg to indicate failure.
-		f.Set("phy.cpu.cores", types.ParseFailMsg)
-		f.Set("phy.cpu.threads", types.ParseFailMsg)
-		f.Set("phy.cpu.sockets", "")
-		f.Set("phy.cpu.vendor", "")
-		f.Set("phy.cpu.model", "")
+		f.Add(types.TierOne, "phy.cpu.cores", types.ParseFailMsg)
+		f.Add(types.TierOne, "phy.cpu.threads", types.ParseFailMsg)
+		f.Add(types.TierOne, "phy.cpu.sockets", "")
+		f.Add(types.TierOne, "phy.cpu.vendor", "")
+		f.Add(types.TierOne, "phy.cpu.model", "")
 		return
 	}
 
@@ -61,11 +61,11 @@ func (p *ProcCpuinfo3) Parse(f *types.Facts) {
 	data = strings.ReplaceAll(data, "\r\n", "\n")
 	data = strings.TrimSpace(data)
 	if data == "" {
-		f.Set("phy.cpu.cores", types.ParseFailMsg)
-		f.Set("phy.cpu.threads", types.ParseFailMsg)
-		f.Set("phy.cpu.sockets", "")
-		f.Set("phy.cpu.vendor", "")
-		f.Set("phy.cpu.model", "")
+		f.Add(types.TierOne, "phy.cpu.cores", types.ParseFailMsg)
+		f.Add(types.TierOne, "phy.cpu.threads", types.ParseFailMsg)
+		f.Add(types.TierOne, "phy.cpu.sockets", "")
+		f.Add(types.TierOne, "phy.cpu.vendor", "")
+		f.Add(types.TierOne, "phy.cpu.model", "")
 		return
 	}
 
@@ -175,9 +175,9 @@ func (p *ProcCpuinfo3) Parse(f *types.Facts) {
 	}
 
 	// Set facts (model/vendor may be empty string like lscpu behavior)
-	f.Set("phy.cpu.model", model)
-	f.Set("phy.cpu.vendor", vendor)
-	f.Set("phy.cpu.cores", cores)
-	f.Set("phy.cpu.threads", threads)
-	f.Set("phy.cpu.sockets", sockets)
+	f.Add(types.TierOne, "phy.cpu.model", model)
+	f.Add(types.TierOne, "phy.cpu.vendor", vendor)
+	f.Add(types.TierOne, "phy.cpu.cores", cores)
+	f.Add(types.TierOne, "phy.cpu.threads", threads)
+	f.Add(types.TierOne, "phy.cpu.sockets", sockets)
 }

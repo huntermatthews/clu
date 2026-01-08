@@ -23,23 +23,23 @@ func (p *ProcUptime) Requires(r *types.Requires) { r.Files = append(r.Files, "/p
 func (p *ProcUptime) Parse(f *types.Facts) {
 	data, err := input.FileReader("/proc/uptime")
 	if err != nil || data == "" {
-		f.Set("run.uptime", types.ParseFailMsg)
+		f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)
 		return
 	}
 
 	fields := strings.Fields(data)
 	if len(fields) == 0 {
-		f.Set("run.uptime", types.ParseFailMsg)
+		f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)
 		return
 	}
 
 	// Value is a float string; convert to seconds int.
 	val, err := strconv.ParseFloat(fields[0], 64)
 	if err != nil {
-		f.Set("run.uptime", types.ParseFailMsg)
+		f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)
 		return
 	}
 
 	secs := int64(val)
-	f.Set("run.uptime", input.SecondsToText(secs))
+	f.Add(types.TierOne, "run.uptime", input.SecondsToText(secs))
 }

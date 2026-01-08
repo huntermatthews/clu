@@ -26,8 +26,8 @@ func (o *OsRelease) Requires(r *types.Requires) { r.Files = append(r.Files, "/et
 func (o *OsRelease) Parse(f *types.Facts) {
 	data, err := input.FileReader("/etc/os-release")
 	if err != nil || data == "" { // treat empty/error uniformly
-		f.Set("os.distro.name", types.ParseFailMsg)
-		f.Set("os.distro.version", types.ParseFailMsg)
+		f.Add(types.TierOne, "os.distro.name", types.ParseFailMsg)
+		f.Add(types.TierOne, "os.distro.version", types.ParseFailMsg)
 		return
 	}
 
@@ -52,6 +52,6 @@ func (o *OsRelease) Parse(f *types.Facts) {
 	if version == "" {
 		version = types.ParseFailMsg
 	}
-	f.Set("os.distro.name", id)
-	f.Set("os.distro.version", version)
+	f.Add(types.TierOne, "os.distro.name", id)
+	f.Add(types.TierOne, "os.distro.version", version)
 }

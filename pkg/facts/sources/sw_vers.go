@@ -32,7 +32,7 @@ func (s *SwVers) Parse(f *types.Facts) {
 	data, rc, _ := input.CommandRunner("sw_vers")
 	if data == "" || rc != 0 {
 		for _, k := range swKeys {
-			f.Set(k, types.ParseFailMsg)
+			f.Add(types.TierOne, k, types.ParseFailMsg)
 		}
 		return
 	}
@@ -46,11 +46,11 @@ func (s *SwVers) Parse(f *types.Facts) {
 		value := strings.TrimSpace(parts[1])
 		switch key {
 		case "ProductName":
-			f.Set("os.name", value)
+			f.Add(types.TierOne, "os.name", value)
 		case "ProductVersion":
-			f.Set("os.version", value)
+			f.Add(types.TierOne, "os.version", value)
 		case "BuildVersion":
-			f.Set("os.build", value)
+			f.Add(types.TierThree, "os.build", value)
 		}
 	}
 }

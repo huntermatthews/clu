@@ -18,7 +18,7 @@ type Ipmitool struct{}
 type factThing struct {
 	name  string
 	value string
-	regex string
+	origin string
 	tier  types.Tier
 }
 
@@ -70,7 +70,7 @@ func (i *Ipmitool) parseLanPrint(f *types.Facts) {
 	}
 	// Extract values
 	for _, k := range ipmitoolLanFacts {
-		re := regexp.MustCompile(k.regex)
+		re := regexp.MustCompile(k.origin)
 		m := re.FindStringSubmatch(data)
 		if len(m) == 2 {
 			val := strings.TrimSpace(m[1])
@@ -91,7 +91,7 @@ func (i *Ipmitool) parseMcInfo(f *types.Facts) {
 		return
 	}
 	for _, k := range ipmitoolMcInfoFacts {
-		re := regexp.MustCompile(k.regex)
+		re := regexp.MustCompile(k.origin)
 		m := re.FindStringSubmatch(data)
 		if len(m) == 2 {
 			val := strings.TrimSpace(m[1])

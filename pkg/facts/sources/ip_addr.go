@@ -44,44 +44,49 @@ func (i *IpAddr) Parse(f *types.Facts) {
 	data, rc, _ := input.CommandRunner("ip --json addr")
 	if data == "" || rc != 0 {
 		for _, k := range ipAddrKeys {
-			f.Set(k, types.ParseFailMsg)
+			f.Add(types.TierTwo, k, types.ParseFailMsg)
 		}
 		return
 	}
 	// Initialize keys to empty strings (Python behavior before accumulation).
+	// net.macs is TierTwo; others are TierOne.
 	for _, k := range ipAddrKeys {
-		f.Set(k, "")
+		if k == "net.macs" {
+			f.Add(types.TierTwo, k, "")
+		} else {
+			f.Add(types.TierOne, k, "")
+		}
 	}
-    
+
 	// Decode JSON.
 	var ifaces []ipAddrIface
 	if err := json.Unmarshal([]byte(data), &ifaces); err != nil {
 		for _, k := range ipAddrKeys {
-			f.Set(k, types.ParseFailMsg)
+			f.Add(types.TierOne, k, types.ParseFailMsg)
 		}
 		return
 	}
 	for _, iface := range ifaces {
 		// net.devs
 		cur, _ := f.Get("net.devs")
-		f.Set("net.devs", cur+iface.IfName+" ")
+		f.Add(types.TierOne, "net.devs", cur+iface.IfName+" ")
 
 		// Addresses
 		for _, addr := range iface.AddrInfo {
 			switch addr.Family {
 			case "inet":
 				cur4, _ := f.Get("net.ipv4")
-				f.Set("net.ipv4", cur4+addr.Local+" ")
+				f.Add(types.TierOne, "net.ipv4", cur4+addr.Local+" ")
 			case "inet6":
 				cur6, _ := f.Get("net.ipv6")
-				f.Set("net.ipv6", cur6+addr.Local+" ")
+				f.Add(types.TierOne, "net.ipv6", cur6+addr.Local+" ")
 			}
 		}
 
 		// MAC address (may be empty depending on interface type).
 		if strings.TrimSpace(iface.Address) != "" {
 			curMac, _ := f.Get("net.macs")
-			f.Set("net.macs", curMac+iface.Address+" ")
+			f.Add(types.TierTwo, "net.macs", curMac+iface.Address+" ")
 		}
 	}
 }

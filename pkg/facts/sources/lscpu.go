@@ -42,8 +42,9 @@ func (l *Lscpu) Requires(r *types.Requires) {
 func (l *Lscpu) Parse(f *types.Facts) {
 	data, rc, _ := input.CommandRunner("lscpu")
 	if data == "" || rc != 0 {
-		return // mimic Python: skip setting anything
+		return
 	}
+
 	// Normalize escaped newlines ("\n") into real newlines so both raw and
 	// literal-escaped inputs are handled consistently.
 	data = strings.ReplaceAll(data, "\\n", "\n")
@@ -86,9 +87,9 @@ func (l *Lscpu) Parse(f *types.Facts) {
 	}
 
 	// Set facts (nil/missing -> empty string like Python assignment of None)
-	f.Set("phy.cpu.model", fields["model"])   // may be empty
-	f.Set("phy.cpu.vendor", fields["vendor"]) // may be empty
-	f.Set("phy.cpu.cores", cores)
-	f.Set("phy.cpu.threads", threads)
-	f.Set("phy.cpu.sockets", fields["sockets"]) // may be empty
+	f.Add(types.TierOne, "phy.cpu.model", fields["model"])   // may be empty
+	f.Add(types.TierTwo, "phy.cpu.vendor", fields["vendor"]) // may be empty
+	f.Add(types.TierOne, "phy.cpu.cores", cores)
+	f.Add(types.TierTwo, "phy.cpu.threads", threads)
+	f.Add(types.TierThree, "phy.cpu.sockets", fields["sockets"]) // may be empty
 }

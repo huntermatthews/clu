@@ -30,17 +30,17 @@ func (s *Selinux) Parse(f *types.Facts) {
 	_, rc, _ := input.CommandRunner("selinuxenabled")
 	switch rc {
 	case 0:
-		f.Set("os.selinux.enable", "True")
+		f.Add(types.TierOne, "os.selinux.enable", "True")
 	case 1:
-		f.Set("os.selinux.enable", "False")
+		f.Add(types.TierOne, "os.selinux.enable", "False")
 	default:
-		f.Set("os.selinux.enable", types.ParseFailMsg)
+		f.Add(types.TierOne, "os.selinux.enable", types.ParseFailMsg)
 	}
 
 	data, _, _ := input.CommandRunner("getenforce")
 	if strings.TrimSpace(data) == "" {
-		f.Set("os.selinux.mode", types.ParseFailMsg)
+		f.Add(types.TierOne, "os.selinux.mode", types.ParseFailMsg)
 	} else {
-		f.Set("os.selinux.mode", strings.TrimSpace(data))
+		f.Add(types.TierOne, "os.selinux.mode", strings.TrimSpace(data))
 	}
 }
