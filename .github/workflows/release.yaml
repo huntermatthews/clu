@@ -170,7 +170,7 @@ jobs:
   upload-all-assets:
     name: "Upload All Assets to Release"
     runs-on: ubuntu-latest
-    needs: [build, build-rpm-packages]
+    needs: [build, build-deb-packages]
     permissions:
       contents: write
     steps:
