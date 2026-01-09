@@ -232,3 +232,7 @@ jobs:
 #     - DEB packages work on Proxmox hosts
 #     - no relationship between workflows and scripts/ - scripts just there for debugging/local builds.
 #
+# 16. Case statement conversion:
+#     - Convert if/elif architecture mapping to case statements in build-rpm.yaml and build-deb.yaml
+#     - More idiomatic bash pattern for matching alternatives (e.g., arm64|aarch64)
+#

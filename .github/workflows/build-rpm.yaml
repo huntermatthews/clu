@@ -29,12 +29,19 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-          # Convert architecture naming: arm64 (team convention) -> aarch64 (RPM)
-          RPM_ARCH="${{ inputs.architecture }}"
-          if [ "$RPM_ARCH" = "arm64" ]; then
+          # Convert architecture naming (matching build-rpm.sh script)
+          if [ "${{ inputs.architecture }}" = "arm64" ] || [ "${{ inputs.architecture }}" = "aarch64" ]; then
             RPM_ARCH="aarch64"
+            GOARCH="arm64"
+          elif [ "${{ inputs.architecture }}" = "x86_64" ] || [ "${{ inputs.architecture }}" = "amd64" ]; then
+            RPM_ARCH="x86_64"
+            GOARCH="amd64"
+          else
+            echo "Unsupported architecture: ${{ inputs.architecture }}"
+            exit 1
           fi
           echo "RPM_ARCH=$RPM_ARCH" >> $GITHUB_ENV
+          echo "GOARCH=$GOARCH" >> $GITHUB_ENV
 
       - name: Install RPM build tools
         run: |
@@ -88,7 +95,7 @@ jobs:
 
       - name: Build RPM
         env:
-          GOARCH: ${{ inputs.architecture }}
+          GOARCH: ${{ env.GOARCH }}
           CGO_ENABLED: 0
         run: |
           rpmbuild --define "_version $VERSION" \
