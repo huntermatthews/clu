@@ -7,7 +7,7 @@ override_dh_auto_build:
 	$(eval VERSION := $(shell dpkg-parsechangelog -SVersion | cut -d- -f1))
 	$(eval GOCMD := $(shell which go 2>/dev/null || echo /usr/lib/go-1.20/bin/go))
     # GOARCH environment variable (if set) will be honored by Go compiler for cross-compilation
-	CGO_ENABLED=0 $(GOCMD) build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=$(VERSION)" -o clu ./cmd/main.go
+	CGO_ENABLED=0 $(GOCMD) build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=$(VERSION)" -o clu ./cmd/clu/main.go
 
 
 override_dh_auto_install:

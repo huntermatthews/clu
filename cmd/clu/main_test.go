@@ -18,7 +18,7 @@ func setupTest(t *testing.T) (string, func()) {
 		t.Fatalf("failed to get working directory: %v", err)
 	}
 
-	testDataDir := filepath.Join(wd, "testdata")
+	testDataDir := filepath.Join(wd, "..", "testdata")
 	if err := os.MkdirAll(testDataDir, 0755); err != nil {
 		t.Fatalf("failed to create testdata dir: %v", err)
 	}
