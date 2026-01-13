@@ -2,20 +2,17 @@ include common.mk
 
 # Variables
 PREFIX ?= /usr/local
+PKG := $(shell go list -m)
 PLATFORMS := darwin-arm64 windows-amd64 linux-amd64 linux-arm64
 
 
 ##
 ##@ Build
 ##
-.PHONY: setup
-setup: ## Setup Go modules
-	@mkdir -p dist
-	go mod download
 
 .PHONY: build
 build: setup ## Build the program for the current platform
-	go build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=$(VERSION)" -o dist/clu ./cmd/clu/main.go
+	go build -ldflags "-X $(PKG)/pkg/global.Version=$(VERSION)" -o dist/clu ./cmd/clu/main.go
 
 .PHONY: clean
 clean: ## Clean up build artifacts
@@ -23,16 +20,14 @@ clean: ## Clean up build artifacts
 
 .PHONY: clu-all
 clu-all: ## Build the Go CLI tool
-	for plat in $(PLATFORMS); do
+	@for plat in $(PLATFORMS); do
 		$(MAKE) clu-$$plat
 	done
 
 .PHONY: clu-%
 clu-%: ## Build clu for a specific platform (e.g., make clu-darwin-amd64)
-	GOOS=$(word 1,$(subst -, ,$*))
+	@GOOS=$(word 1,$(subst -, ,$*))
 	GOARCH=$(word 2,$(subst -, ,$*))
-	# the "build" target is the canonical one - make sure this stays in sync with that.
-	# go build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=$(VERSION)" -o dist/clu-$$GOOS-$$GOARCH ./cmd/clu
 	GOOS=$$GOOS GOARCH=$$GOARCH $(MAKE) build
 	mv dist/clu dist/clu-$$GOOS-$$GOARCH
 
@@ -50,6 +45,9 @@ install: build manpage ## Install clu binary, manpage, and documentation
 manpage: ## Generate man page from markdown using go-md2man
 	go-md2man -in clu.1.md -out clu.1
 
+.PHONY: version
+version: ## Print the current version
+	@echo $(VERSION)
 
 
 ##
@@ -68,3 +66,39 @@ coverage: ## Run tests with coverage and show summary
 .PHONY: coverage-html
 coverage-html: coverage ## Open HTML coverage report
 	go tool cover -html=coverage.out
+
+
+##
+##@ Linting and Formatting
+##
+
+.PHONY: fmt
+fmt: ## Format code
+	go fmt ./...
+
+.PHONY: fmt-check
+fmt-check: ## Check formatting without modifying files
+	@gofmt -d $(shell find . -name '*.go' -not -path "./vendor/*")
+
+.PHONY: lint
+lint: ## Run linter
+	golangci-lint run
+
+.PHONY: vet
+vet: ## Run go vet
+	go vet ./...
+
+
+##
+##@ Setup and Tools
+##
+
+.PHONY: setup
+setup: tools ## Setup Go modules
+	@mkdir -p dist
+	go mod download
+
+.PHONY: tools
+tools: ## Install development tools
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/cpuguy83/go-md2man/v2@latest

@@ -13,23 +13,32 @@ ifneq "$(MINIMUM_GNU_MAKE)" "$(firstword $(sort $(MINIMUM_GNU_MAKE) ${MAKE_VERSI
 endif
 
 # Makefile settings
-MAKEFLAGS += --no-builtin-rules --no-builtin-variables
+# Note: --warn-undefined-variables is too noisy with recursive make (warns about GNUMAKEFLAGS)
+MAKEFLAGS += --no-builtin-rules --no-builtin-variables --no-print-directory
 SHELL := bash
 .DEFAULT_GOAL := help
 .ONESHELL:
 
 # VERSION determination
-# TODO: make sure VERSION has no leading 'v' if passed in.
-# TODO: make sure we remove leading 'v' in the version string if we use git describe
+# If VERSION is not set in the environment, try to get it from git
 ifndef VERSION
   # Check if we're in a git repository
   IS_GIT_REPO := $(shell git rev-parse --is-inside-work-tree 2>/dev/null)
   ifeq "$(IS_GIT_REPO)" "true"
     VERSION := $(shell git describe --dirty --always --match "v[0-9]*")
   else
-    $(error VERSION not set and not in a git repository. Please set VERSION environment variable.)
+    $(error VERSION not set and build not in a git repository. Please set a VERSION environment variable.)
   endif
 endif
+# Strip leading 'v' from VERSION if present
+VERSION := $(patsubst v%,%,$(VERSION))
+
+# TODO: Validate VERSION format
+# SEMVER_REGEX := ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$$
+# VALID_VERSION := $(shell echo "$(VERSION)" | grep -E '$(SEMVER_REGEX)' >/dev/null && echo yes)
+# ifneq ($(VALID_VERSION),yes)
+#   $(error VERSION "$(VERSION)" is not valid semantic versioning format)
+# endif
 
 
 ##
