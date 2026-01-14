@@ -21,7 +21,7 @@ func TestProcUptimeSuccess(t *testing.T) {
 	orig := input.FileReader
 	input.FileReader = func(path string) (string, error) { return "12345.67 54321.00", nil }
 	defer func() { input.FileReader = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &ProcUptime{}
 	src.Parse(f)
 	got, _ := f.Get("run.uptime")
@@ -35,7 +35,7 @@ func TestProcUptimeMissing(t *testing.T) {
 	orig := input.FileReader
 	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
 	defer func() { input.FileReader = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &ProcUptime{}
 	src.Parse(f)
 	got, _ := f.Get("run.uptime")
@@ -48,7 +48,7 @@ func TestProcUptimeMalformed(t *testing.T) {
 	orig := input.FileReader
 	input.FileReader = func(path string) (string, error) { return "not_a_number", nil }
 	defer func() { input.FileReader = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &ProcUptime{}
 	src.Parse(f)
 	got, _ := f.Get("run.uptime")

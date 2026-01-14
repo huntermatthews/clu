@@ -20,7 +20,7 @@ func (p *ProcUptime) Provides(pr types.Provides) { pr["run.uptime"] = p }
 func (p *ProcUptime) Requires(r *types.Requires) { r.Files = append(r.Files, "/proc/uptime") }
 
 // Parse extracts uptime seconds and formats via SecondsToText. Failure yields ParseFailMsg.
-func (p *ProcUptime) Parse(f *types.Facts) {
+func (p *ProcUptime) Parse(f *types.FactDB) {
 	data, err := input.FileReader("/proc/uptime")
 	if err != nil || data == "" {
 		f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)

@@ -22,7 +22,7 @@ func TestUptimeParse(t *testing.T) {
 		t.Skip("uptime not available")
 	}
 	u := &Uptime{}
-	facts := types.NewFacts()
+	facts := types.NewFactDB()
 	u.Parse(facts)
 	if !facts.Contains("run.uptime") {
 		t.Errorf("missing run.uptime fact")

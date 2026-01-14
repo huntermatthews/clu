@@ -27,7 +27,7 @@ func TestIpAddrSuccess(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmd string) (string, int, error) { return json, 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &IpAddr{}
 	src.Parse(f)
 	cases := map[string]string{
@@ -48,7 +48,7 @@ func TestIpAddrFailureRC(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmd string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &IpAddr{}
 	src.Parse(f)
 	for _, k := range []string{"net.macs", "net.ipv4", "net.ipv6", "net.devs"} {
@@ -63,7 +63,7 @@ func TestIpAddrEmptyOutput(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmd string) (string, int, error) { return "", 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &IpAddr{}
 	src.Parse(f)
 	for _, k := range []string{"net.macs", "net.ipv4", "net.ipv6", "net.devs"} {
@@ -78,7 +78,7 @@ func TestIpAddrMalformedJSON(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmd string) (string, int, error) { return "not json", 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &IpAddr{}
 	src.Parse(f)
 	for _, k := range []string{"net.macs", "net.ipv4", "net.ipv6", "net.devs"} {

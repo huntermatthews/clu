@@ -23,7 +23,7 @@ func (l *Lsmem) Requires(r *types.Requires) {
 }
 
 // Parse extracts total online memory from command output. On failure sets ParseFailMsg.
-func (l *Lsmem) Parse(f *types.Facts) {
+func (l *Lsmem) Parse(f *types.FactDB) {
 	data, rc, _ := input.CommandRunner("lsmem --summary --bytes")
 	if data == "" || rc != 0 {
 		f.Add(types.TierOne, "phy.ram", types.ParseFailMsg)

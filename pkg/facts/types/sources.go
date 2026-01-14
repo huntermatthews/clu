@@ -10,5 +10,5 @@ const (
 type Sources interface {
 	Provides(p Provides)
 	Requires(r *Requires)
-	Parse(f *Facts)
+	Parse(f *FactDB)
 }

@@ -22,7 +22,7 @@ func (u *Uptime) Requires(r *types.Requires) {
 // Match both singular 'user' and plural 'users'.
 var uptimeRegex = regexp.MustCompile(`.*up *(.*) \d+ user(?:s)?,? .*`)
 
-func (u *Uptime) Parse(f *types.Facts) {
+func (u *Uptime) Parse(f *types.FactDB) {
 	f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)
 
 	data, rc, _ := input.CommandRunner("uptime")

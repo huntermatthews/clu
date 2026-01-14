@@ -35,7 +35,7 @@ func TestLscpuSuccess(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmdline string) (string, int, error) { return sampleLscpu, 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &Lscpu{}
 	src.Parse(f)
 	cases := map[string]string{
@@ -58,7 +58,7 @@ func TestLscpuFailure(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmdline string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &Lscpu{}
 	src.Parse(f)
 	if _, ok := f.Get("phy.cpu.model"); ok {
@@ -73,7 +73,7 @@ func TestLscpuPartialMissing(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmdline string) (string, int, error) { return partial, 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &Lscpu{}
 	src.Parse(f)
 	cores, _ := f.Get("phy.cpu.cores")

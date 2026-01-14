@@ -45,7 +45,7 @@ func (p *ProcCpuinfo3) Requires(r *types.Requires) {
 //   - Cores = number of unique (physical id, core id) pairs when available; if not
 //     available, attempt to derive from "cpu cores" * sockets; otherwise fall back
 //     to ParseFailMsg.
-func (p *ProcCpuinfo3) Parse(f *types.Facts) {
+func (p *ProcCpuinfo3) Parse(f *types.FactDB) {
 	data, err := input.FileReader("/proc/cpuinfo")
 	if err != nil || data == "" {
 		// Mirror other parsers: set counts to ParseFailMsg to indicate failure.

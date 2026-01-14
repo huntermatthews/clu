@@ -43,7 +43,7 @@ func hasAllFlags(required, allFlags string) bool {
 }
 
 // Parse implements the flag progression logic.
-func (p *ProcCpuinfo) Parse(f *types.Facts) {
+func (p *ProcCpuinfo) Parse(f *types.FactDB) {
 	arch, _ := f.Get("phy.arch")
 	if arch != "x86_64" && arch != "amd64" {
 		return // skip non-x86

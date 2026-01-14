@@ -40,7 +40,7 @@ func TestIpmitoolSkipNonPhysical(t *testing.T) {
 	input.CommandRunner = func(cmdline string) (string, int, error) { return sampleLanPrint, 0, nil }
 	defer func() { input.CommandRunner = orig }()
 
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	f.Set("phy.platform", "virtual")
 	src := &Ipmitool{}
 	src.Parse(f)
@@ -64,7 +64,7 @@ func TestIpmitoolSuccess(t *testing.T) {
 	}
 	defer func() { input.CommandRunner = orig }()
 
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	f.Set("phy.platform", "physical")
 	src := &Ipmitool{}
 	src.Parse(f)
@@ -100,7 +100,7 @@ func TestIpmitoolLanFailure(t *testing.T) {
 	}
 	defer func() { input.CommandRunner = orig }()
 
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	f.Set("phy.platform", "physical")
 	src := &Ipmitool{}
 	src.Parse(f)
@@ -132,7 +132,7 @@ func TestIpmitoolMcFailure(t *testing.T) {
 	}
 	defer func() { input.CommandRunner = orig }()
 
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	f.Set("phy.platform", "physical")
 	src := &Ipmitool{}
 	src.Parse(f)

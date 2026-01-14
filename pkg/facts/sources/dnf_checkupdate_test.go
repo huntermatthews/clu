@@ -44,7 +44,7 @@ func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
 			}
 			defer func() { input.CommandRunner = orig }()
 
-			f := types.NewFacts()
+			f := types.NewFactDB()
 			src := &DnfCheckUpdate{}
 			src.Parse(f)
 			got, _ := f.Get("run.update_required")
@@ -63,7 +63,7 @@ func TestDnfCheckUpdateNetDisabled(t *testing.T) {
 	input.CommandRunner = func(cmdline string) (string, int, error) { return "", 100, nil }
 	defer func() { input.CommandRunner = orig }()
 
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &DnfCheckUpdate{}
 	src.Parse(f)
 	got, _ := f.Get("run.update_required")

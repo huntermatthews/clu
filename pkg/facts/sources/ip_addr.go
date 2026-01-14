@@ -40,7 +40,7 @@ type ipAddrIface struct {
 }
 
 // Parse executes command, decodes JSON and accumulates space-separated lists (trailing space retained for parity).
-func (i *IpAddr) Parse(f *types.Facts) {
+func (i *IpAddr) Parse(f *types.FactDB) {
 	data, rc, _ := input.CommandRunner("ip --json addr")
 	if data == "" || rc != 0 {
 		for _, k := range ipAddrKeys {

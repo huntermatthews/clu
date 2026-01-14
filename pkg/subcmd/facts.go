@@ -26,7 +26,7 @@ func (f *FactsCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 
 	osys := facts.OpSysFactory()
 	provides := osys.Provides()
-	facts := types.NewFacts()
+	facts := types.NewFactDB()
 
 	if len(f.FactNames) == 0 {
 		for k := range provides {
@@ -50,7 +50,7 @@ func (f *FactsCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 }
 
 // parseFactsBySpecs replicates parse_facts_by_specs: determine sources to run.
-func parseFactsBySpecs(provides types.Provides, facts *types.Facts, specs []string) {
+func parseFactsBySpecs(provides types.Provides, facts *types.FactDB, specs []string) {
 	sourcesToParse := map[types.Sources]struct{}{}
 	addSource := func(src interface{}) {
 		if s, ok := src.(types.Sources); ok && s != nil {
@@ -76,8 +76,8 @@ func parseFactsBySpecs(provides types.Provides, facts *types.Facts, specs []stri
 }
 
 // filterFacts mirrors filter_facts: retain facts matching specs and tier.
-func filterFacts(parsed *types.Facts, specs []string, tier int) *types.Facts {
-	output := types.NewFacts()
+func filterFacts(parsed *types.FactDB, specs []string, tier int) *types.FactDB {
+	output := types.NewFactDB()
 	tierFacts := parsed.GetTier(types.Tier(tier)) // TierOne=1 mapping preserved
 	tierSet := map[string]struct{}{}
 	for _, k := range tierFacts {
@@ -96,7 +96,7 @@ func filterFacts(parsed *types.Facts, specs []string, tier int) *types.Facts {
 }
 
 // doOutput dispatches to format-specific output functions.
-func doOutput(stdout input.Stdout, stderr input.Stderr, f *types.Facts, format string) {
+func doOutput(stdout input.Stdout, stderr input.Stderr, f *types.FactDB, format string) {
 	switch format {
 	case "json":
 		outputJSON(stdout, stderr, f)
@@ -110,7 +110,7 @@ func doOutput(stdout input.Stdout, stderr input.Stderr, f *types.Facts, format s
 }
 
 // outputDots prints key: value lines sorted by key.
-func outputDots(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
+func outputDots(stdout input.Stdout, stderr input.Stderr, f *types.FactDB) {
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
@@ -120,7 +120,7 @@ func outputDots(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
 }
 
 // outputShell prints KEY_WITH_UNDERSCORES="value" lines.
-func outputShell(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
+func outputShell(stdout input.Stdout, stderr input.Stderr, f *types.FactDB) {
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
@@ -131,7 +131,7 @@ func outputShell(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
 }
 
 // outputJSON prints a JSON map of facts.
-func outputJSON(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
+func outputJSON(stdout input.Stdout, stderr input.Stderr, f *types.FactDB) {
 	data, _ := json.MarshalIndent(f.ToMap(), "", "  ")
 	fmt.Fprintln(stdout, string(data))
 }

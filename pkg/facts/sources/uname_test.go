@@ -23,7 +23,7 @@ func TestUnameParse(t *testing.T) {
 		t.Skip("uname not available")
 	}
 	u := &Uname{}
-	facts := types.NewFacts()
+	facts := types.NewFactDB()
 	u.Parse(facts)
 	// After parse we expect at least kernel name populated (unless failure token)
 	if !facts.Contains("os.kernel.name") {
@@ -33,7 +33,7 @@ func TestUnameParse(t *testing.T) {
 
 func TestUnameParseSkipIfAlreadyPresent(t *testing.T) {
 	u := &Uname{}
-	facts := types.NewFacts()
+	facts := types.NewFactDB()
 	facts.Set("os.kernel.name", "PRESET")
 	u.Parse(facts)
 	if val, _ := facts.Get("os.kernel.name"); val != "PRESET" {

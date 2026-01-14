@@ -28,9 +28,9 @@ func (d *DnfCheckUpdate) Requires(r *types.Requires) {
 // Parse executes `dnf check-update` and records whether updates are required.
 // It respects a config key `net` (bool). If present and false, network queries
 // are disabled and a placeholder value is stored.
-func (d *DnfCheckUpdate) Parse(f *types.Facts) {
+func (d *DnfCheckUpdate) Parse(f *types.FactDB) {
 	if !global.Config.NetEnabled {
-		f.Add(types.TierOne,"run.update_required", types.NetDisabledMsg)
+		f.Add(types.TierOne, "run.update_required", types.NetDisabledMsg)
 		return
 	}
 
@@ -45,5 +45,5 @@ func (d *DnfCheckUpdate) Parse(f *types.Facts) {
 	default:
 		value = types.ParseFailMsg
 	}
-	f.Add(types.TierOne,"run.update_required", value)
+	f.Add(types.TierOne, "run.update_required", value)
 }

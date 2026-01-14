@@ -39,7 +39,7 @@ func (l *Lscpu) Requires(r *types.Requires) {
 // Parse executes lscpu and extracts values. On command failure it silently returns
 // (matching Python behavior where no facts are set). Computation failures set
 // cores/threads to ParseFailMsg.
-func (l *Lscpu) Parse(f *types.Facts) {
+func (l *Lscpu) Parse(f *types.FactDB) {
 	data, rc, _ := input.CommandRunner("lscpu")
 	if data == "" || rc != 0 {
 		return

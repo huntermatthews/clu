@@ -22,7 +22,7 @@ func (s *SystemVersionPlist) Requires(r *types.Requires) {
 	r.Files = append(r.Files, "/System/Library/CoreServices/SystemVersion.plist")
 }
 
-func (s *SystemVersionPlist) Parse(f *types.Facts) {
+func (s *SystemVersionPlist) Parse(f *types.FactDB) {
 	if f.Contains("os.name") {
 		return
 	}

@@ -28,7 +28,7 @@ func (p *ProcCpuinfo2) Requires(r *types.Requires) {
 
 // Parse implements the same flag-progression logic as ProcCpuinfo but
 // tolerates alternative field names.
-func (p *ProcCpuinfo2) Parse(f *types.Facts) {
+func (p *ProcCpuinfo2) Parse(f *types.FactDB) {
 	arch, _ := f.Get("phy.arch")
 	if arch != "x86_64" && arch != "amd64" {
 		return

@@ -45,16 +45,24 @@ func TierFromInt(i int) (Tier, error) {
 	}
 }
 
-// Facts stores key/value facts and tracks which keys were added at which tier.
-// Behavior mirrors the Python Facts class.
-type Facts struct {
+// A single Fact
+type Fact struct {
+	Name   string
+	Value  string
+	Origin string
+	Tier   Tier
+}
+
+// FactDB stores key/value facts and tracks which keys were added at which tier.
+// Behavior mirrors the Python FactDB class.
+type FactDB struct {
 	facts map[string]string
 	tier  map[Tier][]string
 }
 
-// NewFacts constructs a new Facts instance.
-func NewFacts() *Facts {
-	return &Facts{
+// NewFactDB constructs a new FactDB instance.
+func NewFactDB() *FactDB {
+	return &FactDB{
 		facts: make(map[string]string),
 		tier: map[Tier][]string{
 			TierOne:   {},
@@ -65,31 +73,31 @@ func NewFacts() *Facts {
 }
 
 // Add adds a key/value at the specified priority tier.
-func (f *Facts) Add(priority Tier, key, value string) {
+func (f *FactDB) Add(priority Tier, key, value string) {
 	f.tier[priority] = append(f.tier[priority], key)
 	f.facts[key] = value
 }
 
 // Set emulates Python __setitem__: assigns value and records key as TierOne.
-func (f *Facts) Set(key, value string) {
+func (f *FactDB) Set(key, value string) {
 	f.facts[key] = value
 	f.tier[TierOne] = append(f.tier[TierOne], key)
 }
 
 // Get returns the value and whether it was present.
-func (f *Facts) Get(key string) (string, bool) {
+func (f *FactDB) Get(key string) (string, bool) {
 	v, ok := f.facts[key]
 	return v, ok
 }
 
 // Contains reports whether the key exists.
-func (f *Facts) Contains(key string) bool {
+func (f *FactDB) Contains(key string) bool {
 	_, ok := f.facts[key]
 	return ok
 }
 
 // Update merges another map into the facts, recording each key as TierOne (Python behavior).
-func (f *Facts) Update(other map[string]string) {
+func (f *FactDB) Update(other map[string]string) {
 	for k, v := range other {
 		f.Set(k, v)
 	}
@@ -99,7 +107,7 @@ func (f *Facts) Update(other map[string]string) {
 // TierOne -> TierOne keys
 // TierTwo -> TierOne + TierTwo keys
 // TierThree -> TierOne + TierTwo + TierThree keys
-func (f *Facts) GetTier(t Tier) []string {
+func (f *FactDB) GetTier(t Tier) []string {
 	var result []string
 	switch t {
 	case TierOne:
@@ -118,7 +126,7 @@ func (f *Facts) GetTier(t Tier) []string {
 }
 
 // Keys returns all fact keys (unordered).
-func (f *Facts) Keys() []string {
+func (f *FactDB) Keys() []string {
 	keys := make([]string, 0, len(f.facts))
 	for k := range f.facts {
 		keys = append(keys, k)
@@ -127,19 +135,18 @@ func (f *Facts) Keys() []string {
 }
 
 // String returns a representation similar to Python __str__/__repr__.
-func (f *Facts) String() string {
+func (f *FactDB) String() string {
 	return fmt.Sprintf("Facts: %v, %v", f.facts, f.tier)
 }
 
 // ToMap returns the underlying map (read-only by convention). Modifying it will affect Facts.
-func (f *Facts) ToMap() map[string]string {
+func (f *FactDB) ToMap() map[string]string {
 	return f.facts
 }
 
-// Equals compares with another Facts or a plain map (Python __eq__ semantics).
-// func (f *Facts) Equals(other interface{}) bool {
+// func (f *FactDB) Equals(other interface{}) bool {
 // 	switch o := other.(type) {
-// 	case *Facts:
+// 	case *FactDB:
 // 		if len(f.facts) != len(o.facts) {
 // 			return false
 // 		}

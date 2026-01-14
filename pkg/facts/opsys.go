@@ -58,7 +58,7 @@ func (o *OpSys) GetEarlyFacts() []string {
 // OpSysFactory replicates Python opsys_factory minimal logic using runtime.GOOS.
 func OpSysFactory() *OpSys {
 	uname := &sources.Uname{}
-	facts := types.NewFacts()
+	facts := types.NewFactDB()
 	uname.Parse(facts)
 	kernel, ok := facts.Get("os.kernel.name")
 	if !ok {

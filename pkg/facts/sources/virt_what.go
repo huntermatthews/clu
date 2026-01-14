@@ -21,7 +21,7 @@ func (v *VirtWhat) Requires(r *types.Requires) { r.Programs = append(r.Programs,
 
 // Parse sets phy.platform unless already present. Non-zero rc -> types.ParseFailMsg.
 // Multiple lines are joined by ", "; empty result -> "physical".
-func (v *VirtWhat) Parse(f *types.Facts) {
+func (v *VirtWhat) Parse(f *types.FactDB) {
 	if f.Contains("phy.platform") {
 		return
 	}

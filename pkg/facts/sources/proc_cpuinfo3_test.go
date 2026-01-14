@@ -67,7 +67,7 @@ func TestProcCpuinfo3ParseCases(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			input.FileReader = func(path string) (string, error) { return c.data, nil }
-			f := types.NewFacts()
+			f := types.NewFactDB()
 			src := &ProcCpuinfo3{}
 			src.Parse(f)
 			for k, want := range c.want {
@@ -85,7 +85,7 @@ func TestProcCpuinfo3MissingFile(t *testing.T) {
 	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
 	defer func() { input.FileReader = orig }()
 
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &ProcCpuinfo3{}
 	src.Parse(f)
 

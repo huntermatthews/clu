@@ -21,7 +21,7 @@ func TestNoSaltProvides(t *testing.T) {
 
 // TestNoSaltMissing exercises typical behavior when the file is absent.
 func TestNoSaltMissing(t *testing.T) {
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &NoSalt{}
 	src.Parse(f) // expects system to not have /no_salt in typical environment
 	exists, _ := f.Get("salt.no_salt.exists")

@@ -30,7 +30,7 @@ func (c *Clu) Provides(p types.Provides) {
 
 func (c *Clu) Requires(r *types.Requires) { /* no external requirements */ }
 
-func (c *Clu) Parse(f *types.Facts) {
+func (c *Clu) Parse(f *types.FactDB) {
 	// Binary name (argv0)
 	argv0 := os.Args[0]
 	argv0, _ = filepath.Abs(argv0)

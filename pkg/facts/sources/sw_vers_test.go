@@ -23,7 +23,7 @@ func TestSwVersParse(t *testing.T) {
 		t.Skip("sw_vers not available")
 	}
 	s := &SwVers{}
-	facts := types.NewFacts()
+	facts := types.NewFactDB()
 	s.Parse(facts)
 	if !facts.Contains("os.name") {
 		t.Errorf("expected os.name fact")

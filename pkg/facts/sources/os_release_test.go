@@ -30,7 +30,7 @@ func TestOsReleaseSuccess(t *testing.T) {
 	orig := input.FileReader
 	input.FileReader = func(path string) (string, error) { return sampleOsRelease, nil }
 	defer func() { input.FileReader = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &OsRelease{}
 	src.Parse(f)
 	name, _ := f.Get("os.distro.name")
@@ -44,7 +44,7 @@ func TestOsReleaseMissing(t *testing.T) {
 	orig := input.FileReader
 	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
 	defer func() { input.FileReader = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &OsRelease{}
 	src.Parse(f)
 	name, _ := f.Get("os.distro.name")

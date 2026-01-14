@@ -24,7 +24,7 @@ func (u *UdevadmRam) Requires(r *types.Requires) {
 
 // Parse executes command, extracts MEMORY_DEVICE_x_SIZE numbers, sums them and converts to SI string.
 // On failure sets ParseFailMsg.
-func (u *UdevadmRam) Parse(f *types.Facts) {
+func (u *UdevadmRam) Parse(f *types.FactDB) {
 	data, rc, _ := input.CommandRunner("udevadm info --path /devices/virtual/dmi/id")
 	if data == "" || rc != 0 {
 		f.Set("phy.ram", types.ParseFailMsg)

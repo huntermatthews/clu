@@ -24,7 +24,7 @@ func TestSystemVersionPlistParse(t *testing.T) {
 		t.Skip("SystemVersion.plist not present")
 	}
 	s := &SystemVersionPlist{}
-	facts := types.NewFacts()
+	facts := types.NewFactDB()
 	s.Parse(facts)
 	if !facts.Contains("os.name") {
 		t.Errorf("expected os.name fact populated")

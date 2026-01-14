@@ -40,7 +40,7 @@ func TestProcCpuinfoVersions(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			input.FileReader = func(path string) (string, error) { return c.data, nil }
-			f := types.NewFacts()
+			f := types.NewFactDB()
 			f.Set("phy.arch", "x86_64")
 			src := &ProcCpuinfo{}
 			src.Parse(f)
@@ -56,7 +56,7 @@ func TestProcCpuinfoNonX86Skip(t *testing.T) {
 	orig := input.FileReader
 	input.FileReader = func(path string) (string, error) { return cpuinfoV4, nil }
 	defer func() { input.FileReader = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	f.Set("phy.arch", "arm64")
 	src := &ProcCpuinfo{}
 	src.Parse(f)
@@ -69,7 +69,7 @@ func TestProcCpuinfoMissingFile(t *testing.T) {
 	orig := input.FileReader
 	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
 	defer func() { input.FileReader = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	f.Set("phy.arch", "x86_64")
 	src := &ProcCpuinfo{}
 	src.Parse(f)

@@ -21,7 +21,7 @@ func TestVirtWhatPhysicalFallback(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmd string) (string, int, error) { return "\n\n", 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &VirtWhat{}
 	src.Parse(f)
 	got, _ := f.Get("phy.platform")
@@ -34,7 +34,7 @@ func TestVirtWhatVirtualizationList(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmd string) (string, int, error) { return "kvm\nvmware", 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &VirtWhat{}
 	src.Parse(f)
 	got, _ := f.Get("phy.platform")
@@ -47,7 +47,7 @@ func TestVirtWhatFailureRc(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmd string) (string, int, error) { return "", 5, fmt.Errorf("fail") }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &VirtWhat{}
 	src.Parse(f)
 	got, _ := f.Get("phy.platform")
@@ -61,7 +61,7 @@ func TestVirtWhatSkipIfPreset(t *testing.T) {
 	// Would have produced virtualization list, but should be skipped.
 	input.CommandRunner = func(cmd string) (string, int, error) { return "kvm", 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	f.Set("phy.platform", "physical")
 	src := &VirtWhat{}
 	src.Parse(f)

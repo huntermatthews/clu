@@ -23,7 +23,7 @@ func TestUdevadmRamSuccess(t *testing.T) {
 		return "MEMORY_DEVICE_0_SIZE=1048576\nMEMORY_DEVICE_1_SIZE=2097152\n", 0, nil
 	}
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &UdevadmRam{}
 	src.Parse(f)
 	got, _ := f.Get("phy.ram")
@@ -38,7 +38,7 @@ func TestUdevadmRamNoMatches(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmd string) (string, int, error) { return "OTHER=1", 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &UdevadmRam{}
 	src.Parse(f)
 	got, _ := f.Get("phy.ram")
@@ -52,7 +52,7 @@ func TestUdevadmRamFailure(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmd string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &UdevadmRam{}
 	src.Parse(f)
 	got, _ := f.Get("phy.ram")

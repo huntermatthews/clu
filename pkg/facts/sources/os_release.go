@@ -23,7 +23,7 @@ func (o *OsRelease) Provides(p types.Provides) {
 func (o *OsRelease) Requires(r *types.Requires) { r.Files = append(r.Files, "/etc/os-release") }
 
 // Parse reads /etc/os-release, setting types.ParseFailMsg on failure. Only ID and VERSION_ID are used.
-func (o *OsRelease) Parse(f *types.Facts) {
+func (o *OsRelease) Parse(f *types.FactDB) {
 	data, err := input.FileReader("/etc/os-release")
 	if err != nil || data == "" { // treat empty/error uniformly
 		f.Add(types.TierOne, "os.distro.name", types.ParseFailMsg)

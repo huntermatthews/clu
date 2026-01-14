@@ -15,32 +15,25 @@ import (
 // Ipmitool gathers BMC firmware/network details.
 type Ipmitool struct{}
 
-type factThing struct {
-	name  string
-	value string
-	origin string
-	tier  types.Tier
+var ipmitoolLanFacts = []types.Fact{
+	{Name: "bmc.ipv4_source", Value: "", Origin: `(?m)^IP Address Source *: (.+)`, Tier: types.TierTwo},
+	{Name: "bmc.ipv4_address", Value: "", Origin: `(?m)^IP Address *: (.+)`, Tier: types.TierOne},
+	{Name: "bmc.ipv4_mask", Value: "", Origin: `(?m)^Subnet Mask *: (.+)`, Tier: types.TierTwo},
+	{Name: "bmc.mac_address", Value: "", Origin: `(?m)^MAC Address *: (.+)`, Tier: types.TierOne},
 }
-
-var ipmitoolLanFacts = []factThing{
-	{"bmc.ipv4_source", "", `(?m)^IP Address Source *: (.+)`, types.TierTwo},
-	{"bmc.ipv4_address", "", `(?m)^IP Address *: (.+)`, types.TierOne},
-	{"bmc.ipv4_mask", "", `(?m)^Subnet Mask *: (.+)`, types.TierTwo},
-	{"bmc.mac_address", "", `(?m)^MAC Address *: (.+)`, types.TierOne},
-}
-var ipmitoolMcInfoFacts = []factThing{
-	{"bmc.firmware_version", "", `(?m)^Firmware Revision *: (.+)`, types.TierOne},
-	{"bmc.manufacturer_id", "", `(?m)^Manufacturer ID *: (.+)`, types.TierTwo},
-	{"bmc.manufacturer_name", "", `(?m)^Manufacturer Name *: (.+)`, types.TierTwo},
+var ipmitoolMcInfoFacts = []types.Fact{
+	{Name: "bmc.firmware_version", Value: "", Origin: `(?m)^Firmware Revision *: (.+)`, Tier: types.TierOne},
+	{Name: "bmc.manufacturer_id", Value: "", Origin: `(?m)^Manufacturer ID *: (.+)`, Tier: types.TierTwo},
+	{Name: "bmc.manufacturer_name", Value: "", Origin: `(?m)^Manufacturer Name *: (.+)`, Tier: types.TierTwo},
 }
 
 // Provides registers all fact keys produced by this source.
 func (i *Ipmitool) Provides(p types.Provides) {
 	for _, k := range ipmitoolLanFacts {
-		p[k.name] = i
+		p[k.Name] = i
 	}
 	for _, k := range ipmitoolMcInfoFacts {
-		p[k.name] = i
+		p[k.Name] = i
 	}
 }
 
@@ -50,7 +43,7 @@ func (i *Ipmitool) Requires(r *types.Requires) {
 }
 
 // Parse orchestrates the two ipmitool queries if platform is physical.
-func (i *Ipmitool) Parse(f *types.Facts) {
+func (i *Ipmitool) Parse(f *types.FactDB) {
 	platform, _ := f.Get("phy.platform")
 	if platform != "physical" { // skip if not physical hardware
 		return
@@ -59,44 +52,44 @@ func (i *Ipmitool) Parse(f *types.Facts) {
 	i.parseLanPrint(f)
 }
 
-func (i *Ipmitool) parseLanPrint(f *types.Facts) {
+func (i *Ipmitool) parseLanPrint(f *types.FactDB) {
 
 	data, rc, _ := input.CommandRunner("ipmitool lan print")
 	if data == "" || rc != 0 {
 		for _, k := range ipmitoolLanFacts {
-			f.Add(k.tier, k.name, types.ParseFailMsg)
+			f.Add(k.Tier, k.Name, types.ParseFailMsg)
 		}
 		return
 	}
 	// Extract values
 	for _, k := range ipmitoolLanFacts {
-		re := regexp.MustCompile(k.origin)
+		re := regexp.MustCompile(k.Origin)
 		m := re.FindStringSubmatch(data)
 		if len(m) == 2 {
 			val := strings.TrimSpace(m[1])
 			if val != "" {
-				f.Add(k.tier, k.name, val)
+				f.Add(k.Tier, k.Name, val)
 			}
 		}
 	}
 }
 
-func (i *Ipmitool) parseMcInfo(f *types.Facts) {
+func (i *Ipmitool) parseMcInfo(f *types.FactDB) {
 
 	data, rc, _ := input.CommandRunner("ipmitool mc info")
 	if data == "" || rc != 0 {
 		for _, k := range ipmitoolMcInfoFacts {
-			f.Add(k.tier, k.name, types.ParseFailMsg)
+			f.Add(k.Tier, k.Name, types.ParseFailMsg)
 		}
 		return
 	}
 	for _, k := range ipmitoolMcInfoFacts {
-		re := regexp.MustCompile(k.origin)
+		re := regexp.MustCompile(k.Origin)
 		m := re.FindStringSubmatch(data)
 		if len(m) == 2 {
 			val := strings.TrimSpace(m[1])
 			if val != "" {
-				f.Add(k.tier, k.name, val)
+				f.Add(k.Tier, k.Name, val)
 			}
 		}
 	}

@@ -26,7 +26,7 @@ func (n *NoSalt) Requires(r *types.Requires) {
 
 // Parse reads /no_salt optionally. If missing or empty sets exists False and returns.
 // Otherwise sets exists True and reason to trimmed file content.
-func (n *NoSalt) Parse(f *types.Facts) {
+func (n *NoSalt) Parse(f *types.FactDB) {
 	// Use DI FileReader (returns content,error). Treat any error or empty
 	// trimmed content as missing (optional semantics).
 	data, err := input.FileReader("/no_salt")

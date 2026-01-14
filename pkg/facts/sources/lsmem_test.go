@@ -27,7 +27,7 @@ func TestLsmemSuccess(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmdline string) (string, int, error) { return sampleLsmem, 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &Lsmem{}
 	src.Parse(f)
 	got, ok := f.Get("phy.ram")
@@ -45,7 +45,7 @@ func TestLsmemFailure(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmdline string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &Lsmem{}
 	src.Parse(f)
 	got, _ := f.Get("phy.ram")
@@ -59,7 +59,7 @@ func TestLsmemMissingLine(t *testing.T) {
 	orig := input.CommandRunner
 	input.CommandRunner = func(cmdline string) (string, int, error) { return "Header\nNo total line here", 0, nil }
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &Lsmem{}
 	src.Parse(f)
 	got, _ := f.Get("phy.ram")

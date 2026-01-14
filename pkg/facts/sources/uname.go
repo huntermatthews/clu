@@ -32,7 +32,7 @@ func (u *Uname) Requires(r *types.Requires) {
 
 // Parse populates the provided Facts map with values from `uname -snrm`.
 // If the primary key already exists this function is a no-op.
-func (u *Uname) Parse(f *types.Facts) {
+func (u *Uname) Parse(f *types.FactDB) {
 	if f.Contains("os.kernel.name") {
 		return
 	}

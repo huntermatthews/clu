@@ -26,7 +26,7 @@ func (s *Selinux) Requires(r *types.Requires) {
 // Parse executes the required commands, mapping exit codes and output.
 // selinuxenabled: rc 0 -> True, rc 1 -> False, else ParseFailMsg.
 // getenforce: trimmed stdout or ParseFailMsg.
-func (s *Selinux) Parse(f *types.Facts) {
+func (s *Selinux) Parse(f *types.FactDB) {
 	_, rc, _ := input.CommandRunner("selinuxenabled")
 	switch rc {
 	case 0:

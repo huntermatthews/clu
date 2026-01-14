@@ -39,7 +39,7 @@ func (s *SysDmi) Requires(r *types.Requires) {
 }
 
 // Parse populates facts only if phy.platform == "physical". Missing/empty files yield empty string values.
-func (s *SysDmi) Parse(f *types.Facts) {
+func (s *SysDmi) Parse(f *types.FactDB) {
 	platform, _ := f.Get("phy.platform")
 	if platform != "physical" {
 		return

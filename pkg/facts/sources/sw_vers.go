@@ -24,7 +24,7 @@ func (s *SwVers) Provides(p types.Provides) {
 
 func (s *SwVers) Requires(r *types.Requires) { r.Programs = append(r.Programs, "sw_vers") }
 
-func (s *SwVers) Parse(f *types.Facts) {
+func (s *SwVers) Parse(f *types.FactDB) {
 	if f.Contains("os.name") {
 		return
 	}

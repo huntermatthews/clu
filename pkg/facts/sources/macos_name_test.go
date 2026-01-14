@@ -32,7 +32,7 @@ func TestMacOSNameParseMappings(t *testing.T) {
 	}
 	for _, c := range cases {
 		m := &MacOSName{}
-		facts := types.NewFacts()
+		facts := types.NewFactDB()
 		if c.version != "" { // whitespace still set to test trimming
 			facts.Set("os.version", c.version)
 		}

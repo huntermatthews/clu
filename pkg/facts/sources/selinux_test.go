@@ -45,7 +45,7 @@ func TestSelinuxEnableMapping(t *testing.T) {
 				}
 				return "", 1, fmt.Errorf("fail")
 			}
-			f := types.NewFacts()
+			f := types.NewFactDB()
 			src := &Selinux{}
 			src.Parse(f)
 			gotEnable, _ := f.Get("os.selinux.enable")
@@ -72,7 +72,7 @@ func TestSelinuxModeFailure(t *testing.T) {
 		return "", 1, fmt.Errorf("fail")
 	}
 	defer func() { input.CommandRunner = orig }()
-	f := types.NewFacts()
+	f := types.NewFactDB()
 	src := &Selinux{}
 	src.Parse(f)
 	mode, _ := f.Get("os.selinux.mode")

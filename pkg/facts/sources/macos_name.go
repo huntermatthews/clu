@@ -13,7 +13,7 @@ func (m *MacOSName) Provides(p types.Provides) { p["os.code_name"] = m }
 
 func (m *MacOSName) Requires(r *types.Requires) { r.Facts = append(r.Facts, "os.version") }
 
-func (m *MacOSName) Parse(f *types.Facts) {
+func (m *MacOSName) Parse(f *types.FactDB) {
 	ver, ok := f.Get("os.version")
 	if !ok || strings.TrimSpace(ver) == "" {
 		f.Add(types.TierOne, "os.code_name", types.ParseFailMsg)

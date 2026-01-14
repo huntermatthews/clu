@@ -26,7 +26,7 @@ func TestCluProvides(t *testing.T) {
 // TestCluParse basic parsing; skips assertions if runtime changes unexpectedly.
 func TestCluParse(t *testing.T) {
 	c := &Clu{}
-	facts := types.NewFacts()
+	facts := types.NewFactDB()
 	c.Parse(facts)
 	// Presence
 	for _, k := range []string{"clu.binary", "clu.version", "clu.cmdline", "clu.cwd", "clu.user", "clu.date"} {
