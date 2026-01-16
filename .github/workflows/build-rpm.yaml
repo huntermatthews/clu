@@ -56,7 +56,7 @@ jobs:
           cache: false # Disable cache - no go.sum available in tarball-based build
 
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
