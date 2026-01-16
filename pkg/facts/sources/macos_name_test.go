@@ -34,7 +34,7 @@ func TestMacOSNameParseMappings(t *testing.T) {
 		m := &MacOSName{}
 		facts := types.NewFactDB()
 		if c.version != "" { // whitespace still set to test trimming
-			facts.Set("os.version", c.version)
+			facts.AddFact(types.Fact{Name: "os.version", Value: c.version})
 		}
 		m.Parse(facts)
 		got, _ := facts.Get("os.code_name")

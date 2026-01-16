@@ -15,9 +15,14 @@ import (
 // ProcCpuinfo determines phy.cpu.arch_version for x86_64/amd64 platforms.
 type ProcCpuinfo struct{}
 
+var archVersionFact = types.Fact{
+	Name: "phy.cpu.arch_version",
+	Tier: types.TierOne,
+}
+
 // Provides registers the architecture version fact.
 func (p *ProcCpuinfo) Provides(pr types.Provides) {
-	pr["phy.cpu.arch_version"] = p
+	pr[archVersionFact.Name] = p
 }
 
 // Requires declares /proc/cpuinfo file dependency.
@@ -77,5 +82,6 @@ func (p *ProcCpuinfo) Parse(f *types.FactDB) {
 			break
 		}
 	}
-	f.Add(types.TierOne, "phy.cpu.arch_version", "x86_64_v"+strconv.Itoa(version))
+	archVersionFact.Value = "x86_64_v" + strconv.Itoa(version)
+	f.AddFact(archVersionFact)
 }

@@ -45,7 +45,7 @@ func TestUptimeRegexPluralSingular(t *testing.T) {
 			continue
 		}
 		got := strings.TrimSuffix(m[1], ",")
-		got = standardizeSpaces(got)
+		got = strings.Join(strings.Fields(got), " ")
 		if got != s.want {
 			t.Errorf("uptime parse got %q want %q", got, s.want)
 		}

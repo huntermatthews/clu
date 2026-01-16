@@ -14,27 +14,27 @@ import (
 // SysDmi collects hardware identity facts from sysfs.
 type SysDmi struct{}
 
-var sysDmiMap = map[string]string{
-	"sys.vendor":       "/sys/devices/virtual/dmi/id/sys_vendor",
-	"sys.model.family": "/sys/devices/virtual/dmi/id/product_family",
-	"sys.model.name":   "/sys/devices/virtual/dmi/id/product_name",
-	"sys.serial_no":    "/sys/devices/virtual/dmi/id/product_serial",
-	"sys.uuid":         "/sys/devices/virtual/dmi/id/product_uuid",
-	"sys.oem":          "/sys/devices/virtual/dmi/id/chassis_vendor",
-	"sys.asset_no":     "/sys/devices/virtual/dmi/id/chassis_asset_tag",
+var sysDmiFacts = map[string]*types.Fact{
+	"sys.vendor":       {Name: "sys.vendor", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/sys_vendor"},
+	"sys.model.family": {Name: "sys.model.family", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/product_family"},
+	"sys.model.name":   {Name: "sys.model.name", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/product_name"},
+	"sys.serial_no":    {Name: "sys.serial_no", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/product_serial"},
+	"sys.uuid":         {Name: "sys.uuid", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/product_uuid"},
+	"sys.oem":          {Name: "sys.oem", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/chassis_vendor"},
+	"sys.asset_no":     {Name: "sys.asset_no", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/chassis_asset_tag"},
 }
 
 // Provides registers all DMI fact keys.
 func (s *SysDmi) Provides(p types.Provides) {
-	for k := range sysDmiMap {
-		p[k] = s
+	for name := range sysDmiFacts {
+		p[name] = s
 	}
 }
 
 // Requires declares file dependencies for all DMI paths.
 func (s *SysDmi) Requires(r *types.Requires) {
-	for _, path := range sysDmiMap {
-		r.Files = append(r.Files, path)
+	for _, fact := range sysDmiFacts {
+		r.Files = append(r.Files, fact.Origin)
 	}
 }
 
@@ -45,12 +45,17 @@ func (s *SysDmi) Parse(f *types.FactDB) {
 		return
 	}
 
-	for key, path := range sysDmiMap {
-		data, err := input.FileReader(path)
+	for _, fact := range sysDmiFacts {
+		data, err := input.FileReader(fact.Origin)
 		if err != nil || data == "" {
-			f.Set(key, "")
-			continue
+			fact.Value = ""
+		} else {
+			fact.Value = strings.TrimSpace(data)
 		}
-		f.Set(key, strings.TrimSpace(data))
+	}
+
+	// Add all facts to the FactDB
+	for _, fact := range sysDmiFacts {
+		f.AddFact(*fact)
 	}
 }

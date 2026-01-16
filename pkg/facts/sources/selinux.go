@@ -12,10 +12,16 @@ import (
 // Selinux source collects os.selinux.enable and os.selinux.mode facts.
 type Selinux struct{}
 
+var selinuxFacts = map[string]*types.Fact{
+	"os.selinux.enable": {Name: "os.selinux.enable", Tier: types.TierOne},
+	"os.selinux.mode":   {Name: "os.selinux.mode", Tier: types.TierOne},
+}
+
 // Provides registers SELinux fact keys.
 func (s *Selinux) Provides(p types.Provides) {
-	p["os.selinux.enable"] = s
-	p["os.selinux.mode"] = s
+	for name := range selinuxFacts {
+		p[name] = s
+	}
 }
 
 // Requires declares external programs used.
@@ -30,17 +36,22 @@ func (s *Selinux) Parse(f *types.FactDB) {
 	_, rc, _ := input.CommandRunner("selinuxenabled")
 	switch rc {
 	case 0:
-		f.Add(types.TierOne, "os.selinux.enable", "True")
+		selinuxFacts["os.selinux.enable"].Value = "True"
 	case 1:
-		f.Add(types.TierOne, "os.selinux.enable", "False")
+		selinuxFacts["os.selinux.enable"].Value = "False"
 	default:
-		f.Add(types.TierOne, "os.selinux.enable", types.ParseFailMsg)
+		selinuxFacts["os.selinux.enable"].Value = types.ParseFailMsg
 	}
 
 	data, _, _ := input.CommandRunner("getenforce")
 	if strings.TrimSpace(data) == "" {
-		f.Add(types.TierOne, "os.selinux.mode", types.ParseFailMsg)
+		selinuxFacts["os.selinux.mode"].Value = types.ParseFailMsg
 	} else {
-		f.Add(types.TierOne, "os.selinux.mode", strings.TrimSpace(data))
+		selinuxFacts["os.selinux.mode"].Value = strings.TrimSpace(data)
+	}
+
+	// Add all facts to the FactDB
+	for _, fact := range selinuxFacts {
+		f.AddFact(*fact)
 	}
 }

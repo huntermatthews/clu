@@ -41,7 +41,7 @@ func TestProcCpuinfoVersions(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			input.FileReader = func(path string) (string, error) { return c.data, nil }
 			f := types.NewFactDB()
-			f.Set("phy.arch", "x86_64")
+			f.AddFact(types.Fact{Name: "phy.arch", Value: "x86_64"})
 			src := &ProcCpuinfo{}
 			src.Parse(f)
 			got, _ := f.Get("phy.cpu.arch_version")
@@ -57,7 +57,7 @@ func TestProcCpuinfoNonX86Skip(t *testing.T) {
 	input.FileReader = func(path string) (string, error) { return cpuinfoV4, nil }
 	defer func() { input.FileReader = orig }()
 	f := types.NewFactDB()
-	f.Set("phy.arch", "arm64")
+	f.AddFact(types.Fact{Name: "phy.arch", Value: "arm64"})
 	src := &ProcCpuinfo{}
 	src.Parse(f)
 	if _, ok := f.Get("phy.cpu.arch_version"); ok {
@@ -70,7 +70,7 @@ func TestProcCpuinfoMissingFile(t *testing.T) {
 	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
 	defer func() { input.FileReader = orig }()
 	f := types.NewFactDB()
-	f.Set("phy.arch", "x86_64")
+	f.AddFact(types.Fact{Name: "phy.arch", Value: "x86_64"})
 	src := &ProcCpuinfo{}
 	src.Parse(f)
 	got, _ := f.Get("phy.cpu.arch_version")

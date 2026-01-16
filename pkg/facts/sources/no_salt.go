@@ -1,6 +1,5 @@
 package sources
 
-// Go port of src/clu/sources/no_salt.py
 // Detects presence of a sentinel file /no_salt and records existence and reason.
 
 import (
@@ -13,10 +12,16 @@ import (
 // NoSalt reports whether the /no_salt file exists and its content as a reason.
 type NoSalt struct{}
 
+var noSaltFacts = map[string]*types.Fact{
+	"salt.no_salt.exists": {Name: "salt.no_salt.exists", Tier: types.TierOne},
+	"salt.no_salt.reason": {Name: "salt.no_salt.reason", Tier: types.TierOne},
+}
+
 // Provides registers fact keys produced by this source.
 func (n *NoSalt) Provides(p types.Provides) {
-	p["salt.no_salt.exists"] = n
-	p["salt.no_salt.reason"] = n
+	for name := range noSaltFacts {
+		p[name] = n
+	}
 }
 
 // Requires declares file dependency.
@@ -31,9 +36,15 @@ func (n *NoSalt) Parse(f *types.FactDB) {
 	// trimmed content as missing (optional semantics).
 	data, err := input.FileReader("/no_salt")
 	if err != nil || strings.TrimSpace(data) == "" {
-		f.Add(types.TierOne, "salt.no_salt.exists", "False")
+		noSaltFacts["salt.no_salt.exists"].Value = "False"
+		f.AddFact(*noSaltFacts["salt.no_salt.exists"])
 		return
 	}
-	f.Add(types.TierOne, "salt.no_salt.exists", "True")
-	f.Add(types.TierOne, "salt.no_salt.reason", strings.TrimSpace(data))
+	noSaltFacts["salt.no_salt.exists"].Value = "True"
+	noSaltFacts["salt.no_salt.reason"].Value = strings.TrimSpace(data)
+
+	// Add all facts to the FactDB
+	for _, fact := range noSaltFacts {
+		f.AddFact(*fact)
+	}
 }

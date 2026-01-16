@@ -62,7 +62,7 @@ func TestVirtWhatSkipIfPreset(t *testing.T) {
 	input.CommandRunner = func(cmd string) (string, int, error) { return "kvm", 0, nil }
 	defer func() { input.CommandRunner = orig }()
 	f := types.NewFactDB()
-	f.Set("phy.platform", "physical")
+	f.AddFact(types.Fact{Name: "phy.platform", Value: "physical"})
 	src := &VirtWhat{}
 	src.Parse(f)
 	got, _ := f.Get("phy.platform")

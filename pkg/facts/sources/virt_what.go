@@ -13,8 +13,13 @@ import (
 // VirtWhat determines phy.platform if not already set.
 type VirtWhat struct{}
 
+var platformFact = types.Fact{
+	Name: "phy.platform",
+	Tier: types.TierOne,
+}
+
 // Provides registers phy.platform key.
-func (v *VirtWhat) Provides(p types.Provides) { p["phy.platform"] = v }
+func (v *VirtWhat) Provides(p types.Provides) { p[platformFact.Name] = v }
 
 // Requires declares program dependency.
 func (v *VirtWhat) Requires(r *types.Requires) { r.Programs = append(r.Programs, "virt-what") }
@@ -28,17 +33,17 @@ func (v *VirtWhat) Parse(f *types.FactDB) {
 
 	data, rc, _ := input.CommandRunner("virt-what")
 	if rc != 0 {
-		f.Set("phy.platform", types.ParseFailMsg)
+		platformFact.Value = types.ParseFailMsg
+		f.AddFact(platformFact)
 		return
 	}
 
 	data = strings.TrimSpace(data)
 	if data == "" {
-		f.Set("phy.platform", "physical")
-		return
+		platformFact.Value = "physical"
+	} else {
+		// Replace newlines with comma-space
+		platformFact.Value = strings.ReplaceAll(data, "\n", ", ")
 	}
-
-	// Replace newlines with comma-space
-	data = strings.ReplaceAll(data, "\n", ", ")
-	f.Add(types.TierOne, "phy.platform", data)
+	f.AddFact(platformFact)
 }

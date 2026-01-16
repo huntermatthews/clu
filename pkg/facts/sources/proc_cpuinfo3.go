@@ -16,18 +16,18 @@ import (
 // ProcCpuinfo3 provides topology and identification facts from /proc/cpuinfo.
 type ProcCpuinfo3 struct{}
 
-var procCpuinfo3Keys = []string{
-	"phy.cpu.model",
-	"phy.cpu.vendor",
-	"phy.cpu.cores",
-	"phy.cpu.threads",
-	"phy.cpu.sockets",
+var procCpuinfo3Facts = map[string]*types.Fact{
+	"phy.cpu.model":   {Name: "phy.cpu.model", Tier: types.TierOne},
+	"phy.cpu.vendor":  {Name: "phy.cpu.vendor", Tier: types.TierOne},
+	"phy.cpu.cores":   {Name: "phy.cpu.cores", Tier: types.TierOne},
+	"phy.cpu.threads": {Name: "phy.cpu.threads", Tier: types.TierOne},
+	"phy.cpu.sockets": {Name: "phy.cpu.sockets", Tier: types.TierOne},
 }
 
 // Provides registers produced keys.
 func (p *ProcCpuinfo3) Provides(pr types.Provides) {
-	for _, k := range procCpuinfo3Keys {
-		pr[k] = p
+	for name := range procCpuinfo3Facts {
+		pr[name] = p
 	}
 }
 
@@ -49,11 +49,14 @@ func (p *ProcCpuinfo3) Parse(f *types.FactDB) {
 	data, err := input.FileReader("/proc/cpuinfo")
 	if err != nil || data == "" {
 		// Mirror other parsers: set counts to ParseFailMsg to indicate failure.
-		f.Add(types.TierOne, "phy.cpu.cores", types.ParseFailMsg)
-		f.Add(types.TierOne, "phy.cpu.threads", types.ParseFailMsg)
-		f.Add(types.TierOne, "phy.cpu.sockets", "")
-		f.Add(types.TierOne, "phy.cpu.vendor", "")
-		f.Add(types.TierOne, "phy.cpu.model", "")
+		procCpuinfo3Facts["phy.cpu.cores"].Value = types.ParseFailMsg
+		procCpuinfo3Facts["phy.cpu.threads"].Value = types.ParseFailMsg
+		procCpuinfo3Facts["phy.cpu.sockets"].Value = ""
+		procCpuinfo3Facts["phy.cpu.vendor"].Value = ""
+		procCpuinfo3Facts["phy.cpu.model"].Value = ""
+		for _, fact := range procCpuinfo3Facts {
+			f.AddFact(*fact)
+		}
 		return
 	}
 
@@ -61,11 +64,14 @@ func (p *ProcCpuinfo3) Parse(f *types.FactDB) {
 	data = strings.ReplaceAll(data, "\r\n", "\n")
 	data = strings.TrimSpace(data)
 	if data == "" {
-		f.Add(types.TierOne, "phy.cpu.cores", types.ParseFailMsg)
-		f.Add(types.TierOne, "phy.cpu.threads", types.ParseFailMsg)
-		f.Add(types.TierOne, "phy.cpu.sockets", "")
-		f.Add(types.TierOne, "phy.cpu.vendor", "")
-		f.Add(types.TierOne, "phy.cpu.model", "")
+		procCpuinfo3Facts["phy.cpu.cores"].Value = types.ParseFailMsg
+		procCpuinfo3Facts["phy.cpu.threads"].Value = types.ParseFailMsg
+		procCpuinfo3Facts["phy.cpu.sockets"].Value = ""
+		procCpuinfo3Facts["phy.cpu.vendor"].Value = ""
+		procCpuinfo3Facts["phy.cpu.model"].Value = ""
+		for _, fact := range procCpuinfo3Facts {
+			f.AddFact(*fact)
+		}
 		return
 	}
 
@@ -174,10 +180,15 @@ func (p *ProcCpuinfo3) Parse(f *types.FactDB) {
 		}
 	}
 
-	// Set facts (model/vendor may be empty string like lscpu behavior)
-	f.Add(types.TierOne, "phy.cpu.model", model)
-	f.Add(types.TierOne, "phy.cpu.vendor", vendor)
-	f.Add(types.TierOne, "phy.cpu.cores", cores)
-	f.Add(types.TierOne, "phy.cpu.threads", threads)
-	f.Add(types.TierOne, "phy.cpu.sockets", sockets)
+	// Set fact values (model/vendor may be empty string like lscpu behavior)
+	procCpuinfo3Facts["phy.cpu.model"].Value = model
+	procCpuinfo3Facts["phy.cpu.vendor"].Value = vendor
+	procCpuinfo3Facts["phy.cpu.cores"].Value = cores
+	procCpuinfo3Facts["phy.cpu.threads"].Value = threads
+	procCpuinfo3Facts["phy.cpu.sockets"].Value = sockets
+
+	// Add all facts to the FactDB
+	for _, fact := range procCpuinfo3Facts {
+		f.AddFact(*fact)
+	}
 }

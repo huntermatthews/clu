@@ -10,15 +10,15 @@ import (
 // SwVers collects macOS version info via `sw_vers` program.
 type SwVers struct{}
 
-var swKeys = []string{
-	"os.name",
-	"os.version",
-	"os.build",
+var swVersFacts = map[string]*types.Fact{
+	"os.name":    {Name: "os.name", Tier: types.TierOne},
+	"os.version": {Name: "os.version", Tier: types.TierOne},
+	"os.build":   {Name: "os.build", Tier: types.TierThree},
 }
 
 func (s *SwVers) Provides(p types.Provides) {
-	for _, k := range swKeys {
-		p[k] = s
+	for name := range swVersFacts {
+		p[name] = s
 	}
 }
 
@@ -31,8 +31,9 @@ func (s *SwVers) Parse(f *types.FactDB) {
 
 	data, rc, _ := input.CommandRunner("sw_vers")
 	if data == "" || rc != 0 {
-		for _, k := range swKeys {
-			f.Add(types.TierOne, k, types.ParseFailMsg)
+		for _, fact := range swVersFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
 		}
 		return
 	}
@@ -46,11 +47,16 @@ func (s *SwVers) Parse(f *types.FactDB) {
 		value := strings.TrimSpace(parts[1])
 		switch key {
 		case "ProductName":
-			f.Add(types.TierOne, "os.name", value)
+			swVersFacts["os.name"].Value = value
 		case "ProductVersion":
-			f.Add(types.TierOne, "os.version", value)
+			swVersFacts["os.version"].Value = value
 		case "BuildVersion":
-			f.Add(types.TierThree, "os.build", value)
+			swVersFacts["os.build"].Value = value
 		}
+	}
+
+	// Add all facts to the FactDB
+	for _, fact := range swVersFacts {
+		f.AddFact(*fact)
 	}
 }

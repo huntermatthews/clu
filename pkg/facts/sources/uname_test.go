@@ -34,7 +34,7 @@ func TestUnameParse(t *testing.T) {
 func TestUnameParseSkipIfAlreadyPresent(t *testing.T) {
 	u := &Uname{}
 	facts := types.NewFactDB()
-	facts.Set("os.kernel.name", "PRESET")
+	facts.AddFact(types.Fact{Name: "os.kernel.name", Value: "PRESET"})
 	u.Parse(facts)
 	if val, _ := facts.Get("os.kernel.name"); val != "PRESET" {
 		t.Errorf("expected preset value not overwritten: got %s", val)

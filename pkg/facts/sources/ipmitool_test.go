@@ -41,7 +41,7 @@ func TestIpmitoolSkipNonPhysical(t *testing.T) {
 	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFactDB()
-	f.Set("phy.platform", "virtual")
+	f.AddFact(types.Fact{Name: "phy.platform", Value: "virtual"})
 	src := &Ipmitool{}
 	src.Parse(f)
 	if v, ok := f.Get("bmc.mac_address"); ok || v != "" {
@@ -65,7 +65,7 @@ func TestIpmitoolSuccess(t *testing.T) {
 	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFactDB()
-	f.Set("phy.platform", "physical")
+	f.AddFact(types.Fact{Name: "phy.platform", Value: "physical"})
 	src := &Ipmitool{}
 	src.Parse(f)
 
@@ -101,7 +101,7 @@ func TestIpmitoolLanFailure(t *testing.T) {
 	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFactDB()
-	f.Set("phy.platform", "physical")
+	f.AddFact(types.Fact{Name: "phy.platform", Value: "physical"})
 	src := &Ipmitool{}
 	src.Parse(f)
 
@@ -133,7 +133,7 @@ func TestIpmitoolMcFailure(t *testing.T) {
 	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFactDB()
-	f.Set("phy.platform", "physical")
+	f.AddFact(types.Fact{Name: "phy.platform", Value: "physical"})
 	src := &Ipmitool{}
 	src.Parse(f)
 

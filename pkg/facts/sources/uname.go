@@ -10,8 +10,15 @@ import (
 // Uname collects simple uname-derived facts by running `uname -snrm`.
 type Uname struct{}
 
+var unameFacts = map[string]*types.Fact{
+	"os.kernel.name":    {Name: "os.kernel.name", Tier: types.TierOne},
+	"os.hostname":       {Name: "os.hostname", Tier: types.TierOne},
+	"os.kernel.version": {Name: "os.kernel.version", Tier: types.TierTwo},
+	"phy.arch":          {Name: "phy.arch", Tier: types.TierOne},
+}
+
 // This ORDER is important and matches the output order of `uname -snrm`.
-var unameKeys = []string{
+var unameKeysOrder = []string{
 	"os.kernel.name",
 	"os.hostname",
 	"os.kernel.version",
@@ -20,8 +27,8 @@ var unameKeys = []string{
 
 // Provides registers which keys this source provides.
 func (u *Uname) Provides(p types.Provides) {
-	for _, k := range unameKeys {
-		p[k] = u
+	for name := range unameFacts {
+		p[name] = u
 	}
 }
 
@@ -38,19 +45,24 @@ func (u *Uname) Parse(f *types.FactDB) {
 	}
 	data, rc, _ := input.CommandRunner("uname -snrm")
 	if data == "" || rc != 0 {
-		for _, k := range unameKeys {
-			f.Add(types.TierOne, k, types.ParseFailMsg)
+		for _, fact := range unameFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
 		}
 		return
 	}
 
-	// Fixme - os.kernel.version is tier two
 	fields := strings.Fields(strings.TrimSpace(data))
-	for i, k := range unameKeys {
+	for i, k := range unameKeysOrder {
 		if i < len(fields) {
-			f.Add(types.TierOne, k, fields[i])
+			unameFacts[k].Value = fields[i]
 		} else {
-			f.Add(types.TierOne, k, types.ParseFailMsg)
+			unameFacts[k].Value = types.ParseFailMsg
 		}
+	}
+
+	// Add all facts to the FactDB
+	for _, fact := range unameFacts {
+		f.AddFact(*fact)
 	}
 }

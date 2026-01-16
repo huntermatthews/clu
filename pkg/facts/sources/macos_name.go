@@ -9,20 +9,26 @@ import (
 // MacOSName derives the macOS marketing code name from the major version.
 type MacOSName struct{}
 
-func (m *MacOSName) Provides(p types.Provides) { p["os.code_name"] = m }
+var codeNameFact = types.Fact{
+	Name: "os.code_name",
+	Tier: types.TierOne,
+}
+
+func (m *MacOSName) Provides(p types.Provides) { p[codeNameFact.Name] = m }
 
 func (m *MacOSName) Requires(r *types.Requires) { r.Facts = append(r.Facts, "os.version") }
 
 func (m *MacOSName) Parse(f *types.FactDB) {
 	ver, ok := f.Get("os.version")
 	if !ok || strings.TrimSpace(ver) == "" {
-		f.Add(types.TierOne, "os.code_name", types.ParseFailMsg)
+		codeNameFact.Value = types.ParseFailMsg
+		f.AddFact(codeNameFact)
 		return
 	}
 
 	major := strings.Split(ver, ".")[0]
-	code := codeNameFromMajor(major)
-	f.Add(types.TierOne, "os.code_name", code)
+	codeNameFact.Value = codeNameFromMajor(major)
+	f.AddFact(codeNameFact)
 }
 
 func codeNameFromMajor(major string) string {

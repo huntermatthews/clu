@@ -16,9 +16,14 @@ import (
 // ProcCpuinfo2 is a drop-in alternate parser for /proc/cpuinfo.
 type ProcCpuinfo2 struct{}
 
+var archVersionFact2 = types.Fact{
+	Name: "phy.cpu.arch_version",
+	Tier: types.TierOne,
+}
+
 // Provides registers the architecture version fact.
 func (p *ProcCpuinfo2) Provides(pr types.Provides) {
-	pr["phy.cpu.arch_version"] = p
+	pr[archVersionFact2.Name] = p
 }
 
 // Requires declares /proc/cpuinfo file dependency.
@@ -64,5 +69,6 @@ func (p *ProcCpuinfo2) Parse(f *types.FactDB) {
 			break
 		}
 	}
-	f.Add(types.TierOne, "phy.cpu.arch_version", "x86_64_v"+strconv.Itoa(version))
+	archVersionFact2.Value = "x86_64_v" + strconv.Itoa(version)
+	f.AddFact(archVersionFact2)
 }

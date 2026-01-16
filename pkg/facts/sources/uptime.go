@@ -11,8 +11,13 @@ import (
 // Uptime parses system uptime via `uptime` command.
 type Uptime struct{}
 
+var uptimeFactCmd = types.Fact{
+	Name: "run.uptime",
+	Tier: types.TierOne,
+}
+
 func (u *Uptime) Provides(p types.Provides) {
-	p["run.uptime"] = u
+	p[uptimeFactCmd.Name] = u
 }
 
 func (u *Uptime) Requires(r *types.Requires) {
@@ -23,22 +28,19 @@ func (u *Uptime) Requires(r *types.Requires) {
 var uptimeRegex = regexp.MustCompile(`.*up *(.*) \d+ user(?:s)?,? .*`)
 
 func (u *Uptime) Parse(f *types.FactDB) {
-	f.Add(types.TierOne, "run.uptime", types.ParseFailMsg)
-
 	data, rc, _ := input.CommandRunner("uptime")
 	if data == "" || rc != 0 {
+		uptimeFactCmd.Value = types.ParseFailMsg
+		f.AddFact(uptimeFactCmd)
 		return
 	}
 
 	m := uptimeRegex.FindStringSubmatch(data)
-	uptime := types.ParseFailMsg
 	if len(m) > 1 {
-		uptime = strings.TrimSuffix(m[1], ",")
-		uptime = standardizeSpaces(uptime)
+		uptime := strings.TrimSuffix(m[1], ",")
+		uptimeFactCmd.Value = strings.Join(strings.Fields(uptime), " ")
+	} else {
+		uptimeFactCmd.Value = types.ParseFailMsg
 	}
-	f.Add(types.TierOne, "run.uptime", uptime)
-}
-
-func standardizeSpaces(s string) string {
-	return strings.Join(strings.Fields(s), " ")
+	f.AddFact(uptimeFactCmd)
 }

@@ -13,10 +13,16 @@ import (
 // OsRelease parses the /etc/os-release file for distro identification.
 type OsRelease struct{}
 
+var osReleaseFacts = map[string]*types.Fact{
+	"os.distro.name":    {Name: "os.distro.name", Tier: types.TierOne},
+	"os.distro.version": {Name: "os.distro.version", Tier: types.TierOne},
+}
+
 // Provides registers distro fact keys.
 func (o *OsRelease) Provides(p types.Provides) {
-	p["os.distro.name"] = o
-	p["os.distro.version"] = o
+	for name := range osReleaseFacts {
+		p[name] = o
+	}
 }
 
 // Requires declares the file dependency.
@@ -26,8 +32,10 @@ func (o *OsRelease) Requires(r *types.Requires) { r.Files = append(r.Files, "/et
 func (o *OsRelease) Parse(f *types.FactDB) {
 	data, err := input.FileReader("/etc/os-release")
 	if err != nil || data == "" { // treat empty/error uniformly
-		f.Add(types.TierOne, "os.distro.name", types.ParseFailMsg)
-		f.Add(types.TierOne, "os.distro.version", types.ParseFailMsg)
+		for _, fact := range osReleaseFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
+		}
 		return
 	}
 
@@ -46,12 +54,18 @@ func (o *OsRelease) Parse(f *types.FactDB) {
 			version = value
 		}
 	}
+    // BUG: this is hot garbage
 	if id == "" {
 		id = types.ParseFailMsg
 	}
 	if version == "" {
 		version = types.ParseFailMsg
 	}
-	f.Add(types.TierOne, "os.distro.name", id)
-	f.Add(types.TierOne, "os.distro.version", version)
+	osReleaseFacts["os.distro.name"].Value = id
+	osReleaseFacts["os.distro.version"].Value = version
+
+	// Add all facts to the FactDB
+	for _, fact := range osReleaseFacts {
+		f.AddFact(*fact)
+	}
 }

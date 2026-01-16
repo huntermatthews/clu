@@ -12,7 +12,7 @@ func TestProcCpuinfo3Provides(t *testing.T) {
 	src := &ProcCpuinfo3{}
 	p := types.Provides{}
 	src.Provides(p)
-	for _, k := range procCpuinfo3Keys {
+	for k := range procCpuinfo3Facts {
 		if _, ok := p[k]; !ok {
 			t.Fatalf("missing provides key %s", k)
 		}

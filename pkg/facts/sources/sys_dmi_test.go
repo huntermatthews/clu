@@ -25,7 +25,7 @@ func TestSysDmiSkipNonPhysical(t *testing.T) {
 	input.FileReader = func(path string) (string, error) { return "Dummy", nil }
 	defer func() { input.FileReader = orig }()
 	f := types.NewFactDB()
-	f.Set("phy.platform", "virtual")
+	f.AddFact(types.Fact{Name: "phy.platform", Value: "virtual"})
 	src := &SysDmi{}
 	src.Parse(f)
 	if _, ok := f.Get("sys.vendor"); ok {
@@ -52,7 +52,7 @@ func TestSysDmiSuccess(t *testing.T) {
 	}
 	defer func() { input.FileReader = orig }()
 	f := types.NewFactDB()
-	f.Set("phy.platform", "physical")
+	f.AddFact(types.Fact{Name: "phy.platform", Value: "physical"})
 	src := &SysDmi{}
 	src.Parse(f)
 	cases := map[string]string{
@@ -77,7 +77,7 @@ func TestSysDmiMissingFiles(t *testing.T) {
 	input.FileReader = func(path string) (string, error) { return "", errors.New("missing") }
 	defer func() { input.FileReader = orig }()
 	f := types.NewFactDB()
-	f.Set("phy.platform", "physical")
+	f.AddFact(types.Fact{Name: "phy.platform", Value: "physical"})
 	src := &SysDmi{}
 	src.Parse(f)
 	got, _ := f.Get("sys.vendor")

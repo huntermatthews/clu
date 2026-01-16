@@ -14,8 +14,13 @@ import (
 // UdevadmRam collects total physical RAM size from udevadm output.
 type UdevadmRam struct{}
 
+var ramFactUdevadm = types.Fact{
+	Name: "phy.ram",
+	Tier: types.TierOne,
+}
+
 // Provides registers phy.ram key.
-func (u *UdevadmRam) Provides(p types.Provides) { p["phy.ram"] = u }
+func (u *UdevadmRam) Provides(p types.Provides) { p[ramFactUdevadm.Name] = u }
 
 // Requires declares dependency on udevadm command.
 func (u *UdevadmRam) Requires(r *types.Requires) {
@@ -27,7 +32,8 @@ func (u *UdevadmRam) Requires(r *types.Requires) {
 func (u *UdevadmRam) Parse(f *types.FactDB) {
 	data, rc, _ := input.CommandRunner("udevadm info --path /devices/virtual/dmi/id")
 	if data == "" || rc != 0 {
-		f.Set("phy.ram", types.ParseFailMsg)
+		ramFactUdevadm.Value = types.ParseFailMsg
+		f.AddFact(ramFactUdevadm)
 		return
 	}
 	re := regexp.MustCompile(`MEMORY_DEVICE_\d+_SIZE=(\d+)`)
@@ -41,5 +47,6 @@ func (u *UdevadmRam) Parse(f *types.FactDB) {
 		}
 	}
 	// If no matches, total remains 0 -> BytesToSI will format "0.0 B" (consistent with Python result for sum([])=0).
-	f.Set("phy.ram", input.BytesToSI(total))
+	ramFactUdevadm.Value = input.BytesToSI(total)
+	f.AddFact(ramFactUdevadm)
 }

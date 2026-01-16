@@ -10,11 +10,16 @@ import (
 // SystemVersionPlist parses macOS SystemVersion.plist for OS info.
 type SystemVersionPlist struct{}
 
-var svKeys = []string{"os.name", "os.version", "os.build", "id.build_id"}
+var systemVersionFacts = map[string]*types.Fact{
+	"os.name":     {Name: "os.name", Tier: types.TierOne, Origin: "ProductName"},
+	"os.version":  {Name: "os.version", Tier: types.TierOne, Origin: "ProductVersion"},
+	"os.build":    {Name: "os.build", Tier: types.TierThree, Origin: "ProductBuildVersion"},
+	"id.build_id": {Name: "id.build_id", Tier: types.TierThree, Origin: "BuildID"},
+}
 
 func (s *SystemVersionPlist) Provides(p types.Provides) {
-	for _, k := range svKeys {
-		p[k] = s
+	for name := range systemVersionFacts {
+		p[name] = s
 	}
 }
 
@@ -27,27 +32,26 @@ func (s *SystemVersionPlist) Parse(f *types.FactDB) {
 		return
 	}
 
-	for _, k := range svKeys {
-		// failures are tier one to make sure they are visible
-		f.Add(types.TierOne, k, types.ParseFailMsg)
-	}
-
 	path := "/System/Library/CoreServices/SystemVersion.plist"
 	data, err := input.FileReader(path)
 	if err != nil {
+		// failures are tier one to make sure they are visible
+		for _, fact := range systemVersionFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
+		}
 		return
 	}
 
 	// Simple extraction for expected keys; not a full plist parser.
-	name := extractTag(data, "ProductName")
-	version := extractTag(data, "ProductVersion")
-	build := extractTag(data, "ProductBuildVersion")
-	buildID := extractTag(data, "BuildID")
+	for _, fact := range systemVersionFacts {
+		fact.Value = extractTag(data, fact.Origin)
+	}
 
-	f.Add(types.TierOne, "os.name", name)
-	f.Add(types.TierOne, "os.version", version)
-	f.Add(types.TierThree, "os.build", build)
-	f.Add(types.TierThree, "id.build_id", buildID)
+	// Add all facts to the FactDB
+	for _, fact := range systemVersionFacts {
+		f.AddFact(*fact)
+	}
 }
 
 func extractTag(s, key string) string {

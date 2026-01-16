@@ -14,8 +14,13 @@ import (
 // Lsmem collects physical RAM size.
 type Lsmem struct{}
 
+var ramFact = types.Fact{
+	Name: "phy.ram",
+	Tier: types.TierOne,
+}
+
 // Provides registers the RAM fact key.
-func (l *Lsmem) Provides(p types.Provides) { p["phy.ram"] = l }
+func (l *Lsmem) Provides(p types.Provides) { p[ramFact.Name] = l }
 
 // Requires declares dependency on lsmem command.
 func (l *Lsmem) Requires(r *types.Requires) {
@@ -26,7 +31,8 @@ func (l *Lsmem) Requires(r *types.Requires) {
 func (l *Lsmem) Parse(f *types.FactDB) {
 	data, rc, _ := input.CommandRunner("lsmem --summary --bytes")
 	if data == "" || rc != 0 {
-		f.Add(types.TierOne, "phy.ram", types.ParseFailMsg)
+		ramFact.Value = types.ParseFailMsg
+		f.AddFact(ramFact)
 		return
 	}
 
@@ -42,14 +48,16 @@ func (l *Lsmem) Parse(f *types.FactDB) {
 	}
 
 	if byteCount == "" {
-		f.Add(types.TierOne, "phy.ram", types.ParseFailMsg)
+		ramFact.Value = types.ParseFailMsg
+		f.AddFact(ramFact)
 		return
 	}
 
 	// Convert using BytesToSI; input expects a float64 number of bytes.
 	if v, err := strconv.ParseFloat(byteCount, 64); err == nil {
-		f.Add(types.TierOne, "phy.ram", input.BytesToSI(v))
+		ramFact.Value = input.BytesToSI(v)
 	} else {
-		f.Add(types.TierOne, "phy.ram", types.ParseFailMsg)
+		ramFact.Value = types.ParseFailMsg
 	}
+	f.AddFact(ramFact)
 }
