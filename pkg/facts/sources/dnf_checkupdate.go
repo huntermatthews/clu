@@ -15,9 +15,14 @@ import (
 // DnfCheckUpdate reports if updates are required (True/False) or an error state.
 type DnfCheckUpdate struct{}
 
+var updateFact = types.Fact{
+	Name: "run.update_required",
+	Tier: types.TierOne,
+}
+
 // Provides registers the fact key supplied by this source.
 func (d *DnfCheckUpdate) Provides(p types.Provides) {
-	p["run.update_required"] = d
+	p[updateFact.Name] = d
 }
 
 // Requires declares the external command needed.
@@ -30,20 +35,20 @@ func (d *DnfCheckUpdate) Requires(r *types.Requires) {
 // are disabled and a placeholder value is stored.
 func (d *DnfCheckUpdate) Parse(f *types.FactDB) {
 	if !global.Config.NetEnabled {
-		f.Add(types.TierOne, "run.update_required", types.NetDisabledMsg)
+		updateFact.Value = types.NetDisabledMsg
+		f.AddFact(updateFact)
 		return
 	}
 
 	_, rc, _ := input.CommandRunner("dnf check-update")
 
-	var value string
 	switch rc {
 	case 0:
-		value = "False"
+		updateFact.Value = "False"
 	case 100:
-		value = "True"
+		updateFact.Value = "True"
 	default:
-		value = types.ParseFailMsg
+		updateFact.Value = types.ParseFailMsg
 	}
-	f.Add(types.TierOne, "run.update_required", value)
+	f.AddFact(updateFact)
 }

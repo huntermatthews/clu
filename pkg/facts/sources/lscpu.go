@@ -16,18 +16,18 @@ import (
 // Lscpu collects CPU topology and identification facts.
 type Lscpu struct{}
 
-var lscpuKeys = []string{
-	"phy.cpu.model",
-	"phy.cpu.vendor",
-	"phy.cpu.cores",
-	"phy.cpu.threads",
-	"phy.cpu.sockets",
+var lscpuFacts = map[string]*types.Fact{
+	"phy.cpu.model":   {Name: "phy.cpu.model", Tier: types.TierOne},
+	"phy.cpu.vendor":  {Name: "phy.cpu.vendor", Tier: types.TierTwo},
+	"phy.cpu.cores":   {Name: "phy.cpu.cores", Tier: types.TierOne},
+	"phy.cpu.threads": {Name: "phy.cpu.threads", Tier: types.TierTwo},
+	"phy.cpu.sockets": {Name: "phy.cpu.sockets", Tier: types.TierThree},
 }
 
 // Provides registers the fact keys produced by this source.
 func (l *Lscpu) Provides(p types.Provides) {
-	for _, k := range lscpuKeys {
-		p[k] = l
+	for name := range lscpuFacts {
+		p[name] = l
 	}
 }
 
@@ -86,10 +86,15 @@ func (l *Lscpu) Parse(f *types.FactDB) {
 		}
 	}
 
-	// Set facts (nil/missing -> empty string like Python assignment of None)
-	f.Add(types.TierOne, "phy.cpu.model", fields["model"])   // may be empty
-	f.Add(types.TierTwo, "phy.cpu.vendor", fields["vendor"]) // may be empty
-	f.Add(types.TierOne, "phy.cpu.cores", cores)
-	f.Add(types.TierTwo, "phy.cpu.threads", threads)
-	f.Add(types.TierThree, "phy.cpu.sockets", fields["sockets"]) // may be empty
+	// Set fact values
+	lscpuFacts["phy.cpu.model"].Value = fields["model"]   // may be empty
+	lscpuFacts["phy.cpu.vendor"].Value = fields["vendor"] // may be empty
+	lscpuFacts["phy.cpu.cores"].Value = cores
+	lscpuFacts["phy.cpu.threads"].Value = threads
+	lscpuFacts["phy.cpu.sockets"].Value = fields["sockets"] // may be empty
+
+	// Add all facts to the FactDB
+	for _, fact := range lscpuFacts {
+		f.AddFact(*fact)
+	}
 }

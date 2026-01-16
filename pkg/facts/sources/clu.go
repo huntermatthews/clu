@@ -15,16 +15,19 @@ import (
 // Clu provides runtime-related facts about the running CLI and environment.
 type Clu struct{}
 
+var cluFacts = map[string]*types.Fact{
+	"clu.binary":         {Name: "clu.binary", Tier: types.TierTwo},
+	"clu.version":        {Name: "clu.version", Tier: types.TierOne},
+	"clu.golang.version": {Name: "clu.golang.version", Tier: types.TierThree},
+	"clu.cmdline":        {Name: "clu.cmdline", Tier: types.TierTwo},
+	"clu.cwd":            {Name: "clu.cwd", Tier: types.TierThree},
+	"clu.user":           {Name: "clu.user", Tier: types.TierThree},
+	"clu.date":           {Name: "clu.date", Tier: types.TierTwo},
+}
+
 func (c *Clu) Provides(p types.Provides) {
-	for _, k := range []string{
-		"clu.binary",
-		"clu.version",
-		"clu.cmdline",
-		"clu.cwd",
-		"clu.user",
-		"clu.date",
-	} {
-		p[k] = c
+	for name := range cluFacts {
+		p[name] = c
 	}
 }
 
@@ -34,31 +37,34 @@ func (c *Clu) Parse(f *types.FactDB) {
 	// Binary name (argv0)
 	argv0 := os.Args[0]
 	argv0, _ = filepath.Abs(argv0)
-	f.Add(types.TierTwo, "clu.binary", argv0)
+	cluFacts["clu.binary"].Value = argv0
 
 	// Version from about.go
-	f.Add(types.TierOne, "clu.version", global.Version)
+	cluFacts["clu.version"].Value = global.Version
 
 	// Go runtime version
-	f.Add(types.TierThree, "clu.golang.version", runtime.Version())
+	cluFacts["clu.golang.version"].Value = runtime.Version()
 
 	// Command line
-	f.Add(types.TierTwo, "clu.cmdline", strings.Join(os.Args, " "))
+	cluFacts["clu.cmdline"].Value = strings.Join(os.Args, " ")
 
 	// Working directory
 	cwd, _ := os.Getwd()
-	f.Add(types.TierThree, "clu.cwd", cwd)
+	cluFacts["clu.cwd"].Value = cwd
 
 	// User
-	// Note this fact can cause us to be linked dynamically.
-	// We might drop back to reading $USER or $USERNAME env var instead.
 	u, _ := user.Current()
 	if u != nil {
-		f.Add(types.TierThree, "clu.user", u.Username)
+		cluFacts["clu.user"].Value = u.Username
 	} else {
-		f.Add(types.TierThree, "clu.user", types.ParseFailMsg)
+		cluFacts["clu.user"].Value = types.ParseFailMsg
 	}
 
 	// RFC3339 timestamp (UTC)
-	f.Add(types.TierTwo, "clu.date", time.Now().UTC().Format(time.RFC3339))
+	cluFacts["clu.date"].Value = time.Now().UTC().Format(time.RFC3339)
+
+	// Add all facts to the FactDB
+	for _, fact := range cluFacts {
+		f.AddFact(*fact)
+	}
 }

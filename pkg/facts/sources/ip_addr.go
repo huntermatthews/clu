@@ -14,13 +14,17 @@ import (
 // IpAddr gathers network interface facts.
 type IpAddr struct{}
 
-// ipAddrKeys mirrors Python primary_keys list order.
-var ipAddrKeys = []string{"net.macs", "net.ipv4", "net.ipv6", "net.devs"}
+var ipAddrFacts = map[string]*types.Fact{
+	"net.macs": {Name: "net.macs", Tier: types.TierTwo},
+	"net.ipv4": {Name: "net.ipv4", Tier: types.TierOne},
+	"net.ipv6": {Name: "net.ipv6", Tier: types.TierOne},
+	"net.devs": {Name: "net.devs", Tier: types.TierOne},
+}
 
 // Provides registers fact keys produced by this source.
 func (i *IpAddr) Provides(p types.Provides) {
-	for _, k := range ipAddrKeys {
-		p[k] = i
+	for name := range ipAddrFacts {
+		p[name] = i
 	}
 }
 
@@ -43,50 +47,45 @@ type ipAddrIface struct {
 func (i *IpAddr) Parse(f *types.FactDB) {
 	data, rc, _ := input.CommandRunner("ip --json addr")
 	if data == "" || rc != 0 {
-		for _, k := range ipAddrKeys {
-			f.Add(types.TierTwo, k, types.ParseFailMsg)
+		for _, fact := range ipAddrFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
 		}
 		return
-	}
-	// Initialize keys to empty strings (Python behavior before accumulation).
-	// net.macs is TierTwo; others are TierOne.
-	for _, k := range ipAddrKeys {
-		if k == "net.macs" {
-			f.Add(types.TierTwo, k, "")
-		} else {
-			f.Add(types.TierOne, k, "")
-		}
 	}
 
 	// Decode JSON.
 	var ifaces []ipAddrIface
 	if err := json.Unmarshal([]byte(data), &ifaces); err != nil {
-		for _, k := range ipAddrKeys {
-			f.Add(types.TierOne, k, types.ParseFailMsg)
+		for _, fact := range ipAddrFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
 		}
 		return
 	}
+
 	for _, iface := range ifaces {
 		// net.devs
-		cur, _ := f.Get("net.devs")
-		f.Add(types.TierOne, "net.devs", cur+iface.IfName+" ")
+		ipAddrFacts["net.devs"].Value += iface.IfName + " "
 
 		// Addresses
 		for _, addr := range iface.AddrInfo {
 			switch addr.Family {
 			case "inet":
-				cur4, _ := f.Get("net.ipv4")
-				f.Add(types.TierOne, "net.ipv4", cur4+addr.Local+" ")
+				ipAddrFacts["net.ipv4"].Value += addr.Local + " "
 			case "inet6":
-				cur6, _ := f.Get("net.ipv6")
-				f.Add(types.TierOne, "net.ipv6", cur6+addr.Local+" ")
+				ipAddrFacts["net.ipv6"].Value += addr.Local + " "
 			}
 		}
 
 		// MAC address (may be empty depending on interface type).
 		if strings.TrimSpace(iface.Address) != "" {
-			curMac, _ := f.Get("net.macs")
-			f.Add(types.TierTwo, "net.macs", curMac+iface.Address+" ")
+			ipAddrFacts["net.macs"].Value += iface.Address + " "
 		}
+	}
+
+	// Add all facts to the FactDB
+	for _, fact := range ipAddrFacts {
+		f.AddFact(*fact)
 	}
 }

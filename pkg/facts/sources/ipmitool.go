@@ -15,25 +15,25 @@ import (
 // Ipmitool gathers BMC firmware/network details.
 type Ipmitool struct{}
 
-var ipmitoolLanFacts = []types.Fact{
-	{Name: "bmc.ipv4_source", Value: "", Origin: `(?m)^IP Address Source *: (.+)`, Tier: types.TierTwo},
-	{Name: "bmc.ipv4_address", Value: "", Origin: `(?m)^IP Address *: (.+)`, Tier: types.TierOne},
-	{Name: "bmc.ipv4_mask", Value: "", Origin: `(?m)^Subnet Mask *: (.+)`, Tier: types.TierTwo},
-	{Name: "bmc.mac_address", Value: "", Origin: `(?m)^MAC Address *: (.+)`, Tier: types.TierOne},
+var ipmitoolLanFacts = map[string]*types.Fact{
+	"bmc.ipv4_source":  {Name: "bmc.ipv4_source", Origin: `(?m)^IP Address Source *: (.+)`, Tier: types.TierTwo},
+	"bmc.ipv4_address": {Name: "bmc.ipv4_address", Origin: `(?m)^IP Address *: (.+)`, Tier: types.TierOne},
+	"bmc.ipv4_mask":    {Name: "bmc.ipv4_mask", Origin: `(?m)^Subnet Mask *: (.+)`, Tier: types.TierTwo},
+	"bmc.mac_address":  {Name: "bmc.mac_address", Origin: `(?m)^MAC Address *: (.+)`, Tier: types.TierOne},
 }
-var ipmitoolMcInfoFacts = []types.Fact{
-	{Name: "bmc.firmware_version", Value: "", Origin: `(?m)^Firmware Revision *: (.+)`, Tier: types.TierOne},
-	{Name: "bmc.manufacturer_id", Value: "", Origin: `(?m)^Manufacturer ID *: (.+)`, Tier: types.TierTwo},
-	{Name: "bmc.manufacturer_name", Value: "", Origin: `(?m)^Manufacturer Name *: (.+)`, Tier: types.TierTwo},
+var ipmitoolMcInfoFacts = map[string]*types.Fact{
+	"bmc.firmware_version":  {Name: "bmc.firmware_version", Origin: `(?m)^Firmware Revision *: (.+)`, Tier: types.TierOne},
+	"bmc.manufacturer_id":   {Name: "bmc.manufacturer_id", Origin: `(?m)^Manufacturer ID *: (.+)`, Tier: types.TierTwo},
+	"bmc.manufacturer_name": {Name: "bmc.manufacturer_name", Origin: `(?m)^Manufacturer Name *: (.+)`, Tier: types.TierTwo},
 }
 
 // Provides registers all fact keys produced by this source.
 func (i *Ipmitool) Provides(p types.Provides) {
-	for _, k := range ipmitoolLanFacts {
-		p[k.Name] = i
+	for name := range ipmitoolLanFacts {
+		p[name] = i
 	}
-	for _, k := range ipmitoolMcInfoFacts {
-		p[k.Name] = i
+	for name := range ipmitoolMcInfoFacts {
+		p[name] = i
 	}
 }
 
@@ -53,44 +53,52 @@ func (i *Ipmitool) Parse(f *types.FactDB) {
 }
 
 func (i *Ipmitool) parseLanPrint(f *types.FactDB) {
-
 	data, rc, _ := input.CommandRunner("ipmitool lan print")
 	if data == "" || rc != 0 {
-		for _, k := range ipmitoolLanFacts {
-			f.Add(k.Tier, k.Name, types.ParseFailMsg)
+		for _, fact := range ipmitoolLanFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
 		}
 		return
 	}
 	// Extract values
-	for _, k := range ipmitoolLanFacts {
-		re := regexp.MustCompile(k.Origin)
+	for _, fact := range ipmitoolLanFacts {
+		re := regexp.MustCompile(fact.Origin)
 		m := re.FindStringSubmatch(data)
 		if len(m) == 2 {
 			val := strings.TrimSpace(m[1])
 			if val != "" {
-				f.Add(k.Tier, k.Name, val)
+				fact.Value = val
 			}
 		}
+	}
+	// Add all facts to the FactDB
+	for _, fact := range ipmitoolLanFacts {
+		f.AddFact(*fact)
 	}
 }
 
 func (i *Ipmitool) parseMcInfo(f *types.FactDB) {
-
 	data, rc, _ := input.CommandRunner("ipmitool mc info")
 	if data == "" || rc != 0 {
-		for _, k := range ipmitoolMcInfoFacts {
-			f.Add(k.Tier, k.Name, types.ParseFailMsg)
+		for _, fact := range ipmitoolMcInfoFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
 		}
 		return
 	}
-	for _, k := range ipmitoolMcInfoFacts {
-		re := regexp.MustCompile(k.Origin)
+	for _, fact := range ipmitoolMcInfoFacts {
+		re := regexp.MustCompile(fact.Origin)
 		m := re.FindStringSubmatch(data)
 		if len(m) == 2 {
 			val := strings.TrimSpace(m[1])
 			if val != "" {
-				f.Add(k.Tier, k.Name, val)
+				fact.Value = val
 			}
 		}
+	}
+	// Add all facts to the FactDB
+	for _, fact := range ipmitoolMcInfoFacts {
+		f.AddFact(*fact)
 	}
 }
