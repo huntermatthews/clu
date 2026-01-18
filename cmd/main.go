@@ -22,6 +22,7 @@ type CLI struct {
 	Facts     subcmd.FactsCmd     `cmd:"" help:"Show facts." default:"withargs"`
 	Collector subcmd.CollectorCmd `cmd:"" help:"Run collector."`
 	Requires  subcmd.RequiresCmd  `cmd:"" help:"Requires actions: list or check."`
+	Tools     subcmd.ToolsCmd     `cmd:"" help:"Check SSA admins workstations tools."`
 }
 
 func main() {
@@ -69,7 +70,6 @@ func run(args []string, stdout, stderr input.Stdout) int {
 			fmt.Fprintln(stderr, err)
 			return 1
 		}
-
 	}
 
 	err = ctx.Run()
