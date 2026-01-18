@@ -1,0 +1,3 @@
+This file is empty and exists solely to fake out our detection of windows.
+
+We look for cmd.exe - but we don't actually call it.

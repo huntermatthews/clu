@@ -110,7 +110,7 @@ func doOutput(stdout input.Stdout, stderr input.Stderr, f *types.Facts, format s
 }
 
 // outputDots prints key: value lines sorted by key.
-func outputDots(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
+func outputDots(stdout input.Stdout, _ input.Stderr, f *types.Facts) { //nolint:unusedparams
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
@@ -120,7 +120,7 @@ func outputDots(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
 }
 
 // outputShell prints KEY_WITH_UNDERSCORES="value" lines.
-func outputShell(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
+func outputShell(stdout input.Stdout, _ input.Stderr, f *types.Facts) { //nolint:unusedparams
 	keys := f.Keys()
 	sort.Strings(keys)
 	for _, k := range keys {
@@ -131,7 +131,7 @@ func outputShell(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
 }
 
 // outputJSON prints a JSON map of facts.
-func outputJSON(stdout input.Stdout, stderr input.Stderr, f *types.Facts) {
+func outputJSON(stdout input.Stdout, _ input.Stderr, f *types.Facts) { //nolint:unusedparams
 	data, _ := json.MarshalIndent(f.ToMap(), "", "  ")
 	fmt.Fprintln(stdout, string(data))
 }

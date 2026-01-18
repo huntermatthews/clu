@@ -91,6 +91,7 @@ func EnableMockMode(dir string) error {
 	// Change the input functions to the mock versions.
 	input.CommandRunner = input.MockTextProgram
 	input.FileReader = input.MockTextFile
+	input.ProgramChecker = input.MockProgramCheck
 	return nil
 }
 
