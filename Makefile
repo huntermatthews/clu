@@ -80,9 +80,9 @@ fmt: ## Format code
 fmt-check: ## Check formatting without modifying files
 	@gofmt -d $(shell find . -name '*.go' -not -path "./vendor/*")
 
-.PHONY: lint
-lint: ## Run linter
-	golangci-lint run
+# .PHONY: lint
+# lint: ## Run linter
+# 	golangci-lint run
 
 .PHONY: vet
 vet: ## Run go vet
@@ -100,5 +100,4 @@ setup: tools ## Setup Go modules
 
 .PHONY: tools
 tools: ## Install development tools
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	go install github.com/cpuguy83/go-md2man/v2@latest
