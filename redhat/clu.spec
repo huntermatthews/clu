@@ -28,7 +28,7 @@ else
     echo "Error: Go compiler not found"
     exit 1
 fi
-CGO_ENABLED=0 $GOCMD build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=%{_version}" -o clu ./cmd/main.go
+CGO_ENABLED=0 $GOCMD build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=%{_version}" -o clu ./cmd/clu/main.go
 
 %install
 mkdir -p %{buildroot}%{_bindir}
@@ -46,3 +46,6 @@ install -m 644 README.md %{buildroot}%{_docdir}/%{name}/README.md
 %changelog
 * Tue Dec 30 2025 GitHub Actions <noreply@github.com> - %{_version}-1
 - Automated build from release %{_version}
+
+# %global _source_payload    w9.gzdio
+# %global _binary_payload    w9.gzdio
