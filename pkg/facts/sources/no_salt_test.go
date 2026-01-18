@@ -3,7 +3,7 @@ package sources
 import (
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/facts/types"
 )
 
 // TestNoSaltProvides validates fact registration.

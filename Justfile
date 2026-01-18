@@ -52,7 +52,7 @@ clu:
         export GOOS=${plat%:*}
         export GOARCH=${plat#*:}
         echo "Building for $GOOS on $GOARCH..."
-        go build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version={{REPO_VERSION}}" -o ./dist/clu-$(go env GOOS)-$(go env GOARCH) ./cmd/main.go
+        go build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version={{REPO_VERSION}}" -o ./dist/clu-$(go env GOOS)-$(go env GOARCH) ./cmd/main.go
     done
 
 # Build the Go CLI tool
@@ -65,10 +65,6 @@ clu-symlink:
 [group('build')]
 manpage:
     {{go-md2man}} -in clu.1.md -out clu.1
-# Generate man page from AsciiDoc using asciidoctor
-[group('build')]
-manpage-asciidoc:
-    asciidoctor -b manpage clu.1.adoc -o clu.2
 
 # Show the current version from git
 [group('package')]

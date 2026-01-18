@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg/global"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/global"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 func TestRun_Hosts(t *testing.T) {

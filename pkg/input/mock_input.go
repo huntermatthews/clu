@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/NHGRI/clu/pkg/global"
 )
 
 // MockTextFile reads the mock file corresponding to `fname` under the
@@ -114,4 +114,36 @@ func MockTextProgram(cmdline string) (string, int, error) {
 	}
 
 	return string(outData), rc, nil
+}
+
+// MockProgramCheck checks if a program exists in the mock environment by
+// looking for the program's output file under
+// `global.Config.MockDir/_programs/<name>` where <name> comes from
+// `TransformCmdlineToFilename(cmdline)`. Returns the program name (first
+// component before underscore) if found, otherwise empty string.
+func MockProgramCheck(cmdline string) string {
+	if global.Config.MockDir == "" {
+		panic("global.Config.MockDir is not set for MockProgramCheck")
+	}
+	if strings.TrimSpace(cmdline) == "" {
+		return ""
+	}
+
+	name, _ := TransformCmdlineToFilename(cmdline)
+	// program outputs are under _programs directory
+	base := filepath.Join(global.Config.MockDir, "_programs")
+	outPath := filepath.Join(base, name)
+
+	// Check if output file exists and is a regular file
+	info, err := os.Stat(outPath)
+	if err != nil {
+		return ""
+	}
+	if info.IsDir() {
+		return ""
+	}
+
+	// Return only the program name (first part before underscore)
+	progName := strings.SplitN(name, "_", 2)[0]
+	return progName
 }

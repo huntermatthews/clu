@@ -1,9 +1,13 @@
 {
-  "gopls": {
-    "directoryFilters": [
-      "-notes"
-    ]
-  },
-  "Justfile": "just"
+    "gopls": {
+        "directoryFilters": [
+            "-notes"
+        ]
+    },
+    "Justfile": "just",
+    "yaml.schemas": {
+        "https://www.schemastore.org/github-workflow.json": [
+            ".github/workflows/*.yaml"
+        ]
+    }
 }
-

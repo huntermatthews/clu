@@ -3,8 +3,8 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // Uname collects simple uname-derived facts by running `uname -snrm`.

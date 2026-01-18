@@ -4,8 +4,8 @@ package facts
 // source aggregation and default/early fact lists.
 
 import (
-	"github.com/huntermatthews/clu/pkg/facts/sources"
-	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/facts/sources"
+	"github.com/NHGRI/clu/pkg/facts/types"
 )
 
 // NewDarwin constructs the Darwin OpSys with its ordered sources and fact lists.

@@ -6,12 +6,11 @@
 override_dh_auto_build:
 	$(eval VERSION := $(shell dpkg-parsechangelog -SVersion | cut -d- -f1))
 	$(eval GOCMD := $(shell which go 2>/dev/null || echo /usr/lib/go-1.20/bin/go))
-	CGO_ENABLED=0 $(GOCMD) build -ldflags "-X github.com/huntermatthews/clu/pkg/global.Version=$(VERSION)" -o clu ./cmd/main.go
+	CGO_ENABLED=0 $(GOCMD) build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=$(VERSION)" -o clu ./cmd/main.go
 
 override_dh_auto_install:
 	install -D -m 755 clu debian/clu/usr/bin/clu
 	install -D -m 644 clu.1 debian/clu/usr/share/man/man1/clu.1
-	install -D -m 644 LICENSE debian/clu/usr/share/doc/clu/LICENSE
 	install -D -m 644 README.md debian/clu/usr/share/doc/clu/README.md
 
 override_dh_auto_clean:
@@ -19,3 +18,18 @@ override_dh_auto_clean:
 
 override_dh_auto_test:
 	# Skip tests for now
+
+override_dh_dwz:
+	# Skip dwz compression for Go binaries (incompatible with CGO_ENABLED=0)
+
+override_dh_strip:
+	# Skip stripping entirely for Go binaries (can break static linking and cross-compilation)
+	# Go binaries are already optimized and don't benefit from stripping
+
+override_dh_shlibdeps:
+	# Skip shared library dependency detection for static Go binaries
+	# Go binaries with CGO_ENABLED=0 are statically linked and need no shared libs
+
+override_dh_builddeb:
+	# Use faster compression for large Go binaries
+	dh_builddeb -- -Zxz

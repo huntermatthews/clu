@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/facts"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // RequiresCmd implements the "requires" subcommand (stub only).
@@ -31,7 +31,7 @@ func (r *RequiresCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 }
 
 // listRequires lists all file and program requirements.
-func listRequires(stdout input.Stdout, stderr input.Stderr) int {
+func listRequires(stdout input.Stdout, _ input.Stderr) int {
 	reqs := facts.OpSysFactory().Requires()
 	fmt.Fprintln(stdout, "Listing Requirements:")
 	fmt.Fprintln(stdout, "----------------------")
@@ -48,7 +48,7 @@ func listRequires(stdout input.Stdout, stderr input.Stderr) int {
 }
 
 // checkRequires checks existence of required files and programs.
-func checkRequires(stdout input.Stdout, stderr input.Stderr) int {
+func checkRequires(stdout input.Stdout, _ input.Stderr) int {
 	reqs := facts.OpSysFactory().Requires()
 	fmt.Fprintln(stdout, "Checking requirements:")
 	fmt.Fprintln(stdout, "----------------------")

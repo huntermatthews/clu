@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // UdevadmRam collects total physical RAM size from udevadm output.

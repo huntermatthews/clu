@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg/global"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/global"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 func setupTest(t *testing.T) (string, func()) {

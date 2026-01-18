@@ -1,0 +1,108 @@
+---
+name: Build DEB Package
+
+on:
+  workflow_call:
+    inputs:
+      architecture:
+        description: "Target architecture (amd64, arm64)"
+        required: true
+        type: string
+      runner:
+        description: "GitHub runner to use"
+        required: true
+        type: string
+
+env:
+  BUILD_HOST: action-runner.github.com
+
+jobs:
+  build-deb:
+    name: "Package DEB"
+    runs-on: ${{ inputs.runner }}
+    container: ubuntu:20.04
+    # Note: Permissions are set in the calling workflow (release.yaml)
+    env:
+      GITHUB_REF_NAME: ${{ github.ref_name }}
+    steps:
+      - name: Set VERSION variable
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Install dependencies and DEB build tools
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          TZ: UTC
+          # Suppress an apt-key warning about standard out not being a terminal.  This is safe.
+          APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: DontWarn
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-1.20-go dpkg-dev build-essential debhelper
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Mark workspace as safe for git (fix dubious ownership)
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Create source tarball from checkout
+        run: |
+          git -c core.autocrlf=false archive \
+            --format=tar.gz \
+            --prefix="clu-$VERSION/" \
+            -o "clu-$VERSION.tar.gz" \
+            "$GITHUB_REF_NAME"
+
+      - name: Inspect tarball contents (debug)
+        run: |
+          echo "Top-level entries in tarball:"
+          tar -tzf "clu-$VERSION.tar.gz" | cut -d/ -f1 | sort -u
+          echo "Sample of tar listing (first 20):"
+          tar -tzf "clu-$VERSION.tar.gz" | head -n 20
+
+      - name: Extract and prepare source
+        run: |
+          echo "Before extract, working directory contents:" && ls -la
+          tar -xzf clu-$VERSION.tar.gz
+          echo "After extract, working directory contents:" && ls -la
+
+          # Create Debian orig tarball (required naming convention)
+          cp clu-$VERSION.tar.gz clu_$VERSION.orig.tar.gz
+
+      - name: Verify build dependencies
+        run: |
+          cd clu-$VERSION
+
+          # Verify we can satisfy build dependencies
+          dpkg-checkbuilddeps || echo "Warning: Some build deps may not be satisfied by apt packages, but Go is available via actions/setup-go"
+
+      - name: Build DEB package
+        run: |
+          cd clu-$VERSION
+
+          # Update debian/changelog with current version
+          sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
+
+          # Build the DEB package
+          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -b -d
+
+          # Move the .deb file to a predictable location at the root
+          cd ..
+          mkdir -p debs
+          mv clu_${VERSION}-1_${{ inputs.architecture }}.deb debs/clu_${VERSION}-1_${{ inputs.architecture }}.deb
+
+      - name: Upload DEB artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: deb-package-${{ inputs.architecture }}
+          path: debs/*
+
+      - name: Generate SLSA attestation for DEB
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: debs/*.deb

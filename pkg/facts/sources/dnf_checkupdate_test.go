@@ -3,9 +3,9 @@ package sources
 import (
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/global"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/global"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // TestDnfCheckUpdateProvides ensures the source registers its fact key.

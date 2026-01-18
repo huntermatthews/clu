@@ -28,28 +28,45 @@ When creating releases for both RPM and DEB packages, use version strings that a
 All release artifacts include SLSA Level 3 attestations for supply chain verification. You can verify the authenticity and integrity of any downloaded artifact:
 
 ### Verify Raw Binaries
+
 ```bash
-gh attestation verify clu-linux-amd64 --owner huntermatthews
-gh attestation verify clu-linux-arm64 --owner huntermatthews  
-gh attestation verify clu-darwin-arm64 --owner huntermatthews
+gh attestation verify clu-linux-amd64 --owner NHGRI
+gh attestation verify clu-linux-arm64 --owner NHGRI
+gh attestation verify clu-darwin-arm64 --owner NHGRI
 ```
 
 ### Verify Package Files
+
 ```bash
 # RPM packages
-gh attestation verify clu-1.0.0-1.x86_64.rpm --owner huntermatthews
-gh attestation verify clu-1.0.0-1.aarch64.rpm --owner huntermatthews
-gh attestation verify clu-1.0.0-1.x86_64.el7.rpm --owner huntermatthews
+gh attestation verify clu-1.0.0-1.x86_64.rpm --owner NHGRI
+gh attestation verify clu-1.0.0-1.aarch64.rpm --owner NHGRI
+gh attestation verify clu-1.0.0-1.x86_64.el7.rpm --owner NHGRI
 
-# DEB packages  
-gh attestation verify clu_1.0.0-1_amd64.deb --owner huntermatthews
-gh attestation verify clu_1.0.0-1_arm64.deb --owner huntermatthews
+# DEB packages
+gh attestation verify clu_1.0.0-1_amd64.deb --owner NHGRI
+gh attestation verify clu_1.0.0-1_arm64.deb --owner NHGRI
 ```
 
 ### Verify Checksums
+
 ```bash
 # Download and verify checksums
-curl -fsSL -O https://github.com/huntermatthews/clu/releases/download/v1.0.0/SHA256SUMS
-curl -fsSL -O https://github.com/huntermatthews/clu/releases/download/v1.0.0/clu-linux-amd64
+curl -fsSL -O https://github.com/NHGRI/clu/releases/download/v1.0.0/SHA256SUMS
+curl -fsSL -O https://github.com/NHGRI/clu/releases/download/v1.0.0/clu-linux-amd64
 sha256sum -c SHA256SUMS
+```
+
+
+## Private repo download information
+
+```shell
+DOWNLOAD_URL="PASTE_THE_browser_download_url_HERE"
+FILE_NAME="name_of_your_asset.tar.gz"
+
+curl -L \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "Accept: application/octet-stream" \
+  -o "${FILE_NAME}" \
+  "${DOWNLOAD_URL}"
 ```

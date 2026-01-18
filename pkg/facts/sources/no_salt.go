@@ -5,8 +5,8 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
-	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/input"
 )
 
 // NoSalt reports whether the /no_salt file exists and its content as a reason.

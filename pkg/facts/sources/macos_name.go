@@ -3,7 +3,7 @@ package sources
 import (
 	"strings"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/facts/types"
 )
 
 // MacOSName derives the macOS marketing code name from the major version.

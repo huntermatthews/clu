@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/facts/types"
 )
 
 func TestSystemVersionPlistProvides(t *testing.T) {

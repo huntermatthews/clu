@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/huntermatthews/clu/pkg/facts/types"
+	"github.com/NHGRI/clu/pkg/facts/types"
 )
 
 func TestUptimeProvides(t *testing.T) {

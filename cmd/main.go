@@ -7,9 +7,9 @@ import (
 
 	"github.com/alecthomas/kong"
 
-	"github.com/huntermatthews/clu/pkg/global"
-	"github.com/huntermatthews/clu/pkg/input"
-	"github.com/huntermatthews/clu/pkg/subcmd"
+	"github.com/NHGRI/clu/pkg/global"
+	"github.com/NHGRI/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/subcmd"
 )
 
 // CLI defines the root command and global flags.
@@ -91,6 +91,7 @@ func EnableMockMode(dir string) error {
 	// Change the input functions to the mock versions.
 	input.CommandRunner = input.MockTextProgram
 	input.FileReader = input.MockTextFile
+	input.ProgramChecker = input.MockProgramCheck
 	return nil
 }
 
