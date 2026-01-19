@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"text/tabwriter"
 
-	"github.com/huntermatthews/clu/pkg/input"
-	"github.com/huntermatthews/clu/pkg/tools"
+	"github.com/NHGRI/clu/pkg/input"
+	"github.com/NHGRI/clu/pkg/tools"
 )
 
 var specs = []ToolSpec{
@@ -59,7 +59,7 @@ type VersionParser func(path string) string
 
 type ToolSpec struct {
 	Name         string
-	Category         ToolCategory
+	Category     ToolCategory
 	ParseVersion VersionParser
 }
 
