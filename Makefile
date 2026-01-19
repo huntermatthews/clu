@@ -12,7 +12,7 @@ PLATFORMS := darwin-arm64 windows-amd64 linux-amd64 linux-arm64
 
 .PHONY: build
 build: setup ## Build the program for the current platform
-	go build -ldflags "-X $(PKG)/pkg/global.Version=$(VERSION)" -o dist/clu ./cmd/clu/main.go
+	go build -ldflags "-X $(PKG)/pkg/global.Version=$(VERSION)" -o dist/clu ./cmd/clu
 
 .PHONY: clean
 clean: ## Clean up build artifacts
