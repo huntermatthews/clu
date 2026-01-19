@@ -14,29 +14,29 @@ import (
 // WindowsSysteminfo collects OS and hardware facts from systeminfo output.
 type WindowsSysteminfo struct{}
 
-var systemInfoKeys = []string{
-	"os.hostname",
-	"os.name",
-	"os.version",
-	"os.build",
-	"os.owner",
-	"os.organization",
-	"os.install_date",
-	"run.boot_time",
-	"phy.manufacturer",
-	"phy.model",
-	"phy.system_type",
-	"phy.bios_version",
-	"net.domain",
-	"net.network_cards",
-	"phy.cpu.cores",
-	"phy.ram",
+var systemInfoFacts = map[string]*types.Fact{
+	"os.hostname":       {Name: "os.hostname", Tier: types.TierOne},
+	"os.name":           {Name: "os.name", Tier: types.TierOne},
+	"os.version":        {Name: "os.version", Tier: types.TierOne},
+	"os.build":          {Name: "os.build", Tier: types.TierOne},
+	"os.owner":          {Name: "os.owner", Tier: types.TierTwo},
+	"os.organization":   {Name: "os.organization", Tier: types.TierTwo},
+	"os.install_date":   {Name: "os.install_date", Tier: types.TierTwo},
+	"run.boot_time":     {Name: "run.boot_time", Tier: types.TierTwo},
+	"phy.manufacturer":  {Name: "phy.manufacturer", Tier: types.TierTwo},
+	"phy.model":         {Name: "phy.model", Tier: types.TierTwo},
+	"phy.system_type":   {Name: "phy.system_type", Tier: types.TierTwo},
+	"phy.bios_version":  {Name: "phy.bios_version", Tier: types.TierThree},
+	"net.domain":        {Name: "net.domain", Tier: types.TierTwo},
+	"net.network_cards": {Name: "net.network_cards", Tier: types.TierThree},
+	"phy.cpu.cores":     {Name: "phy.cpu.cores", Tier: types.TierOne},
+	"phy.ram":           {Name: "phy.ram", Tier: types.TierOne},
 }
 
 // Provides registers fact keys produced by this source.
 func (w *WindowsSysteminfo) Provides(p types.Provides) {
-	for _, k := range systemInfoKeys {
-		p[k] = w
+	for name := range systemInfoFacts {
+		p[name] = w
 	}
 }
 
@@ -47,12 +47,13 @@ func (w *WindowsSysteminfo) Requires(r *types.Requires) {
 
 // Parse executes systeminfo and extracts OS/hardware facts from CSV output.
 // Maps CSV header to values and extracts relevant fields.
-func (w *WindowsSysteminfo) Parse(f *types.Facts) {
+func (w *WindowsSysteminfo) Parse(f *types.FactDB) {
 
 	data, rc, _ := input.CommandRunner("systeminfo")
 	if data == "" || rc != 0 {
-		for _, k := range systemInfoKeys {
-			f.Add(types.TierOne, k, types.ParseFailMsg)
+		for _, fact := range systemInfoFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
 		}
 		return
 	}
@@ -61,8 +62,9 @@ func (w *WindowsSysteminfo) Parse(f *types.Facts) {
 	r := csv.NewReader(strings.NewReader(data))
 	records, err := r.ReadAll()
 	if err != nil || len(records) < 2 {
-		for _, k := range systemInfoKeys {
-			f.Add(types.TierOne, k, types.ParseFailMsg)
+		for _, fact := range systemInfoFacts {
+			fact.Value = types.ParseFailMsg
+			f.AddFact(*fact)
 		}
 		return
 	}
@@ -80,27 +82,27 @@ func (w *WindowsSysteminfo) Parse(f *types.Facts) {
 
 	// Extract and set facts
 	if v, ok := fields["Host Name"]; ok && v != "" {
-		f.Add(types.TierOne, "os.hostname", v)
+		systemInfoFacts["os.hostname"].Value = v
 	} else {
-		f.Add(types.TierOne, "os.hostname", types.ParseFailMsg)
+		systemInfoFacts["os.hostname"].Value = types.ParseFailMsg
 	}
 
 	if v, ok := fields["OS Name"]; ok && v != "" {
-		f.Add(types.TierOne, "os.name", v)
+		systemInfoFacts["os.name"].Value = v
 	} else {
-		f.Add(types.TierOne, "os.name", types.ParseFailMsg)
+		systemInfoFacts["os.name"].Value = types.ParseFailMsg
 	}
 
 	if v, ok := fields["OS Version"]; ok && v != "" {
-		f.Add(types.TierOne, "os.version", v)
+		systemInfoFacts["os.version"].Value = v
 	} else {
-		f.Add(types.TierOne, "os.version", types.ParseFailMsg)
+		systemInfoFacts["os.version"].Value = types.ParseFailMsg
 	}
 
 	if v, ok := fields["OS Build Type"]; ok && v != "" {
-		f.Add(types.TierOne, "os.build", v)
+		systemInfoFacts["os.build"].Value = v
 	} else {
-		f.Add(types.TierOne, "os.build", types.ParseFailMsg)
+		systemInfoFacts["os.build"].Value = types.ParseFailMsg
 	}
 
 	// Total Physical Memory (in MB, convert to bytes for consistency)
@@ -108,12 +110,12 @@ func (w *WindowsSysteminfo) Parse(f *types.Facts) {
 		// Extract numeric part and format as SI string
 		cleaned := strings.Fields(v)
 		if len(cleaned) > 0 {
-			f.Add(types.TierOne, "phy.ram", cleaned[0]+" MB")
+			systemInfoFacts["phy.ram"].Value = cleaned[0] + " MB"
 		} else {
-			f.Add(types.TierOne, "phy.ram", types.ParseFailMsg)
+			systemInfoFacts["phy.ram"].Value = types.ParseFailMsg
 		}
 	} else {
-		f.Add(types.TierOne, "phy.ram", types.ParseFailMsg)
+		systemInfoFacts["phy.ram"].Value = types.ParseFailMsg
 	}
 
 	// Processor count (parse "N Processor(s) Installed" format)
@@ -121,61 +123,61 @@ func (w *WindowsSysteminfo) Parse(f *types.Facts) {
 		// Extract first field (count)
 		parts := strings.Fields(v)
 		if len(parts) > 0 {
-			f.Add(types.TierOne, "phy.cpu.cores", parts[0])
+			systemInfoFacts["phy.cpu.cores"].Value = parts[0]
 		} else {
-			f.Add(types.TierOne, "phy.cpu.cores", types.ParseFailMsg)
+			systemInfoFacts["phy.cpu.cores"].Value = types.ParseFailMsg
 		}
 	} else {
-		f.Add(types.TierOne, "phy.cpu.cores", types.ParseFailMsg)
+		systemInfoFacts["phy.cpu.cores"].Value = types.ParseFailMsg
 	}
 
 	// Registered Owner
 	if v, ok := fields["Registered Owner"]; ok && v != "" {
-		f.Add(types.TierTwo, "os.owner", v)
+		systemInfoFacts["os.owner"].Value = v
 	} else {
-		f.Add(types.TierTwo, "os.owner", types.ParseFailMsg)
+		systemInfoFacts["os.owner"].Value = types.ParseFailMsg
 	}
 
 	// Registered Organization
 	if v, ok := fields["Registered Organization"]; ok && v != "" {
-		f.Add(types.TierTwo, "os.organization", v)
+		systemInfoFacts["os.organization"].Value = v
 	} else {
-		f.Add(types.TierTwo, "os.organization", types.ParseFailMsg)
+		systemInfoFacts["os.organization"].Value = types.ParseFailMsg
 	}
 
 	// Original Install Date
 	if v, ok := fields["Original Install Date"]; ok && v != "" {
-		f.Add(types.TierTwo, "os.install_date", v)
+		systemInfoFacts["os.install_date"].Value = v
 	} else {
-		f.Add(types.TierTwo, "os.install_date", types.ParseFailMsg)
+		systemInfoFacts["os.install_date"].Value = types.ParseFailMsg
 	}
 
 	// System Boot Time
 	if v, ok := fields["System Boot Time"]; ok && v != "" {
-		f.Add(types.TierTwo, "run.boot_time", v)
+		systemInfoFacts["run.boot_time"].Value = v
 	} else {
-		f.Add(types.TierTwo, "run.boot_time", types.ParseFailMsg)
+		systemInfoFacts["run.boot_time"].Value = types.ParseFailMsg
 	}
 
 	// System Manufacturer
 	if v, ok := fields["System Manufacturer"]; ok && v != "" {
-		f.Add(types.TierTwo, "phy.manufacturer", v)
+		systemInfoFacts["phy.manufacturer"].Value = v
 	} else {
-		f.Add(types.TierTwo, "phy.manufacturer", types.ParseFailMsg)
+		systemInfoFacts["phy.manufacturer"].Value = types.ParseFailMsg
 	}
 
 	// System Model
 	if v, ok := fields["System Model"]; ok && v != "" {
-		f.Add(types.TierTwo, "phy.model", v)
+		systemInfoFacts["phy.model"].Value = v
 	} else {
-		f.Add(types.TierTwo, "phy.model", types.ParseFailMsg)
+		systemInfoFacts["phy.model"].Value = types.ParseFailMsg
 	}
 
 	// System Type
 	if v, ok := fields["System Type"]; ok && v != "" {
-		f.Add(types.TierTwo, "phy.system_type", v)
+		systemInfoFacts["phy.system_type"].Value = v
 	} else {
-		f.Add(types.TierTwo, "phy.system_type", types.ParseFailMsg)
+		systemInfoFacts["phy.system_type"].Value = types.ParseFailMsg
 	}
 
 	// BIOS Version (version, date format - extract version only)
@@ -184,25 +186,30 @@ func (w *WindowsSysteminfo) Parse(f *types.Facts) {
 		parts := strings.SplitN(v, ",", 2)
 		version := strings.TrimSpace(parts[0])
 		if version != "" {
-			f.Add(types.TierThree, "phy.bios_version", version)
+			systemInfoFacts["phy.bios_version"].Value = version
 		} else {
-			f.Add(types.TierThree, "phy.bios_version", types.ParseFailMsg)
+			systemInfoFacts["phy.bios_version"].Value = types.ParseFailMsg
 		}
 	} else {
-		f.Add(types.TierThree, "phy.bios_version", types.ParseFailMsg)
+		systemInfoFacts["phy.bios_version"].Value = types.ParseFailMsg
 	}
 
 	// Domain
 	if v, ok := fields["Domain"]; ok && v != "" {
-		f.Add(types.TierTwo, "net.domain", v)
+		systemInfoFacts["net.domain"].Value = v
 	} else {
-		f.Add(types.TierTwo, "net.domain", types.ParseFailMsg)
+		systemInfoFacts["net.domain"].Value = types.ParseFailMsg
 	}
 
 	// Network Cards
 	if v, ok := fields["Network Card(s)"]; ok && v != "" {
-		f.Add(types.TierThree, "net.network_cards", v)
+		systemInfoFacts["net.network_cards"].Value = v
 	} else {
-		f.Add(types.TierThree, "net.network_cards", types.ParseFailMsg)
+		systemInfoFacts["net.network_cards"].Value = types.ParseFailMsg
+	}
+
+	// Add all facts to the FactDB
+	for _, fact := range systemInfoFacts {
+		f.AddFact(*fact)
 	}
 }
