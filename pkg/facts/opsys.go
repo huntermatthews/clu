@@ -65,20 +65,13 @@ func OpSysFactory() *OpSys {
 	} else {
 		// If its not Windows, use Uname to determine OS.
 		uname := &sources.Uname{}
-		facts := types.NewFacts()
-		uname.Parse(facts)
-		kernel, ok := facts.Get("os.kernel.name")
+		factdb := types.NewFactDB()
+		uname.Parse(factdb)
+		kernel, ok := factdb.Get("os.kernel.name")
 		if !ok {
 			panic("unable to determine OS kernel name")
 		}
 
-	switch kernel {
-	case "Darwin":
-		return NewDarwin()
-	case "Linux":
-		return NewLinux()
-	default:
-		panic("unsupported operating system; got " + kernel)
 		switch kernel {
 		case "Darwin":
 			return NewDarwin()
@@ -86,7 +79,6 @@ func OpSysFactory() *OpSys {
 			return NewLinux()
 		default:
 			panic("unsupported operating system; got " + kernel)
-
 		}
 	}
 }
