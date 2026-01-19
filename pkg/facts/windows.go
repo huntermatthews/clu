@@ -10,8 +10,7 @@ import (
 // NewWindows constructs the Windows OpSys with its ordered sources and fact lists.
 func NewWindows() *OpSys {
 	srcs := []types.Sources{
-		//		&sources.WindowsSystemInfo{},
-		&sources.WindowsVer{},
+		&sources.WindowsSysteminfo{},
 		&sources.Clu{},
 	}
 	defaults := []string{
