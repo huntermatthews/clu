@@ -131,7 +131,7 @@ jobs:
             depends_on "go" => :build
 
             def install
-              system "go", "build", *std_go_args(ldflags: "-X github.com/${{ github.repository }}/pkg.Version=$VERSION"), "./cmd/main.go"
+              system "go", "build", *std_go_args(ldflags: "-X github.com/${{ github.repository }}/pkg.Version=$VERSION"), "./cmd/clu/main.go"
             end
 
             test do

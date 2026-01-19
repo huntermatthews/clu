@@ -3,16 +3,31 @@
 set -euo pipefail
 
 # Script to build RPM package locally from source tarball
-# Usage: ./scripts/build-rpm.sh <version>
+# Usage: ./scripts/build-rpm.sh <version> [architecture]
 
-if [[ ${#} -ne 1 ]]; then
-    echo "Error: Version argument is required"
-    echo "Usage: ${0} <version>"
+if [[ ${#} -lt 1 || ${#} -gt 2 ]]; then
+    echo "Error: Version argument is required, architecture is optional"
+    echo "Usage: ${0} <version> [architecture]"
     echo "Example: ${0} 1.2.3"
+    echo "Example: ${0} 1.2.3 aarch64"
     exit 1
 fi
 
 VERSION="${1}"
+ARCH="${2:-x86_64}"  # Default to x86_64 if not specified
+
+# Convert architecture naming conventions
+if [[ "${ARCH}" == "arm64" || "${ARCH}" == "aarch64" ]]; then
+    RPM_ARCH="aarch64"
+    GOARCH="arm64"
+elif [[ "${ARCH}" == "x86_64" || "${ARCH}" == "amd64" ]]; then
+    RPM_ARCH="x86_64"
+    GOARCH="amd64"
+else
+    echo "Error: Unsupported architecture '${ARCH}'"
+    echo "Supported: x86_64, amd64, aarch64, arm64"
+    exit 1
+fi
 
 # Validate version format (RPM/DEB compatible)
 if ! [[ "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*(-[a-zA-Z0-9]+)*$ ]]; then
@@ -24,7 +39,7 @@ fi
 
 TARBALL_PATH="clu-${VERSION}.tar.gz"
 
-echo "Building RPM for clu version: ${VERSION}"
+echo "Building RPM for clu version: ${VERSION}, architecture: ${RPM_ARCH}"
 
 # Create source tarball if it doesn't exist
 if [[ ! -f "${TARBALL_PATH}" ]]; then
@@ -49,12 +64,27 @@ echo "Copying source tarball and spec file..."
 cp "${TARBALL_PATH}" ~/rpmbuild/SOURCES/
 cp redhat/clu.spec ~/rpmbuild/SPECS/
 
+# Check for Go compiler (flexible approach)
+if ! command -v go >/dev/null 2>&1 && [[ ! -x /usr/lib/go-1.20/bin/go ]]; then
+    echo "Error: Go compiler not found"
+    echo "Install Go with one of these options:"
+    echo "  Ubuntu 20.04: sudo apt-get install golang-1.20-go"
+    echo "  Ubuntu 22.04+: sudo apt-get install golang-go"
+    echo "  Or use official installer from https://golang.org/dl/"
+    exit 1
+fi
+
 # Build RPM
 echo "Building RPM from source..."
-rpmbuild --define "_version ${VERSION}" --define "_buildhost $(hostname -f)" -bb ~/rpmbuild/SPECS/clu.spec
+export GOARCH="${GOARCH}"
+export CGO_ENABLED=0
+rpmbuild --define "_version ${VERSION}" \
+         --define "_buildhost $(hostname -f)" \
+         --target "${RPM_ARCH}" \
+         -bb ~/rpmbuild/SPECS/clu.spec
 
 # Show results
 echo "Generated RPM:"
-ls -la ~/rpmbuild/RPMS/x86_64/clu-*.rpm
+ls -la ~/rpmbuild/RPMS/${RPM_ARCH}/clu-*.rpm
 
-echo "To install: sudo rpm -i ~/rpmbuild/RPMS/x86_64/clu-${VERSION}-1.*.rpm"
+echo "To install: sudo rpm -i ~/rpmbuild/RPMS/${RPM_ARCH}/clu-${VERSION}-1.*.rpm"

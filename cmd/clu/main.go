@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -22,6 +23,7 @@ type CLI struct {
 	Facts     subcmd.FactsCmd     `cmd:"" help:"Show facts." default:"withargs"`
 	Collector subcmd.CollectorCmd `cmd:"" help:"Run collector."`
 	Requires  subcmd.RequiresCmd  `cmd:"" help:"Requires actions: list or check."`
+	Tools     subcmd.ToolsCmd     `cmd:"" help:"Check SSA admins workstations tools."`
 }
 
 func main() {
@@ -50,26 +52,22 @@ func run(args []string, stdout, stderr input.Stdout) int {
 		return 1
 	}
 
-	if cli.Debug {
-		fmt.Fprintln(stderr, "debug: enabled")
-		// see comment in pkg/config.go about this
-		global.Config.Debug = true
-	}
+	// setup logging and global config based on debug bool flag
+	setupLogging(cli.Debug)
+	global.Config.Debug = cli.Debug
 
 	if cli.Net {
-		fmt.Fprintln(stderr, "net: enabled")
+		slog.Debug("network access enabled")
 		global.Config.NetEnabled = true
 	}
 
 	if cli.MockDir != "" {
-		fmt.Fprintln(stderr, "mock mode: enabled, dir =", cli.MockDir)
+		slog.Debug("mock mode: enabled, dir =" + cli.MockDir)
 
-		// global.Config.MockDir = cli.MockDir
 		if err := EnableMockMode(cli.MockDir); err != nil {
 			fmt.Fprintln(stderr, err)
 			return 1
 		}
-
 	}
 
 	err = ctx.Run()

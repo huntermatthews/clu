@@ -11,6 +11,14 @@ indent_style = space
 indent_size = 4
 insert_final_newline = true
 trim_trailing_whitespace = true
+max_line_length = 120
 
-[*.{md,yaml}]
+[*.{md}]
 indent_size = 2
+
+[*.{sls,yml,yaml}]
+indent_size = 2
+
+# Makefiles MUST use tab indentation - part of the language.
+[{GNUmakefile,Makefile,Makefile.*,*.mk}]
+indent_style = tab

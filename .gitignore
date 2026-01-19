@@ -19,3 +19,4 @@ go.work.sum
 # Anything we build goes here
 dist/
 build/
+/cmd2/cmd2

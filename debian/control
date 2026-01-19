@@ -1,9 +1,9 @@
 Source: clu
 Section: admin
 Priority: optional
-Maintainer: SSA Team <hunter.matthews@nih.gov>
+Maintainer: Hunter Matthews <hunter.matthews@nih.gov>
 Build-Depends: debhelper-compat (= 12), golang-1.20-go | golang-1.21-go | golang-1.22-go | golang-go (>= 2:1.20)
-Standards-Version: 4.6.0
+Standards-Version: 4.7.0
 Homepage: https://github.com/NHGRI/clu
 
 Package: clu

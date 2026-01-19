@@ -51,7 +51,7 @@ jobs:
           mkdir -p "${ARTIFACT_DIR}"
 
           # Build binary with debug symbols and platform-specific name
-          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/NHGRI/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}" ./cmd/main.go
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/NHGRI/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}" ./cmd/clu/main.go
 
       - name: Generate checksums
         run: |
@@ -134,9 +134,8 @@ jobs:
         include:
           - architecture: x86_64
             runner: ubuntu-latest
-          # Temporarily disabled - ARM runner availability issues
-          # - architecture: aarch64
-          #   runner: ubuntu-latest-arm
+          - architecture: arm64
+            runner: ubuntu-latest
     uses: ./.github/workflows/build-rpm.yaml
     with:
       architecture: ${{ matrix.architecture }}
@@ -161,9 +160,8 @@ jobs:
         include:
           - architecture: amd64
             runner: ubuntu-latest
-          # Temporarily disabled - ARM runner availability issues
-          # - architecture: arm64
-          #   runner: ubuntu-latest-arm
+          - architecture: arm64
+            runner: ubuntu-latest
     uses: ./.github/workflows/build-deb.yaml
     with:
       architecture: ${{ matrix.architecture }}
@@ -233,4 +231,8 @@ jobs:
 # 15. Documentation updates:
 #     - DEB packages work on Proxmox hosts
 #     - no relationship between workflows and scripts/ - scripts just there for debugging/local builds.
+#
+# 16. Case statement conversion:
+#     - Convert if/elif architecture mapping to case statements in build-rpm.yaml and build-deb.yaml
+#     - More idiomatic bash pattern for matching alternatives (e.g., arm64|aarch64)
 #

@@ -40,8 +40,13 @@ jobs:
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-1.20-go dpkg-dev build-essential debhelper
 
+          # Install cross-compilation tools if building for ARM64 on AMD64
+          if [ "${{ inputs.architecture }}" = "arm64" ]; then
+            apt-get install -y -qq --no-install-recommends crossbuild-essential-arm64
+          fi
+
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
@@ -88,8 +93,17 @@ jobs:
           # Update debian/changelog with current version
           sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
 
-          # Build the DEB package
-          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -b -d
+          # Map architecture names (matching build-deb.sh script)
+          case "${{ inputs.architecture }}" in
+            amd64) GOARCH=amd64 ;;
+            arm64) GOARCH=arm64 ;;
+            *) echo "Unsupported architecture: ${{ inputs.architecture }}"; exit 1 ;;
+          esac
+
+          # Build the DEB package (matching build-deb.sh: export vars and use -a flag)
+          export GOARCH="${GOARCH}"
+          export CGO_ENABLED=0
+          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -ui -i -b -d -a${{ inputs.architecture }}
 
           # Move the .deb file to a predictable location at the root
           cd ..
