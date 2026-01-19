@@ -160,7 +160,6 @@ func collectPrograms(reqs *types.Requires, workDir string) error {
 	return nil
 }
 
-// transformCmdlineToFilename simplified version mirroring Python input.transform_cmdline_to_filename.
 func transformCmdlineToFilename(cmd string) (base string, rc string) {
 	// Replace spaces and special chars with underscores; keep alnum and dot.
 	cleaned := make([]rune, 0, len(cmd))
@@ -193,10 +192,8 @@ func copyFile(src, dst string) {
 	}
 }
 
-// (removed writeFilePath and writeFile helpers; callers use os.WriteFile directly)
-
 func createCollection(hostname, workDir, outDir string) (string, error) {
-	outPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", global.Title, hostname))
+	outPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", global.GetAppInfo().Name, hostname))
 	f, err := os.Create(outPath)
 	if err != nil {
 		return "", err
