@@ -42,14 +42,14 @@ func (w *WindowsSysteminfo) Provides(p types.Provides) {
 
 // Requires declares program dependency.
 func (w *WindowsSysteminfo) Requires(r *types.Requires) {
-	r.Programs = append(r.Programs, "systeminfo")
+	r.Programs = append(r.Programs, "systeminfo /FO CSV")
 }
 
 // Parse executes systeminfo and extracts OS/hardware facts from CSV output.
 // Maps CSV header to values and extracts relevant fields.
 func (w *WindowsSysteminfo) Parse(f *types.FactDB) {
 
-	data, rc, _ := input.CommandRunner("systeminfo")
+	data, rc, _ := input.CommandRunner("systeminfo /FO CSV")
 	if data == "" || rc != 0 {
 		for _, fact := range systemInfoFacts {
 			fact.Value = types.ParseFailMsg
