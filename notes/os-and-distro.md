@@ -30,14 +30,15 @@ We can set "nhgri-hostname" and "nhgri-assetno" however...
 
 Based on <https://itbwiki.nhgri.nih.gov/wiki/index.php/Workstation_Naming_Conventions>
 
-^HG-(0\d{7})-[DLTVC][WML]\d$  with gmi flags (global, multiline [^ and $ work], case insensitive)
+`^HG-(0\d{7})-[DLTVC][WML]\d$`  with gmi flags (global, multiline [^ and $ work], case insensitive)
 is the regex for our hostnames.
 
 
 TODO: make the trailing digit optional - they changed the spec in 2021-12
 
+```python
 HG_HOSTNAME_RE = re.compile('^HG-(0\d{7})-[DLTVC][WML](\d)?$', re.ASCII | re.IGNORECASE | re.MULTILINE)
-
+```
 
 ## Gentoo
 
