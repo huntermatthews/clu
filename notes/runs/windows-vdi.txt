@@ -1,0 +1,24 @@
+C:\Users\matthewsht\OneDrive - National Institutes of Health\Desktop\WINDOWS>clu-windows-amd64.exe -t 3
+clu.binary: C:\Users\matthewsht\OneDrive - National Institutes of Health\Desktop\WINDOWS\clu-windows-amd64.exe
+clu.cmdline: clu-windows-amd64.exe -t 3
+clu.cwd: C:\Users\matthewsht\OneDrive - National Institutes of Health\Desktop\WINDOWS
+clu.date: 2026-01-21T20:15:47Z
+clu.golang.version: go1.25.6
+clu.user: NIH\matthewsht
+clu.version: 0.8.48-45-ge83f77b
+net.domain: nih.gov
+net.network_cards: 1 NIC(s) Installed.,[01]: Microsoft Hyper-V Network Adapter,      Connection Name: Ethernet 5,      DHCP Enabled:    Yes,      DHCP Server:     168.63.129.16,      IP address(es),      [01]: 10.178.136.176,      [02]: fe80::b62f:4ef7:969d:6e1f
+os.build: Multiprocessor Free
+os.hostname: CITGRI-b-01
+os.install_date: 1/9/2026, 4:35:37 PM
+os.name: Microsoft Windows 10 Enterprise for Virtual Desktops
+os.organization: N/A
+os.owner: N/A
+os.version: 10.0.19045 N/A Build 19045
+phy.bios_version: Microsoft Corporation Hyper-V UEFI Release v4.1
+phy.cpu.cores: 1
+phy.manufacturer: Microsoft Corporation
+phy.model: Virtual Machine
+phy.ram: 32,767 MB
+phy.system_type: x64-based PC
+run.boot_time: 1/20/2026, 7:03:23 AM
