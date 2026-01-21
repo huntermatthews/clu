@@ -16,7 +16,7 @@ build: setup ## Build the program for the current platform
 
 .PHONY: clean
 clean: ## Clean up build artifacts
-	@rm -rf dist/* coverage.out
+	@rm -rf dist/* coverage.out .go-md2man-installed
 
 .PHONY: clu-all
 clu-all: ## Build the Go CLI tool
@@ -41,9 +41,14 @@ install: build manpage ## Install clu binary, manpage, and documentation
 	install -m 644 clu.1 $(PREFIX)/share/man/man1/clu.1
 	install -m 644 README.md $(PREFIX)/share/doc/clu/README.md
 
+
 .PHONY: manpage
-manpage: ## Generate man page from markdown using go-md2man
+manpage: .go-md2man-installed ## Generate man page from markdown using go-md2man
 	go-md2man -in clu.1.md -out clu.1
+
+.go-md2man-installed:
+	go install github.com/cpuguy83/go-md2man/v2@latest
+	@touch .go-md2man-installed
 
 .PHONY: version
 version: ## Print the current version
@@ -94,10 +99,6 @@ vet: ## Run go vet
 ##
 
 .PHONY: setup
-setup: tools ## Setup Go modules
+setup: ## Setup Go modules
 	@mkdir -p dist
 	go mod download
-
-.PHONY: tools
-tools: ## Install development tools
-	go install github.com/cpuguy83/go-md2man/v2@latest
