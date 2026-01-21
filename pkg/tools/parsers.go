@@ -6,47 +6,38 @@ import (
 	"strings"
 )
 
-// parseVersionFromOutput extracts version number from command output
-func parseVersionFromOutput(output string) string {
-	// Get first line
-	firstLine := strings.Split(output, "\n")[0]
+// VersionParser tries multiple common version flags and parses version from output.
+// Tries "--version", "-V", and "version" in that order.
+// Returns "unknown" if all attempts fail.
+func DefaultVersionParser(path string) string {
+	args := []string{"--version", "-V", "version"}
 
-	// Common patterns: "name version X.Y.Z", "name X.Y.Z", "name-X.Y.Z", "name, version X.Y.Z"
-	// Match version numbers like X.Y.Z, X.Y, or just X
-	re := regexp.MustCompile(`\d+\.\d+(\.\d+)?`)
-	matches := re.FindString(firstLine)
+	for _, arg := range args {
+		cmd := exec.Command(path, arg)
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			continue
+		}
 
-	if matches != "" {
-		return matches
+		// Get first line
+		firstLine := strings.Split(string(output), "\n")[0]
+
+		// Common patterns: "name version X.Y.Z", "name X.Y.Z", "name-X.Y.Z", "name, version X.Y.Z"
+		// Match version numbers like X.Y.Z, X.Y, or just X
+		re := regexp.MustCompile(`\d+\.\d+(\.\d+)?`)
+		matches := re.FindString(firstLine)
+
+		if matches != "" {
+			return matches
+		}
 	}
 
 	return "unknown"
 }
 
-func VersionSimpleParser(path string) string {
-	// Run program --version and parse first line
-	cmd := exec.Command(path, "--version")
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return "unknown"
-	}
-
-	return parseVersionFromOutput(string(output))
-}
-
-func VersionSubcmdParser(path string) string {
-	// Run program version (subcommand) and parse first line
-	cmd := exec.Command(path, "version")
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return "unknown"
-	}
-
-	return parseVersionFromOutput(string(output))
-}
-
+// OpenSSH uses -V (capital V, single dash) and outputs to stderr
+// we also need to parse differently
 func VersionOpensshParser(path string) string {
-	// OpenSSH uses -V (capital V, single dash) and outputs to stderr
 	cmd := exec.Command(path, "-V")
 	output, err := cmd.CombinedOutput()
 	if err != nil {

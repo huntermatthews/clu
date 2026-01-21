@@ -11,38 +11,38 @@ import (
 )
 
 var specs = []ToolSpec{
-	{"python3", Required, tools.VersionSimpleParser},
-	{"jq", Required, tools.VersionSimpleParser},
-	{"fish", Required, tools.VersionSimpleParser},
-	{"packer", Required, tools.VersionSimpleParser},
-	{"terraform", Required, tools.VersionSimpleParser},
-	{"bash", Required, tools.VersionSimpleParser},
-	{"go", Required, tools.VersionSubcmdParser},
-	{"sed", Required, tools.VersionSimpleParser}, // special - gnu vs bsd
-	{"awk", Required, tools.VersionSimpleParser}, // special - gnu vs bsd
-	{"pip3", Required, tools.VersionSimpleParser},
-	{"curl", Required, tools.VersionSimpleParser},
+	{"python3", Required, tools.DefaultVersionParser},
+	{"jq", Required, tools.DefaultVersionParser},
+	{"fish", Required, tools.DefaultVersionParser},
+	{"packer", Required, tools.DefaultVersionParser},
+	{"terraform", Required, tools.DefaultVersionParser},
+	{"bash", Required, tools.DefaultVersionParser},
+	{"go", Required, tools.DefaultVersionParser},
+	{"sed", Required, tools.DefaultVersionParser}, // special - gnu vs bsd
+	{"awk", Required, tools.DefaultVersionParser}, // special - gnu vs bsd
+	{"pip3", Required, tools.DefaultVersionParser},
+	{"curl", Required, tools.DefaultVersionParser},
 	{"pass", Required, tools.VersionPassParser},
-	{"gpg", Required, tools.VersionSimpleParser},
+	{"gpg", Required, tools.DefaultVersionParser},
 	{"ssh", Required, tools.VersionOpensshParser},
-	{"git", Required, tools.VersionSimpleParser},
-	{"make", Required, tools.VersionSimpleParser},
+	{"git", Required, tools.DefaultVersionParser},
+	{"make", Required, tools.DefaultVersionParser},
 
-	{"yq", Recommended, tools.VersionSimpleParser},
-	{"uv", Recommended, tools.VersionSimpleParser},
-	{"salt", Recommended, tools.VersionSimpleParser},
-	{"zsh", Recommended, tools.VersionSimpleParser},
-	{"pkcs15-tool", Recommended, tools.VersionSimpleParser},
-	{"pkcs11-tool", Recommended, tools.VersionSimpleParser},
-	{"just", Recommended, tools.VersionSimpleParser},
+	{"yq", Recommended, tools.DefaultVersionParser},
+	{"uv", Recommended, tools.DefaultVersionParser},
+	{"salt", Recommended, tools.DefaultVersionParser},
+	{"zsh", Recommended, tools.DefaultVersionParser},
+	{"pkcs15-tool", Recommended, tools.DefaultVersionParser},
+	{"pkcs11-tool", Recommended, tools.DefaultVersionParser},
+	{"just", Recommended, tools.DefaultVersionParser},
 
-	{"lua", Optional, tools.VersionSimpleParser},
-	{"stow", Optional, tools.VersionSimpleParser},
-	{"lmod", Optional, tools.VersionSimpleParser},
-	{"pipx", Optional, tools.VersionSimpleParser},
-	{"keyring", Optional, tools.VersionSimpleParser},
-	{"age", Optional, tools.VersionSimpleParser}, // maybe one day
-	{"vpn", Optional, tools.VersionSimpleParser},
+	{"lua", Optional, tools.DefaultVersionParser},
+	{"stow", Optional, tools.DefaultVersionParser},
+	{"lmod", Optional, tools.DefaultVersionParser},
+	{"pipx", Optional, tools.DefaultVersionParser},
+	{"keyring", Optional, tools.DefaultVersionParser},
+	{"age", Optional, tools.DefaultVersionParser}, // maybe one day
+	{"vpn", Optional, tools.DefaultVersionParser},
 }
 
 type ToolCategory string
@@ -70,7 +70,8 @@ type ToolsCmd struct {
 
 func (f *ToolsCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	w := tabwriter.NewWriter(stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "TOOL\tVERSION\tPATH")
+	fmt.Fprintln(w, "Tool\tVersion\tPath")
+	fmt.Fprintln(w, "====\t=======\t====")
 
 	for _, spec := range specs {
 		if f.Category == All || spec.Category == f.Category {

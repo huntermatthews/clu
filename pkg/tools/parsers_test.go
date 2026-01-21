@@ -8,6 +8,23 @@ import (
 	"testing"
 )
 
+// parseVersionFromOutput is a helper for tests to extract version from output
+func parseVersionFromOutput(output string) string {
+	// Get first line
+	firstLine := strings.Split(output, "\n")[0]
+
+	// Common patterns: "name version X.Y.Z", "name X.Y.Z", "name-X.Y.Z", "name, version X.Y.Z"
+	// Match version numbers like X.Y.Z, X.Y, or just X
+	re := regexp.MustCompile(`\d+\.\d+(\.\d+)?`)
+	matches := re.FindString(firstLine)
+
+	if matches != "" {
+		return matches
+	}
+
+	return "unknown"
+}
+
 func TestVersionSimpleParser_Python3(t *testing.T) {
 	testFile := filepath.Join("..", "..", "testdata", "host_tools", "_programs", "python3_--version")
 	content, err := os.ReadFile(testFile)
