@@ -18,8 +18,6 @@ var specs = []ToolSpec{
 	{"terraform", Required, tools.DefaultVersionParser},
 	{"bash", Required, tools.DefaultVersionParser},
 	{"go", Required, tools.DefaultVersionParser},
-	{"sed", Required, tools.DefaultVersionParser}, // special - gnu vs bsd
-	{"awk", Required, tools.DefaultVersionParser}, // special - gnu vs bsd
 	{"pip3", Required, tools.DefaultVersionParser},
 	{"curl", Required, tools.DefaultVersionParser},
 	{"pass", Required, tools.VersionPassParser},
@@ -61,6 +59,7 @@ type ToolSpec struct {
 	Name         string
 	Category     ToolCategory
 	ParseVersion VersionParser
+    // TODO: add field later for team standard minimum version
 }
 
 // ToolsCmd implements the "tools" subcommand.
