@@ -7,10 +7,10 @@ import (
 )
 
 // VersionParser tries multiple common version flags and parses version from output.
-// Tries "--version", "-V", and "version" in that order.
+// Tries "--version", "-V", "version", and "-v" in that order.
 // Returns "unknown" if all attempts fail.
 func DefaultVersionParser(path string) string {
-	args := []string{"--version", "-V", "version"}
+	args := []string{"--version", "-V", "version", "-v"}
 
 	for _, arg := range args {
 		cmd := exec.Command(path, arg)
