@@ -30,18 +30,18 @@ func setupLogging(debug bool) {
 }
 
 func (h *ConsoleHandler) Handle(ctx context.Context, r slog.Record) error {
+	// Add source info if debug level
+	if r.Level == slog.LevelDebug && r.PC != 0 {
+		fs := runtime.CallersFrames([]uintptr{r.PC})
+		f, _ := fs.Next()
+		fmt.Fprintf(os.Stderr, "[%s:%d] ", filepath.Base(f.File), f.Line)
+	}
+
 	fmt.Fprintf(os.Stderr, "%s %s: %s",
 		r.Time.Format("15:04:05"),
 		r.Level.String(),
 		r.Message,
 	)
-
-	// Add source info if debug level
-	if r.Level == slog.LevelDebug && r.PC != 0 {
-		fs := runtime.CallersFrames([]uintptr{r.PC})
-		f, _ := fs.Next()
-		fmt.Fprintf(os.Stderr, " [%s:%d]", filepath.Base(f.File), f.Line)
-	}
 
 	// Handle key-value pairs
 	r.Attrs(func(a slog.Attr) bool {
