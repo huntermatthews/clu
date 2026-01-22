@@ -85,6 +85,7 @@ func EnableMockMode(dir string) error {
 	}
 
 	global.Config.MockDir = path
+	slog.Debug("mock mode path resolved to: " + path)
 
 	// Change the input functions to the mock versions.
 	input.CommandRunner = input.MockTextProgram

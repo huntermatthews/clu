@@ -43,7 +43,7 @@ func (f *FactsCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 
 	// Filter down to requested + tier selection.
 	outputFacts := filterFacts(facts, f.FactNames, int(f.Tier))
-	// Output.
+
 	doOutput(stdout, stderr, outputFacts, f.OutputFormat)
 
 	return nil
