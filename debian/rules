@@ -4,16 +4,11 @@
 	dh $@
 
 override_dh_auto_build:
-	$(eval VERSION := $(shell dpkg-parsechangelog -SVersion | cut -d- -f1))
-	$(eval GOCMD := $(shell which go 2>/dev/null || echo /usr/lib/go-1.20/bin/go))
-    # GOARCH environment variable (if set) will be honored by Go compiler for cross-compilation
-	CGO_ENABLED=0 $(GOCMD) build -ldflags "-X github.com/NHGRI/clu/pkg/global.Version=$(VERSION)" -o clu ./cmd/clu/main.go
-
+	make build VERSION=$(VERSION)
 
 override_dh_auto_install:
-	install -D -m 755 clu debian/clu/usr/bin/clu
-	install -D -m 644 clu.1 debian/clu/usr/share/man/man1/clu.1
-	install -D -m 644 README.md debian/clu/usr/share/doc/clu/README.md
+	# debian/clu/ is the staging directory; files installed there become /usr/* in the final package
+	make install VERSION=$(VERSION) PREFIX=$(CURDIR)/debian/clu/usr
 
 override_dh_auto_clean:
 	rm -f clu
