@@ -14,6 +14,7 @@ on:
         type: string
 
 env:
+  # Some of the GH runners have dubious hostnames; set a consistent build host name
   BUILD_HOST: action-runner.github.com
 
 jobs:
