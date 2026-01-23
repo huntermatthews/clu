@@ -70,29 +70,12 @@ jobs:
             -o "clu-$VERSION.tar.gz" \
             "$GITHUB_REF_NAME"
 
-      - name: Inspect tarball contents (debug)
-        run: |
-          echo "Top-level entries in tarball:"
-          tar -tzf "clu-$VERSION.tar.gz" | cut -d/ -f1 | sort -u
-          echo "Sample of tar listing (first 20):"
-          tar -tzf "clu-$VERSION.tar.gz" | head -n 20
-
-      - name: Extract and prepare source
-        run: |
-          echo "Before extract, working directory contents:" && ls -la
-          tar -xzf clu-$VERSION.tar.gz
-          # GitHub archives create clu-{tag} directory, rename to clu-{version}
-          if [ -d "clu-${{ github.ref_name }}" ] && [ ! -d "clu-$VERSION" ]; then
-            mv "clu-${{ github.ref_name }}" "clu-$VERSION"
-          fi
-          echo "After extract/rename, working directory contents:" && ls -la
-
       - name: Setup RPM build directory
         run: |
           # Create RPM build directory manually - rpmdevtools not available in Ubuntu repositories
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           cp clu-$VERSION.tar.gz ~/rpmbuild/SOURCES/
-          cp clu-$VERSION/redhat/clu.spec ~/rpmbuild/SPECS/
+          cp redhat/clu.spec ~/rpmbuild/SPECS/
 
       - name: Build RPM
         env:
