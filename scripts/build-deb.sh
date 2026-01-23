@@ -13,7 +13,7 @@ if [[ ${#} -lt 1 || ${#} -gt 2 ]]; then
     exit 1
 fi
 
-VERSION="${1}"
+export VERSION="${1}"
 ARCH="${2:-amd64}"  # Default to amd64 if not specified
 
 # Convert architecture naming conventions
@@ -96,8 +96,6 @@ fi
 # Build the package (unsigned for local builds)
 # Use -d flag to skip build dependency checks when cross-compiling
 # Use dpkg-buildpackage directly to avoid debuild wrapper issues with architecture detection
-export GOARCH="${GOARCH}"
-export CGO_ENABLED=0
 (cd "clu-${VERSION}" && dpkg-buildpackage -us -uc -ui -i -b -d -a"${DEB_ARCH}")
 
 # Show results

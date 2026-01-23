@@ -101,8 +101,6 @@ jobs:
           esac
 
           # Build the DEB package (matching build-deb.sh: export vars and use -a flag)
-          export GOARCH="${GOARCH}"
-          export CGO_ENABLED=0
           HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -ui -i -b -d -a${{ inputs.architecture }}
 
           # Move the .deb file to a predictable location at the root

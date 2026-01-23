@@ -13,7 +13,7 @@ if [[ ${#} -lt 1 || ${#} -gt 2 ]]; then
     exit 1
 fi
 
-VERSION="${1}"
+export VERSION="${1}"
 ARCH="${2:-x86_64}"  # Default to x86_64 if not specified
 
 # Convert architecture naming conventions
@@ -76,8 +76,6 @@ fi
 
 # Build RPM
 echo "Building RPM from source..."
-export GOARCH="${GOARCH}"
-export CGO_ENABLED=0
 rpmbuild --define "_version ${VERSION}" \
          --define "_buildhost $(hostname -f)" \
          --target "${RPM_ARCH}" \

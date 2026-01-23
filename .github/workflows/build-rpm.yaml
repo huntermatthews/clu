@@ -96,7 +96,6 @@ jobs:
       - name: Build RPM
         env:
           GOARCH: ${{ env.GOARCH }}
-          CGO_ENABLED: 0
         run: |
           rpmbuild --define "_version $VERSION" \
                    --define "_buildhost $BUILD_HOST" \
