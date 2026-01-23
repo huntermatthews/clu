@@ -31,6 +31,14 @@ jobs:
           VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+          # Map architecture names (matching build-deb.sh script)
+          case "${{ inputs.architecture }}" in
+            amd64) GOARCH=amd64 ;;
+            arm64) GOARCH=arm64 ;;
+            *) echo "Unsupported architecture: ${{ inputs.architecture }}"; exit 1 ;;
+          esac
+          echo "GOARCH=$GOARCH" >> $GITHUB_ENV
+
       - name: Install dependencies and DEB build tools
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -93,13 +101,6 @@ jobs:
 
           # Update debian/changelog with current version
           sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
-
-          # Map architecture names (matching build-deb.sh script)
-          case "${{ inputs.architecture }}" in
-            amd64) GOARCH=amd64 ;;
-            arm64) GOARCH=arm64 ;;
-            *) echo "Unsupported architecture: ${{ inputs.architecture }}"; exit 1 ;;
-          esac
 
           # Build the DEB package (matching build-deb.sh: export vars and use -a flag)
           HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -ui -i -b -d -a${{ inputs.architecture }}
