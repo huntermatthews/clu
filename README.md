@@ -70,3 +70,14 @@ curl -L \
   -o "${FILE_NAME}" \
   "${DOWNLOAD_URL}"
 ```
+
+## Development Notes
+
+### Invariants / Assumptions
+
+Several parts of clu rely on the parsing in the "facts" subcmd. That subcmd was the original heart of clu
+and gets used in all kinds of places. I try and list the assumptions here:
+
+- **os.kernel.name** - This is the output of "uname -s" on unix systems and the equivalent hardcoded value on Windows.
+This is used in various places to know what "OS" this is with "os.distro.name" further differentiating
+the linux distros.
