@@ -4,7 +4,8 @@
 # version check HAS to be at the top , BEFORE older versions of Make will choke on later syntax
 # EL7 ships with 3.82, so this is the current minimum.
 # macOS ships with an ancient version of Make (3.81), so sysadmins will need to install a newer version via Homebrew.
-MINIMUM_GNU_MAKE := 3.81
+# (as of Jan 2026 the big feature we rely on is .ONESHELL, added in 3.82)
+MINIMUM_GNU_MAKE := 3.82
 ifeq "${MAKE_VERSION}" ""
   $(error This Makefile requires GNU Make $(MINIMUM_GNU_MAKE) or greater)
 endif
@@ -13,8 +14,7 @@ ifneq "$(MINIMUM_GNU_MAKE)" "$(firstword $(sort $(MINIMUM_GNU_MAKE) ${MAKE_VERSI
 endif
 
 # Makefile settings
-# Note: --warn-undefined-variables is too noisy with recursive make (warns about GNUMAKEFLAGS)
-MAKEFLAGS += --no-builtin-rules --no-builtin-variables --no-print-directory
+MAKEFLAGS += --no-builtin-rules --no-builtin-variables --no-print-directory --warn-undefined-variables
 SHELL := bash
 .DEFAULT_GOAL := help
 .ONESHELL:

@@ -11,26 +11,24 @@ PLATFORMS := darwin-arm64 windows-amd64 linux-amd64 linux-arm64
 ##
 
 .PHONY: build
-build: setup ## Build the program for the current platform
-	CGO_ENABLED=0 go build -ldflags "-X $(PKG)/pkg/global.Version=$(VERSION)" -o dist/clu ./cmd/clu
+build: setup clu ## Build the program for the current platform
 
 .PHONY: clean
 clean: ## Clean up build artifacts
 	@rm -rf dist/* coverage.out .go-md2man-installed
 
+.PHONY: clu
+clu:
+	CGO_ENABLED=0 go build -ldflags "-X $(PKG)/pkg/global.Version=$(VERSION)" -o dist/clu ./cmd/clu
+
 .PHONY: clu-all
-clu-all: ## Build the Go CLI tool
+clu-all: ## Build clu for all platforms
 	@for plat in $(PLATFORMS); do
-		$(MAKE) clu-$$plat
+		GOOS=$${plat%-*}
+		GOARCH=$${plat#*-}
+		echo "Building clu for $$GOOS-$$GOARCH..."
+		CGO_ENABLED=0 GOOS=$$GOOS GOARCH=$$GOARCH go build -ldflags "-X $(PKG)/pkg/global.Version=$(VERSION)" -o dist/clu-$$GOOS-$$GOARCH ./cmd/clu
 	done
-
-.PHONY: clu-%
-clu-%: ## Build clu for a specific platform (e.g., make clu-darwin-amd64)
-	@GOOS=$(word 1,$(subst -, ,$*))
-	GOARCH=$(word 2,$(subst -, ,$*))
-	GOOS=$$GOOS GOARCH=$$GOARCH $(MAKE) build
-	mv dist/clu dist/clu-$$GOOS-$$GOARCH
-
 
 .PHONY: install
 install: build manpage ## Install clu binary, manpage, and documentation
