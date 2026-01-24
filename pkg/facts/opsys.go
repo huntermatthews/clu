@@ -3,7 +3,7 @@ package facts
 // Go port of src/clu/opsys/opsys.py providing an operating system abstraction
 // that aggregates fact sources and exposes combined Provides and Requires data.
 // Concrete OS implementations (e.g. Darwin, Linux) can construct an OpSys with
-// an ordered slice of sources plus default and early fact key lists.
+// an ordered slice of sources plus early fact key list.
 
 import (
 	"github.com/NHGRI/clu/pkg/facts/sources"
@@ -12,16 +12,10 @@ import (
 )
 
 // OpSys aggregates a set of fact sources for an operating system.
-// DefaultFacts and EarlyFacts mirror the Python methods returning ordered key lists.
+// EarlyFacts mirrors the Python method returning ordered key list.
 type OpSys struct {
-	Sources      []types.Sources
-	DefaultFacts []string
-	EarlyFacts   []string
-}
-
-// New constructs a new OpSys instance.
-func NewOpSys(s []types.Sources, defaults []string, early []string) *OpSys {
-	return &OpSys{Sources: s, DefaultFacts: defaults, EarlyFacts: early}
+	Sources    []types.Sources
+	EarlyFacts []string
 }
 
 // Provides builds a provider map by invoking Provides on each source in order.
@@ -44,11 +38,6 @@ func (o *OpSys) Requires() *types.Requires {
 		}
 	}
 	return reqs
-}
-
-// GetDefaultFacts returns the list of default fact keys (may be empty).
-func (o *OpSys) GetDefaultFacts() []string {
-	return append([]string{}, o.DefaultFacts...)
 }
 
 // GetEarlyFacts returns the list of early fact keys (may be empty).

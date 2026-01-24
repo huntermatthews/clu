@@ -1,6 +1,6 @@
 package facts
 
-// Windows operating system source aggregation and default/early fact lists.
+// Windows operating system source aggregation and early fact lists.
 
 import (
 	"github.com/NHGRI/clu/pkg/facts/sources"
@@ -9,15 +9,11 @@ import (
 
 // NewWindows constructs the Windows OpSys with its ordered sources and fact lists.
 func NewWindows() *OpSys {
-	srcs := []types.Sources{
-		&sources.WindowsSysteminfo{},
-		&sources.Clu{},
+	return &OpSys{
+		Sources: []types.Sources{
+			&sources.WindowsSysteminfo{},
+			&sources.Clu{},
+		},
+		EarlyFacts: []string{},
 	}
-	defaults := []string{
-		"os.name",
-		"os.version",
-		"clu.version",
-	}
-	early := []string{}
-	return NewOpSys(srcs, defaults, early)
 }
