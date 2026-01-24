@@ -1,3 +1,10 @@
 
 
 https://github.com/shirou/gopsutil
+
+https://github.com/elastic/go-sysinfo
+https://github.com/matishsiao/goInfo
+https://github.com/shirou/gopsutil
+https://github.com/yusufpapurcu/wmi
+https://pkg.go.dev/golang.org/x/sys/windows/registry
+https://pkg.go.dev/golang.org/x/sys/windows#pkg-notes
