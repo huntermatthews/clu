@@ -66,6 +66,8 @@ func OpSysFactory() *OpSys {
 			return NewDarwin()
 		case "Linux":
 			return NewLinux()
+		case "FreeBSD":
+			return NewFreeBSD()
 		default:
 			panic("unsupported operating system; got " + kernel)
 		}

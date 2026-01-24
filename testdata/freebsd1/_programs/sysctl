@@ -1,0 +1,14 @@
+kern.ostype: FreeBSD
+kern.osrelease: 14.2-RELEASE
+kern.osrevision: 199506
+kern.version: FreeBSD 14.2-RELEASE releng/14.2-n269506-c8918d6c7412 GENERIC
+kern.hostname: testfreebsd01.localdomain
+kern.boottime: { sec = 1737633600, usec = 0 } Fri Jan 23 05:26:40 2026
+hw.machine: amd64
+hw.model: Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz
+hw.ncpu: 8
+hw.physmem: 17179869184
+hw.usermem: 16106127360
+hw.realmem: 17716740096
+hw.machine_arch: amd64
+hw.pagesize: 4096
