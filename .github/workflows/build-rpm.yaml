@@ -1,5 +1,5 @@
 ---
-name: Build RPM Package (Ubuntu-based)
+name: Build RPM Package
 
 on:
   workflow_call:
@@ -19,7 +19,7 @@ env:
 
 jobs:
   build-rpm:
-    name: "Package RPM (Ubuntu-based)"
+    name: "Package RPM"
     runs-on: ${{ inputs.runner }}
     # Note: Permissions are set in the calling workflow (release.yaml)
     env:
@@ -31,16 +31,11 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
           # Convert architecture naming (matching build-rpm.sh script)
-          if [ "${{ inputs.architecture }}" = "arm64" ] || [ "${{ inputs.architecture }}" = "aarch64" ]; then
-            RPM_ARCH="aarch64"
-            GOARCH="arm64"
-          elif [ "${{ inputs.architecture }}" = "x86_64" ] || [ "${{ inputs.architecture }}" = "amd64" ]; then
-            RPM_ARCH="x86_64"
-            GOARCH="amd64"
-          else
-            echo "Unsupported architecture: ${{ inputs.architecture }}"
-            exit 1
-          fi
+          case "${{ inputs.architecture }}" in
+            x86_64|amd64) RPM_ARCH="x86_64"; GOARCH="amd64" ;;
+            aarch64|arm64) RPM_ARCH="aarch64"; GOARCH="arm64" ;;
+            *) echo "Unsupported architecture: ${{ inputs.architecture }}"; exit 1 ;;
+          esac
           echo "RPM_ARCH=$RPM_ARCH" >> $GITHUB_ENV
           echo "GOARCH=$GOARCH" >> $GITHUB_ENV
 
@@ -54,7 +49,7 @@ jobs:
         with:
           go-version: "stable"
           check-latest: true
-          cache: false # Disable cache - no go.sum available in tarball-based build
+          cache: true
 
       - name: Checkout source
         uses: actions/checkout@v6
@@ -62,19 +57,15 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 0
 
-      - name: Create source tarball from checkout
+      - name: Setup RPM build directory and link source
         run: |
-          git -c core.autocrlf=false archive \
-            --format=tar.gz \
-            --prefix="clu-$VERSION/" \
-            -o "clu-$VERSION.tar.gz" \
-            "$GITHUB_REF_NAME"
-
-      - name: Setup RPM build directory
-        run: |
-          # Create RPM build directory manually - rpmdevtools not available in Ubuntu repositories
+          # Create RPM build directory manually
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          cp clu-$VERSION.tar.gz ~/rpmbuild/SOURCES/
+
+          # Symlink source to BUILD directory (no tarball, no copy)
+          ln -s "$GITHUB_WORKSPACE" ~/rpmbuild/BUILD/clu-$VERSION
+
+          # Copy spec file to SPECS directory
           cp redhat/clu.spec ~/rpmbuild/SPECS/
 
       - name: Build RPM

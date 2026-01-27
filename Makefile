@@ -33,7 +33,7 @@ clu-%: ## Build clu for a specific platform (e.g., make clu-darwin-amd64)
 
 
 .PHONY: install
-install: build manpage ## Install clu binary, manpage, and documentation
+install: build ## Install clu binary, manpage, and documentation
 	install -d $(PREFIX)/bin
 	install -d $(PREFIX)/share/man/man1
 	install -d $(PREFIX)/share/doc/clu

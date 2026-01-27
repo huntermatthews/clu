@@ -1,5 +1,5 @@
 ---
-name: Build DEB Package
+name: Build DEB Package (No Tarball)
 
 on:
   workflow_call:
@@ -19,9 +19,9 @@ env:
 
 jobs:
   build-deb:
-    name: "Package DEB"
+    name: "Package DEB (No Tarball)"
     runs-on: ${{ inputs.runner }}
-    container: ubuntu:20.04
+    container: ubuntu:22.04
     # Note: Permissions are set in the calling workflow (release.yaml)
     env:
       GITHUB_REF_NAME: ${{ github.ref_name }}
@@ -47,7 +47,7 @@ jobs:
           APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: DontWarn
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends ca-certificates curl git golang-1.20-go dpkg-dev build-essential debhelper
+          apt-get install -y -qq --no-install-recommends ca-certificates curl git dpkg-dev build-essential debhelper golang-go
 
           # Install cross-compilation tools if building for ARM64 on AMD64
           if [ "${{ inputs.architecture }}" = "arm64" ]; then
@@ -64,51 +64,22 @@ jobs:
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Create source tarball from checkout
-        run: |
-          git -c core.autocrlf=false archive \
-            --format=tar.gz \
-            --prefix="clu-$VERSION/" \
-            -o "clu-$VERSION.tar.gz" \
-            "$GITHUB_REF_NAME"
-
-      - name: Inspect tarball contents (debug)
-        run: |
-          echo "Top-level entries in tarball:"
-          tar -tzf "clu-$VERSION.tar.gz" | cut -d/ -f1 | sort -u
-          echo "Sample of tar listing (first 20):"
-          tar -tzf "clu-$VERSION.tar.gz" | head -n 20
-
-      - name: Extract and prepare source
-        run: |
-          echo "Before extract, working directory contents:" && ls -la
-          tar -xzf clu-$VERSION.tar.gz
-          echo "After extract, working directory contents:" && ls -la
-
-          # Create Debian orig tarball (required naming convention)
-          cp clu-$VERSION.tar.gz clu_$VERSION.orig.tar.gz
-
       - name: Verify build dependencies
         run: |
-          cd clu-$VERSION
-
           # Verify we can satisfy build dependencies
-          dpkg-checkbuilddeps || echo "Warning: Some build deps may not be satisfied by apt packages, but Go is available via actions/setup-go"
+          dpkg-checkbuilddeps || echo "Warning: Some build deps may not be satisfied by apt packages"
 
       - name: Build DEB package
         run: |
-          cd clu-$VERSION
-
           # Update debian/changelog with current version
           sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
 
-          # Build the DEB package (matching build-deb.sh: export vars and use -a flag)
+          # Build the DEB package directly from checkout (binary-only, no tarball)
           HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -ui -i -b -d -a${{ inputs.architecture }}
 
-          # Move the .deb file to a predictable location at the root
-          cd ..
+          # Move the .deb file to a predictable location
           mkdir -p debs
-          mv clu_${VERSION}-1_${{ inputs.architecture }}.deb debs/clu_${VERSION}-1_${{ inputs.architecture }}.deb
+          mv ../clu_${VERSION}-1_${{ inputs.architecture }}.deb debs/
 
       - name: Upload DEB artifact
         uses: actions/upload-artifact@v6

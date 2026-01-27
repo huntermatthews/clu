@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Script to build RPM package locally from source tarball
+# Script to build RPM package directly from checkout (no tarball)
 # Usage: ./scripts/build-rpm.sh <version> [architecture]
 
 if [[ ${#} -lt 1 || ${#} -gt 2 ]]; then
@@ -16,18 +16,12 @@ fi
 export VERSION="${1}"
 ARCH="${2:-x86_64}"  # Default to x86_64 if not specified
 
-# Convert architecture naming conventions
-if [[ "${ARCH}" == "arm64" || "${ARCH}" == "aarch64" ]]; then
-    RPM_ARCH="aarch64"
-    GOARCH="arm64"
-elif [[ "${ARCH}" == "x86_64" || "${ARCH}" == "amd64" ]]; then
-    RPM_ARCH="x86_64"
-    GOARCH="amd64"
-else
-    echo "Error: Unsupported architecture '${ARCH}'"
-    echo "Supported: x86_64, amd64, aarch64, arm64"
-    exit 1
-fi
+# Map architecture names (matching build-rpm.yaml workflow)
+case "${ARCH}" in
+    x86_64|amd64) RPM_ARCH="x86_64"; GOARCH="amd64" ;;
+    aarch64|arm64) RPM_ARCH="aarch64"; GOARCH="arm64" ;;
+    *) echo "Error: Unsupported architecture '${ARCH}'"; exit 1 ;;
+esac
 
 # Validate version format (RPM/DEB compatible)
 if ! [[ "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*(-[a-zA-Z0-9]+)*$ ]]; then
@@ -37,52 +31,43 @@ if ! [[ "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*(-[a-zA-Z0-9]+)*$ ]]; then
     exit 1
 fi
 
-TARBALL_PATH="clu-${VERSION}.tar.gz"
-
 echo "Building RPM for clu version: ${VERSION}, architecture: ${RPM_ARCH}"
-
-# Create source tarball if it doesn't exist
-if [[ ! -f "${TARBALL_PATH}" ]]; then
-    echo "Creating source tarball from git..."
-    # Use same approach as GitHub archives (common pattern)
-    git archive --format=tar.gz --prefix=clu-${VERSION}/ HEAD > "${TARBALL_PATH}"
-    echo "Created ${TARBALL_PATH}"
-fi
+echo "Building directly from checkout (no tarball)"
 
 # Set up build tree
 echo "Setting up RPM build tree..."
-if command -v rpmdev-setuptree >/dev/null 2>&1; then
-    rpmdev-setuptree
-else
-    # Manual setup if rpmdevtools not available
-    mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-    echo "Created RPM build directories manually (rpmdevtools not found)"
-fi
+mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-# Copy tarball and spec
-echo "Copying source tarball and spec file..."
-cp "${TARBALL_PATH}" ~/rpmbuild/SOURCES/
+# Symlink source to BUILD directory (no tarball, no copy)
+echo "Symlinking source to build directory..."
+rm -rf ~/rpmbuild/BUILD/clu-${VERSION}
+ln -s "$PWD" ~/rpmbuild/BUILD/clu-${VERSION}
+# Copy spec file to SPECS directory
+echo "Copying spec file..."
 cp redhat/clu.spec ~/rpmbuild/SPECS/
-
-# Check for Go compiler (flexible approach)
-if ! command -v go >/dev/null 2>&1 && [[ ! -x /usr/lib/go-1.20/bin/go ]]; then
+# Check for Go compiler
+if ! command -v go >/dev/null 2>&1; then
     echo "Error: Go compiler not found"
     echo "Install Go with one of these options:"
-    echo "  Ubuntu 20.04: sudo apt-get install golang-1.20-go"
     echo "  Ubuntu 22.04+: sudo apt-get install golang-go"
     echo "  Or use official installer from https://golang.org/dl/"
     exit 1
 fi
 
+# Export GOARCH for cross-compilation
+export GOARCH
+
 # Build RPM
-echo "Building RPM from source..."
+echo "Building RPM..."
 rpmbuild --define "_version ${VERSION}" \
          --define "_buildhost $(hostname -f)" \
          --target "${RPM_ARCH}" \
          -bb ~/rpmbuild/SPECS/clu.spec
 
 # Show results
+echo ""
+echo "RPM build complete!"
 echo "Generated RPM:"
 ls -la ~/rpmbuild/RPMS/${RPM_ARCH}/clu-*.rpm
-
+echo ""
 echo "To install: sudo rpm -i ~/rpmbuild/RPMS/${RPM_ARCH}/clu-${VERSION}-1.*.rpm"

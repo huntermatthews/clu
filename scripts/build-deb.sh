@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# Script to build DEB package locally from source tarball
 # Usage: ./scripts/build-deb.sh <version> [architecture]
 
 if [[ ${#} -lt 1 || ${#} -gt 2 ]]; then
@@ -16,18 +15,12 @@ fi
 export VERSION="${1}"
 ARCH="${2:-amd64}"  # Default to amd64 if not specified
 
-# Convert architecture naming conventions
-if [[ "${ARCH}" == "arm64" || "${ARCH}" == "aarch64" ]]; then
-    DEB_ARCH="arm64"
-    GOARCH="arm64"
-elif [[ "${ARCH}" == "x86_64" || "${ARCH}" == "amd64" ]]; then
-    DEB_ARCH="amd64"
-    GOARCH="amd64"
-else
-    echo "Error: Unsupported architecture '${ARCH}'"
-    echo "Supported: x86_64, amd64, aarch64, arm64"
-    exit 1
-fi
+# Map architecture names (matching build-deb.yaml workflow)
+case "${ARCH}" in
+    amd64|x86_64) DEB_ARCH="amd64"; GOARCH="amd64" ;;
+    arm64|aarch64) DEB_ARCH="arm64"; GOARCH="arm64" ;;
+    *) echo "Error: Unsupported architecture '${ARCH}'"; exit 1 ;;
+esac
 
 # Validate version format (RPM/DEB compatible)
 if ! [[ "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*(-[a-zA-Z0-9]+)*$ ]]; then
@@ -37,81 +30,50 @@ if ! [[ "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*(-[a-zA-Z0-9]+)*$ ]]; then
     exit 1
 fi
 
-TARBALL_PATH="clu-${VERSION}.tar.gz"
-ORIG_TARBALL="clu_${VERSION}.orig.tar.gz"
-
 echo "Building DEB for clu version: ${VERSION}, architecture: ${DEB_ARCH}"
 
-# Create source tarball if it doesn't exist
-if [[ ! -f "${TARBALL_PATH}" ]]; then
-    echo "Creating source tarball..."
-    git archive --format=tar.gz --prefix=clu-${VERSION}/ HEAD > "${TARBALL_PATH}"
-    echo "Created ${TARBALL_PATH}"
-fi
-
-# Create Debian orig tarball (required naming convention)
-if [[ ! -f "${ORIG_TARBALL}" ]]; then
-    echo "Creating Debian orig tarball..."
-    cp "${TARBALL_PATH}" "${ORIG_TARBALL}"
-fi
-
-# Extract source
-echo "Extracting source..."
-rm -rf "clu-${VERSION}"
-tar -xzf "${ORIG_TARBALL}"
-
-# Copy debian packaging files
-echo "Setting up Debian package files..."
+# Verify debian directory exists
 if [[ ! -d "debian" ]]; then
     echo "Error: debian/ directory not found"
-    echo "Please create debian/ directory with control files first"
+    echo "Please run this script from the repository root"
     exit 1
 fi
-cp -r debian "clu-${VERSION}/"
 
 # Update changelog with correct version
 echo "Updating changelog version to ${VERSION}..."
-sed -i "1s/([^)]*)/(${VERSION}-1)/" "clu-${VERSION}/debian/changelog"
-
-# Build package
-echo "Building DEB package..."
+sed -i "1s/([^)]*)/(${VERSION}-1)/" debian/changelog
 
 # Check for required build tools
 if ! command -v dpkg-buildpackage >/dev/null 2>&1; then
     echo "Error: dpkg-buildpackage not found"
-    echo "Install build dependencies with: sudo apt-get install dpkg-dev build-essential golang-go-1.20"
+    echo "Install build dependencies with: sudo apt-get install dpkg-dev build-essential"
     exit 1
 fi
 
-# Check for Go compiler (flexible approach)
-if ! command -v go >/dev/null 2>&1 && [[ ! -x /usr/lib/go-1.20/bin/go ]]; then
+# Check for Go compiler
+if ! command -v go >/dev/null 2>&1; then
     echo "Error: Go compiler not found"
     echo "Install Go with one of these options:"
-    echo "  Ubuntu 20.04: sudo apt-get install golang-1.20-go"
-    echo "  Ubuntu 22.04+: sudo apt-get install golang-go"
-    echo "  Or use official installer from https://golang.org/dl/"
+    echo "  Ubuntu 20.04/22.04: sudo apt-get install golang-1.22-go"
+    echo "  Ubuntu 24.04+: sudo apt-get install golang-go"
     exit 1
 fi
 
-# Build the package (unsigned for local builds)
+# Build package
+echo "Building DEB package..."
+
+# Export GOARCH for cross-compilation
+export GOARCH
+
+# Build the package (unsigned for local builds, binary-only)
 # Use -d flag to skip build dependency checks when cross-compiling
-# Use dpkg-buildpackage directly to avoid debuild wrapper issues with architecture detection
-(cd "clu-${VERSION}" && dpkg-buildpackage -us -uc -ui -i -b -d -a"${DEB_ARCH}")
+# Use -b for binary-only build (no source package needed)
+dpkg-buildpackage -us -uc -ui -i -b -d -a"${DEB_ARCH}"
 
 # Show results
 echo ""
 echo "DEB build complete!"
 echo "Generated packages:"
-ls -la clu_*.deb clu_*.changes 2>/dev/null || true
+ls -la ../clu_*.deb ../clu_*.changes 2>/dev/null || true
 echo ""
-echo "To install: sudo dpkg -i clu_${VERSION}-1_${DEB_ARCH}.deb"
-echo "If dependencies missing: sudo apt-get install -f"
-
-# DEBUG: Alternative Go 1.20 check method (package-based)
-# if ! dpkg -l | grep -qE "^ii.*(golang-1\.20|golang-1\.20-go)"; then
-#     echo "Error: golang-1.20 not found"
-#     echo "Install Go 1.20 with: sudo apt-get install golang-1.20"
-#     echo "Or install the compiler directly: sudo apt-get install golang-1.20-go"
-#     echo "Note: golang-1.20 is available in Ubuntu 20.04 main repositories"
-#     exit 1
-# fi
+echo "To install: sudo dpkg -i ../clu_${VERSION}-1_${DEB_ARCH}.deb"
