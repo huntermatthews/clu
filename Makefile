@@ -31,7 +31,6 @@ clu-%: ## Build clu for a specific platform (e.g., make clu-darwin-amd64)
 	GOOS=$$GOOS GOARCH=$$GOARCH $(MAKE) build
 	mv dist/clu dist/clu-$$GOOS-$$GOARCH
 
-
 .PHONY: install
 install: build ## Install clu binary, manpage, and documentation
 	install -d $(PREFIX)/bin
@@ -42,6 +41,10 @@ install: build ## Install clu binary, manpage, and documentation
 	install -m 644 README.md $(PREFIX)/share/doc/clu/README.md
 
 
+##
+##@ Documentation
+##
+
 .PHONY: manpage
 manpage: .go-md2man-installed ## Generate man page from markdown using go-md2man
 	go-md2man -in clu.1.md -out clu.1
@@ -50,9 +53,6 @@ manpage: .go-md2man-installed ## Generate man page from markdown using go-md2man
 	go install github.com/cpuguy83/go-md2man/v2@latest
 	@touch .go-md2man-installed
 
-.PHONY: version
-version: ## Print the current version
-	@echo $(VERSION)
 
 
 ##
@@ -102,3 +102,11 @@ vet: ## Run go vet
 setup: ## Setup Go modules
 	@mkdir -p dist
 	go mod download
+
+.PHONY: version
+version: ## Print the current version
+	@echo $(VERSION)
+
+.PHONY: pkg-version
+pkg-version: ## Print the current version
+	@echo $(VERSION) | tr '-' '+'
