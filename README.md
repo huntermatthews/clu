@@ -41,7 +41,6 @@ gh attestation verify clu-darwin-arm64 --owner NHGRI
 # RPM packages
 gh attestation verify clu-1.0.0-1.x86_64.rpm --owner NHGRI
 gh attestation verify clu-1.0.0-1.aarch64.rpm --owner NHGRI
-gh attestation verify clu-1.0.0-1.x86_64.el7.rpm --owner NHGRI
 
 # DEB packages
 gh attestation verify clu_1.0.0-1_amd64.deb --owner NHGRI
