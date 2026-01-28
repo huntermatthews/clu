@@ -5,7 +5,7 @@ on:
   workflow_call:
     inputs:
       architecture:
-        description: "Target architecture (x86_64, aarch64)"
+        description: "Target architecture (x86_64, arm64)"
         required: true
         type: string
       runner:
@@ -32,8 +32,8 @@ jobs:
 
           # Convert architecture naming (matching build-rpm.sh script)
           case "${{ inputs.architecture }}" in
-            x86_64|amd64) RPM_ARCH="x86_64"; GOARCH="amd64" ;;
-            aarch64|arm64) RPM_ARCH="aarch64"; GOARCH="arm64" ;;
+            amd64) RPM_ARCH="x86_64"; GOARCH="amd64" ;;
+            arm64) RPM_ARCH="aarch64"; GOARCH="arm64" ;;
             *) echo "Unsupported architecture: ${{ inputs.architecture }}"; exit 1 ;;
           esac
           echo "RPM_ARCH=$RPM_ARCH" >> $GITHUB_ENV

@@ -30,14 +30,7 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-          # Map architecture names (matching build-deb.sh script)
-          case "${{ inputs.architecture }}" in
-            amd64) GOARCH=amd64 ;;
-            arm64) GOARCH=arm64 ;;
-            *) echo "Unsupported architecture: ${{ inputs.architecture }}"; exit 1 ;;
-          esac
-          echo "GOARCH=$GOARCH" >> $GITHUB_ENV
+          echo "GOARCH=${{ inputs.architecture }}" >> $GITHUB_ENV
 
       - name: Install dependencies and DEB build tools
         env:

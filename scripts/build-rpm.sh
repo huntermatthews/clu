@@ -2,24 +2,23 @@
 
 set -euo pipefail
 
-# Script to build RPM package directly from checkout (no tarball)
-# Usage: ./scripts/build-rpm.sh <version> [architecture]
+# Script to build RPM package directly from checkout
 
 if [[ ${#} -lt 1 || ${#} -gt 2 ]]; then
     echo "Error: Version argument is required, architecture is optional"
-    echo "Usage: ${0} <version> [architecture]"
+    echo "Usage: ${0} <version> [<amd64|arm64>]"
     echo "Example: ${0} 1.2.3"
-    echo "Example: ${0} 1.2.3 aarch64"
+    echo "Example: ${0} 1.2.3 arm64"
     exit 1
 fi
 
 export VERSION="${1}"
-ARCH="${2:-x86_64}"  # Default to x86_64 if not specified
+ARCH="${2:-amd64}"  # Default to amd64 if not specified
 
-# Map architecture names (matching build-rpm.yaml workflow)
+# Map architecture names
 case "${ARCH}" in
-    x86_64|amd64) RPM_ARCH="x86_64"; GOARCH="amd64" ;;
-    aarch64|arm64) RPM_ARCH="aarch64"; GOARCH="arm64" ;;
+    amd64) RPM_ARCH="x86_64"; GOARCH="amd64" ;;
+    arm64) RPM_ARCH="aarch64"; GOARCH="arm64" ;;
     *) echo "Error: Unsupported architecture '${ARCH}'"; exit 1 ;;
 esac
 
@@ -32,7 +31,6 @@ if ! [[ "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*(-[a-zA-Z0-9]+)*$ ]]; then
 fi
 
 echo "Building RPM for clu version: ${VERSION}, architecture: ${RPM_ARCH}"
-echo "Building directly from checkout (no tarball)"
 
 # Set up build tree
 echo "Setting up RPM build tree..."

@@ -2,25 +2,19 @@
 
 set -euo pipefail
 
-# Usage: ./scripts/build-deb.sh <version> [architecture]
+# Usage: ./scripts/build-deb.sh <version> [<amd64|arm64>]
 
 if [[ ${#} -lt 1 || ${#} -gt 2 ]]; then
     echo "Error: Version argument is required, architecture is optional"
-    echo "Usage: ${0} <version> [architecture]"
+    echo "Usage: ${0} <version> [<amd64|arm64>]"
     echo "Example: ${0} 1.2.3"
     echo "Example: ${0} 1.2.3 arm64"
     exit 1
 fi
 
 export VERSION="${1}"
-ARCH="${2:-amd64}"  # Default to amd64 if not specified
-
-# Map architecture names (matching build-deb.yaml workflow)
-case "${ARCH}" in
-    amd64|x86_64) DEB_ARCH="amd64"; GOARCH="amd64" ;;
-    arm64|aarch64) DEB_ARCH="arm64"; GOARCH="arm64" ;;
-    *) echo "Error: Unsupported architecture '${ARCH}'"; exit 1 ;;
-esac
+GOARCH="${2:-amd64}"  # Default to amd64 if not specified
+DEB_ARCH="${GOARCH}"   # we don't need a mapping here - deb/ubuntu use amd64/arm64
 
 # Validate version format (RPM/DEB compatible)
 if ! [[ "${VERSION}" =~ ^[0-9]+(\.[0-9]+)*(-[a-zA-Z0-9]+)*$ ]]; then
