@@ -66,9 +66,14 @@ echo "Building DEB package..."
 export GOARCH
 
 # Build the package (unsigned for local builds, binary-only)
-# Use -d flag to skip build dependency checks when cross-compiling
-# Use -b for binary-only build (no source package needed)
-dpkg-buildpackage -us -uc -ui -i -b -d -a"${DEB_ARCH}"
+dpkg-buildpackage \
+    --unsigned-source \
+    --unsigned-changes \
+    --unsigned-buildinfo \
+    --diff-ignore=.* \
+    --build=binary \
+    --no-check-builddeps \
+    --host-arch="${DEB_ARCH}"
 
 # Show results
 echo ""

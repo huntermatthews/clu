@@ -75,7 +75,14 @@ jobs:
           sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
 
           # Build the DEB package directly from checkout (binary-only, no tarball)
-          HOSTNAME=$BUILD_HOST dpkg-buildpackage -us -uc -ui -i -b -d -a${{ inputs.architecture }}
+          HOSTNAME=$BUILD_HOST dpkg-buildpackage \
+            --unsigned-source \
+            --unsigned-changes \
+            --unsigned-buildinfo \
+            --diff-ignore=.* \
+            --build=binary \
+            --no-check-builddeps \
+            --host-arch=${{ inputs.architecture }}
 
           # Move the .deb file to a predictable location
           mkdir -p debs
