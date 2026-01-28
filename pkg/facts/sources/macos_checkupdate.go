@@ -39,26 +39,64 @@ func (m *MacOSCheckUpdate) Parse(f *types.FactDB) {
 		return
 	}
 
-	output, _, err := input.CommandRunner("softwareupdate --list")
+	macosUpdatesAvailable, err := hasMacosUpdatesAvailable()
 	if err != nil {
 		macUpdateFact.Value = types.ParseFailMsg
 		f.AddFact(macUpdateFact)
 		return
 	}
 
-	// If output contains "No new software available", no updates are needed
-	if strings.Contains(output, "No new software available") {
-		macUpdateFact.Value = "False"
-	} else {
+	brewUpdatesAvailable, err := hasBrewUpdatesAvailable()
+	if err != nil {
+		macUpdateFact.Value = types.ParseFailMsg
+		f.AddFact(macUpdateFact)
+		return
+	}
+
+	if macosUpdatesAvailable || brewUpdatesAvailable {
 		macUpdateFact.Value = "True"
+	} else {
+		macUpdateFact.Value = "False"
 	}
 
 	f.AddFact(macUpdateFact)
 }
 
-// TODO: Add Homebrew update check
-// Refresh the package list:
-// brew update
-// See outdated packages:
-// brew outdated
-// This command specifically lists only the packages that have a newer version available.
+// Check software update alone and return a boolean
+func hasMacosUpdatesAvailable() (bool, error) {
+	output, _, err := input.CommandRunner("softwareupdate --list")
+	if err != nil {
+		return false, err
+	}
+
+	// If output contains "No new software available", no updates are needed
+	if strings.Contains(output, "No new software available") {
+		return false, nil
+	} else {
+		return true, nil
+	}
+}
+
+// Check software update alone and return a boolean
+func hasBrewUpdatesAvailable() (bool, error) {
+	// First update Homebrew metadata
+	_, rc, err := input.CommandRunner("brew update")
+	if err != nil || rc != 0 {
+		return false, err
+	}
+
+	// Check for outdated packages
+	output, _, err := input.CommandRunner("brew outdated")
+	if err != nil {
+		return false, err
+	}
+
+	// If output is empty, no updates are needed
+	if strings.TrimSpace(output) == "" {
+		return false, nil
+	} else {
+		return true, nil
+	}
+}
+
+
