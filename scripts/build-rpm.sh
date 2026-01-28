@@ -40,9 +40,11 @@ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 echo "Symlinking source to build directory..."
 rm -rf ~/rpmbuild/BUILD/clu-${VERSION}
 ln -s "$PWD" ~/rpmbuild/BUILD/clu-${VERSION}
+
 # Copy spec file to SPECS directory
 echo "Copying spec file..."
 cp redhat/clu.spec ~/rpmbuild/SPECS/
+
 # Check for Go compiler
 if ! command -v go >/dev/null 2>&1; then
     echo "Error: Go compiler not found"
@@ -62,10 +64,18 @@ rpmbuild --define "_version ${VERSION}" \
          --target "${RPM_ARCH}" \
          -bb ~/rpmbuild/SPECS/clu.spec
 
+# Move the final binary RPM to the top of the repo and delete other RPMs
+REPO_TOP="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+RPM_FILE="$HOME/rpmbuild/RPMS/${RPM_ARCH}/clu-${VERSION}-1.${RPM_ARCH}.rpm"
+if [ -f "$RPM_FILE" ]; then
+    mv "$RPM_FILE" "$REPO_TOP/"
+fi
+
+
 # Show results
 echo ""
 echo "RPM build complete!"
 echo "Generated RPM:"
-ls -la ~/rpmbuild/RPMS/${RPM_ARCH}/clu-*.rpm
+ls -la "$REPO_TOP/clu-${VERSION}-1.${RPM_ARCH}.rpm" 2>/dev/null || true
 echo ""
-echo "To install: sudo rpm -i ~/rpmbuild/RPMS/${RPM_ARCH}/clu-${VERSION}-1.*.rpm"
+echo "To install: sudo rpm -i $REPO_TOP/clu-${VERSION}-1.${RPM_ARCH}.rpm"

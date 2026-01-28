@@ -26,13 +26,6 @@ fi
 
 echo "Building DEB for clu version: ${VERSION}, architecture: ${DEB_ARCH}"
 
-# Verify debian directory exists
-if [[ ! -d "debian" ]]; then
-    echo "Error: debian/ directory not found"
-    echo "Please run this script from the repository root"
-    exit 1
-fi
-
 # Update changelog with correct version
 echo "Updating changelog version to ${VERSION}..."
 sed -i "1s/([^)]*)/(${VERSION}-1)/" debian/changelog
@@ -40,7 +33,7 @@ sed -i "1s/([^)]*)/(${VERSION}-1)/" debian/changelog
 # Check for required build tools
 if ! command -v dpkg-buildpackage >/dev/null 2>&1; then
     echo "Error: dpkg-buildpackage not found"
-    echo "Install build dependencies with: sudo apt-get install dpkg-dev build-essential"
+    echo "Install build dependencies with: sudo apt-get install dpkg-dev build-essential debhelper"
     exit 1
 fi
 
@@ -48,7 +41,7 @@ fi
 if ! command -v go >/dev/null 2>&1; then
     echo "Error: Go compiler not found"
     echo "Install Go with one of these options:"
-    echo "  Ubuntu 20.04/22.04: sudo apt-get install golang-1.22-go"
+    echo "  Ubuntu 22.04: sudo apt-get install golang-1.22-go"
     echo "  Ubuntu 24.04+: sudo apt-get install golang-go"
     exit 1
 fi
@@ -69,10 +62,21 @@ dpkg-buildpackage \
     --no-check-builddeps \
     --host-arch="${DEB_ARCH}"
 
+# Move the .deb file to the top of the repo and delete other build artifacts
+# I hate that we have to do this, but dpkg-buildpackage insists on putting them
+# in the parent directory of the source tree.
+REPO_TOP="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+DEB_FILE="../clu_${VERSION}-1_${DEB_ARCH}.deb"
+if [ -f "$DEB_FILE" ]; then
+    mv "$DEB_FILE" "$REPO_TOP/"
+fi
+# Remove other build artifacts
+rm -f ../clu_*_${DEB_ARCH}.changes ../clu_*_${DEB_ARCH}.buildinfo ../clu_*_${DEB_ARCH}.dsc 2>/dev/null || true
+
 # Show results
 echo ""
 echo "DEB build complete!"
-echo "Generated packages:"
-ls -la ../clu_*.deb ../clu_*.changes 2>/dev/null || true
+echo "Generated package:"
+ls -la "$REPO_TOP/clu_${VERSION}-1_${DEB_ARCH}.deb" 2>/dev/null || true
 echo ""
-echo "To install: sudo dpkg -i ../clu_${VERSION}-1_${DEB_ARCH}.deb"
+echo "To install: sudo dpkg -i $REPO_TOP/clu_${VERSION}-1_${DEB_ARCH}.deb"
