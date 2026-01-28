@@ -10,7 +10,7 @@ import (
 
 // TestDnfCheckUpdateProvides ensures the source registers its fact key.
 func TestDnfCheckUpdateProvides(t *testing.T) {
-	src := &DnfCheckUpdate{}
+	src := &LinuxCheckUpdate{}
 	p := types.NewProvides()
 	src.Provides(p)
 	if _, ok := p["run.update_required"]; !ok {
@@ -45,7 +45,7 @@ func TestDnfCheckUpdateParseExitCodes(t *testing.T) {
 			defer func() { input.CommandRunner = orig }()
 
 			f := types.NewFactDB()
-			src := &DnfCheckUpdate{}
+			src := &LinuxCheckUpdate{}
 			src.Parse(f)
 			got, _ := f.Get("run.update_required")
 			if got != c.want {
@@ -64,7 +64,7 @@ func TestDnfCheckUpdateNetDisabled(t *testing.T) {
 	defer func() { input.CommandRunner = orig }()
 
 	f := types.NewFactDB()
-	src := &DnfCheckUpdate{}
+	src := &LinuxCheckUpdate{}
 	src.Parse(f)
 	got, _ := f.Get("run.update_required")
 	if got != types.NetDisabledMsg {

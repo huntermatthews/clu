@@ -12,7 +12,7 @@ func NewLinux() *OpSys {
 	return &OpSys{
 		Sources: []types.Sources{
 			&sources.Clu{},
-			&sources.DnfCheckUpdate{},
+			&sources.LinuxCheckUpdate{},
 			&sources.IpAddr{},
 			&sources.Ipmitool{},
 			&sources.Lscpu{},
