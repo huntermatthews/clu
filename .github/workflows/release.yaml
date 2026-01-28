@@ -45,14 +45,19 @@ jobs:
           cache: true
 
       - name: Build binaries
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          VERSION: ${{ github.ref_name }}
         run: |
-          # Define output names
+          # Build using Makefile
+          make build
+
+          # Rename binary to include platform suffix
           ARTIFACT_NAME="clu-${{ matrix.goos }}-${{ matrix.goarch }}"
           ARTIFACT_DIR="dist/${ARTIFACT_NAME}"
           mkdir -p "${ARTIFACT_DIR}"
-
-          # Build binary with debug symbols and platform-specific name
-          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -ldflags "-X github.com/NHGRI/clu/pkg.Version=${{ github.ref_name }}" -o "${ARTIFACT_DIR}/clu-${{ matrix.goos }}-${{ matrix.goarch }}" ./cmd/clu/main.go
+          mv dist/clu "${ARTIFACT_DIR}/${ARTIFACT_NAME}"
 
       - name: Generate checksums
         run: |
