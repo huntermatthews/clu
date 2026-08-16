@@ -1,0 +1,95 @@
+// SPDX-FileCopyrightText: 2024 Hunter Matthews
+// SPDX-License-Identifier: LGPL-2.1-only
+
+package sources
+
+import (
+	"fmt"
+	"testing"
+
+	"github.com/huntermatthews/clu/internal/facts/types"
+	"github.com/huntermatthews/clu/internal/input"
+)
+
+// Representative lscpu output snippet.
+var sampleLscpu = `Architecture:                    x86_64
+CPU(s):                          16
+Model name:                      Intel(R) Xeon(R) CPU E5-2670 v3 @ 2.30GHz
+Thread(s) per core:              2
+Core(s) per socket:              8
+Socket(s):                       1
+Vendor ID:                       GenuineIntel`
+
+// TestLscpuProvides checks keys registration.
+func TestLscpuProvides(t *testing.T) {
+	src := &Lscpu{}
+	p := types.Provides{}
+	src.Provides(p)
+	keys := []string{"phy.cpu.model", "phy.cpu.vendor", "phy.cpu.cores", "phy.cpu.threads", "phy.cpu.sockets"}
+	for _, k := range keys {
+		if _, ok := p[k]; !ok {
+			t.Fatalf("missing provides key %s", k)
+		}
+	}
+}
+
+// TestLscpuSuccess verifies parsing and derived computations.
+func TestLscpuSuccess(t *testing.T) {
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return sampleLscpu, 0, nil }
+	defer func() { input.CommandRunner = orig }()
+	f := types.NewFactDB()
+	src := &Lscpu{}
+	src.Parse(f)
+	cases := map[string]string{
+		"phy.cpu.model":   "Intel(R) Xeon(R) CPU E5-2670 v3 @ 2.30GHz",
+		"phy.cpu.vendor":  "GenuineIntel",
+		"phy.cpu.cores":   "8",
+		"phy.cpu.threads": "16",
+		"phy.cpu.sockets": "1",
+	}
+	for k, want := range cases {
+		got, ok := f.Get(k)
+		if !ok || got != want {
+			t.Fatalf("%s want %q got %q (ok=%v)", k, want, got, ok)
+		}
+	}
+}
+
+// TestLscpuFailure ensures facts are set to ParseFailMsg on command failure
+// so sysadmins can see and report the issue.
+func TestLscpuFailure(t *testing.T) {
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return "", 1, fmt.Errorf("fail") }
+	defer func() { input.CommandRunner = orig }()
+	f := types.NewFactDB()
+	src := &Lscpu{}
+	src.Parse(f)
+	got, ok := f.Get("phy.cpu.model")
+	if !ok {
+		t.Fatalf("expected phy.cpu.model to be set on failure, got nothing")
+	}
+	if got != types.ParseFailMsg {
+		t.Fatalf("expected ParseFailMsg on failure, got %q", got)
+	}
+}
+
+// TestLscpuPartialMissing verifies derived computations fallback when numeric fields missing.
+func TestLscpuPartialMissing(t *testing.T) {
+	// Output missing threads_per_core -> threads should be ParseFailMsg.
+	partial := `Model name: Intel(R) Sample CPU\nCore(s) per socket: 4\nSocket(s): 2\nVendor ID: VendorX`
+	orig := input.CommandRunner
+	input.CommandRunner = func(cmdline string) (string, int, error) { return partial, 0, nil }
+	defer func() { input.CommandRunner = orig }()
+	f := types.NewFactDB()
+	src := &Lscpu{}
+	src.Parse(f)
+	cores, _ := f.Get("phy.cpu.cores")
+	threads, _ := f.Get("phy.cpu.threads")
+	if cores != "8" { // 4 * 2
+		t.Fatalf("expected cores=8 got %s", cores)
+	}
+	if threads != types.ParseFailMsg {
+		t.Fatalf("expected threads ParseFailMsg got %s", threads)
+	}
+}

@@ -1,0 +1,21 @@
+# markdownlint schema example: <https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml>
+
+# Default state for all rules
+
+default: true
+
+# MD isn't just previewed - its also READ as just the markdown - make that a little easier
+
+MD012:
+  # Consecutive blank lines
+  maximum: 2
+
+# Markdown files don't need to observe a line length limit
+
+MD013: false # line-length
+
+MD041: false # first-line-heading -- we usually use "ascii art" for this.
+
+MD024:
+  # Only flag duplicate headings that are siblings; allows repeated section names across CHANGELOG versions
+  siblings_only: true

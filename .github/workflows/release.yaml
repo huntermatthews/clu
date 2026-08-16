@@ -1,0 +1,210 @@
+---
+name: Build and Release Clu
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+
+env:
+  # Some of the GH runners have dubious hostnames; set a consistent build host name
+  BUILD_HOST: action-runner.github.com
+
+jobs:
+  build:
+    name: "Compile Go Binaries"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      attestations: write
+      id-token: write
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: darwin
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        # If using git commands later, you might need fetch-depth: 0
+        # with:
+        #   fetch-depth: 0
+
+      - name: Setup Go (stable)
+        uses: actions/setup-go@v6
+        with:
+          go-version: "stable"
+          check-latest: true
+          cache: true
+
+      - name: Build binaries
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          # Build using Makefile
+          make build
+
+      - name: "Set binary name (add .exe for Windows)"
+        run: |
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY_NAME="clu-${{ matrix.goos }}-${{ matrix.goarch }}.exe"
+          else
+            BINARY_NAME="clu-${{ matrix.goos }}-${{ matrix.goarch }}"
+          fi
+          echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
+
+          mkdir -p "dist/clu-${{ matrix.goos }}-${{ matrix.goarch }}"
+          mv "dist/clu" "dist/clu-${{ matrix.goos }}-${{ matrix.goarch }}/$BINARY_NAME"
+
+      - name: Generate checksums
+        run: |
+          # Create a platform-specific checksum file for easier aggregation
+          sha256sum dist/clu-${{ matrix.goos }}-${{ matrix.goarch }}/${{ env.BINARY_NAME }} > dist/SHA256SUMS-${{ matrix.goos }}-${{ matrix.goarch }}
+
+      - name: Generate SLSA attestation
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: dist/clu-${{ matrix.goos }}-${{ matrix.goarch }}/${{ env.BINARY_NAME }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-assets-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: |
+            dist/clu-${{ matrix.goos }}-${{ matrix.goarch }}/*
+            dist/SHA256SUMS-${{ matrix.goos }}-${{ matrix.goarch }}
+
+  create-release:
+    name: "Create GitHub Release"
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Set VERSION variable
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          body: |
+            Release ${{ github.ref_name }}.
+
+            If you have a PAT and want to use it - download / deploy with:
+            `curl -fsSLO -H "Authorization: token YOUR_PAT" https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/clu-linux-amd64`
+            `chmod +x clu-linux-amd64`
+
+            If you don't have a PAT but have auth'd with GitHub CLI, you can use:
+            `gh release download ${{ github.ref_name }} -p 'clu-linux-amd64' --repo ${{ github.repository }}`
+            `chmod +x clu-linux-amd64`
+
+            ## SLSA Attestation Verification
+            All artifacts have SLSA build provenance attestations. Verify with commands in the README.md.
+          draft: true
+
+  build-rpm-packages:
+    name: "Build RPM Packages (Ubuntu)"
+    needs: create-release
+    permissions:
+      contents: read
+      attestations: write
+      id-token: write
+    strategy:
+      matrix:
+        include:
+          - architecture: amd64
+            runner: ubuntu-latest
+          - architecture: arm64
+            runner: ubuntu-latest
+    uses: ./.github/workflows/build-rpm.yaml
+    with:
+      architecture: ${{ matrix.architecture }}
+      runner: ${{ matrix.runner }}
+    secrets: inherit
+
+  build-deb-packages:
+    name: "Build DEB Packages"
+    needs: create-release
+    permissions:
+      contents: read
+      attestations: write
+      id-token: write
+    strategy:
+      matrix:
+        include:
+          - architecture: amd64
+            runner: ubuntu-latest
+          - architecture: arm64
+            runner: ubuntu-latest
+    uses: ./.github/workflows/build-deb.yaml
+    with:
+      architecture: ${{ matrix.architecture }}
+      runner: ${{ matrix.runner }}
+    secrets: inherit
+
+  upload-all-assets:
+    name: "Upload All Assets to Release"
+    runs-on: ubuntu-latest
+    needs: [build, build-rpm-packages, build-deb-packages]
+    permissions:
+      contents: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: Download binary artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: dist/
+          pattern: release-assets-*
+          merge-multiple: true
+
+      - name: Create master checksum file
+        run: |
+          # Create master checksum file with header
+          echo "# SHA256 Checksums for clu ${{ github.ref_name }}" > dist/SHA256SUMS
+          cat dist/SHA256SUMS-* >> dist/SHA256SUMS
+
+          # Clean up individual platform checksum files
+          rm -f dist/SHA256SUMS-*
+
+      - name: Generate SLSA attestation for checksums
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: dist/SHA256SUMS
+
+      - name: Download RPM packages
+        uses: actions/download-artifact@v8
+        with:
+          path: rpms/
+          pattern: rpm-package*
+          merge-multiple: true
+
+      - name: Download DEB package
+        uses: actions/download-artifact@v8
+        with:
+          path: debs/
+          pattern: deb-package*
+          merge-multiple: true
+
+      - name: Upload all assets to release and publish
+        uses: softprops/action-gh-release@v3
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: false
+          files: |
+            dist/**/*
+            rpms/*
+            debs/*
+          fail_on_unmatched_files: true

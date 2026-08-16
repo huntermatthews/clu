@@ -1,0 +1,32 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	make build VERSION=$(VERSION)
+
+override_dh_auto_install:
+	# debian/clu/ is the staging directory; files installed there become /usr/* in the final package
+	make install VERSION=$(VERSION) PREFIX=$(CURDIR)/debian/clu/usr
+
+override_dh_auto_clean:
+	rm -f clu
+
+override_dh_auto_test:
+	# Skip tests for now
+
+override_dh_dwz:
+	# Skip dwz compression for Go binaries (incompatible with CGO_ENABLED=0)
+
+override_dh_strip:
+	# Skip stripping entirely for Go binaries (can break static linking and cross-compilation)
+	# Go binaries are already optimized and don't benefit from stripping
+
+override_dh_shlibdeps:
+	# Skip shared library dependency detection for static Go binaries
+	# Go binaries with CGO_ENABLED=0 are statically linked and need no shared libs
+
+override_dh_builddeb:
+	# Use faster compression for large Go binaries
+	dh_builddeb -- -Zxz

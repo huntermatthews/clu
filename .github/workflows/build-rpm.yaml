@@ -1,0 +1,97 @@
+---
+name: Build RPM Package
+
+on:
+  workflow_call:
+    inputs:
+      architecture:
+        description: "Target architecture (amd64, arm64)"
+        required: true
+        type: string
+      runner:
+        description: "GitHub runner to use"
+        required: true
+        type: string
+
+env:
+  # Some of the GH runners have dubious hostnames; set a consistent build host name
+  BUILD_HOST: action-runner.github.com
+
+jobs:
+  build-rpm:
+    name: "Package RPM"
+    runs-on: ${{ inputs.runner }}
+    # Note: Permissions are set in the calling workflow (release.yaml)
+    env:
+      GITHUB_REF_NAME: ${{ github.ref_name }}
+    steps:
+      - name: Set VERSION variable
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+          # Convert architecture naming (matching build-rpm.sh script)
+          case "${{ inputs.architecture }}" in
+            amd64) RPM_ARCH="x86_64"; GOARCH="amd64" ;;
+            arm64) RPM_ARCH="aarch64"; GOARCH="arm64" ;;
+            *) echo "Unsupported architecture: ${{ inputs.architecture }}"; exit 1 ;;
+          esac
+          echo "RPM_ARCH=$RPM_ARCH" >> $GITHUB_ENV
+          echo "GOARCH=$GOARCH" >> $GITHUB_ENV
+
+      - name: Install RPM build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm
+
+      - name: Setup Go (stable)
+        uses: actions/setup-go@v6
+        with:
+          go-version: "stable"
+          check-latest: true
+          cache: true
+
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Install go-md2man
+        run: |
+          # Force host arch - GOARCH is set to the target arch, which would cross-compile go-md2man
+          GOARCH=$(go env GOHOSTARCH) go install github.com/cpuguy83/go-md2man/v2@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      - name: Setup RPM build directory and link source
+        run: |
+          # Create RPM build directory manually
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+          # Symlink source to BUILD directory (no tarball, no copy)
+          ln -s "$GITHUB_WORKSPACE" ~/rpmbuild/BUILD/clu-$VERSION
+
+          # Copy spec file to SPECS directory
+          cp redhat/clu.spec ~/rpmbuild/SPECS/
+
+      ####
+
+      - name: Build RPM
+        env:
+          GOARCH: ${{ env.GOARCH }}
+        run: |
+          rpmbuild --define "_version $VERSION" \
+                   --define "_buildhost $BUILD_HOST" \
+                   --target "$RPM_ARCH" \
+                   -bb ~/rpmbuild/SPECS/clu.spec
+
+      - name: Generate SLSA attestation for RPM
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: ~/rpmbuild/RPMS/${{ env.RPM_ARCH }}/*.rpm
+
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: rpm-package-${{ env.RPM_ARCH }}
+          path: ~/rpmbuild/RPMS/${{ env.RPM_ARCH }}/*.rpm

@@ -1,0 +1,29 @@
+clu.binary: dist/clu
+clu.cmdline: dist/clu --mock-dir host2 -t3
+clu.cwd: /Users/hunter/projects/clu
+clu.date: 2025-12-28T06:07:23Z
+clu.user: hunter
+clu.version: v0.7.8-11-g67257bd-dirty
+net.devs: lo eth0 
+net.ipv4: 127.0.0.1 10.136.128.68 
+net.ipv6: ::1 fe80::250:56ff:fe90:da67 
+net.macs: 00:00:00:00:00:00 00:50:56:90:da:67 
+os.distro.name: opensuse-leap
+os.distro.version: 15.6
+os.hostname: <hostname2>
+os.kernel.name: Linux
+os.kernel.version: 6.4.0-150600.23.47-default
+os.selinux.enable: False
+os.selinux.mode: Unknown/Error
+phy.arch: x86_64
+phy.cpu.arch_version: x86_64_v4
+phy.cpu.cores: 2
+phy.cpu.model: Intel(R) Xeon(R) Gold 6342 CPU @ 2.80GHz
+phy.cpu.sockets: 1
+phy.cpu.threads: 2
+phy.cpu.vendor: GenuineIntel
+phy.platform: vmware
+phy.ram: 4.0 GB
+run.update_required: Unknown - Network Queries Disabled
+run.uptime: 28 days, 6 hours, 37 minutes, 24 seconds
+salt.no_salt.exists: False

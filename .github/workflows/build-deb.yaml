@@ -1,0 +1,111 @@
+---
+name: Build DEB Package (No Tarball)
+
+on:
+  workflow_call:
+    inputs:
+      architecture:
+        description: "Target architecture (amd64, arm64)"
+        required: true
+        type: string
+      runner:
+        description: "GitHub runner to use"
+        required: true
+        type: string
+
+env:
+  # Some of the GH runners have dubious hostnames; set a consistent build host name
+  BUILD_HOST: action-runner.github.com
+
+jobs:
+  build-deb:
+    name: "Package DEB"
+    runs-on: ${{ inputs.runner }}
+    container: ubuntu:22.04
+    # Note: Permissions are set in the calling workflow (release.yaml)
+    env:
+      GITHUB_REF_NAME: ${{ github.ref_name }}
+    steps:
+      - name: Set VERSION variable
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "GOARCH=${{ inputs.architecture }}" >> $GITHUB_ENV
+
+      - name: Install dependencies and DEB build tools
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          TZ: UTC
+          # Suppress an apt-key warning about standard out not being a terminal.  This is safe.
+          APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE: DontWarn
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends ca-certificates curl git dpkg-dev build-essential debhelper
+
+          # Install cross-compilation tools if building for ARM64 on AMD64
+          if [ "${{ inputs.architecture }}" = "arm64" ]; then
+            apt-get install -y -qq --no-install-recommends crossbuild-essential-arm64
+          fi
+
+      - name: Setup Go (stable)
+        uses: actions/setup-go@v6
+        with:
+          go-version: "stable"
+          check-latest: true
+          cache: true
+
+      - name: "DEBUG: Verify Go installation"
+        run: |
+          which go
+          go version
+
+      - name: Install go-md2man
+        run: |
+          # Force host arch - GOARCH is set to the target arch, which would cross-compile go-md2man
+          GOARCH=$(go env GOHOSTARCH) go install github.com/cpuguy83/go-md2man/v2@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Mark workspace as safe for git (fix dubious ownership)
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Verify build dependencies
+        run: |
+          # Verify we can satisfy build dependencies
+          dpkg-checkbuilddeps || echo "Warning: Some build deps may not be satisfied by apt packages"
+
+      - name: Build DEB package
+        run: |
+          # Update debian/changelog with current version
+          sed -i "1s/([^)]*)/($VERSION-1)/" debian/changelog
+
+          # Build the DEB package directly from checkout (binary-only, no tarball)
+          HOSTNAME=$BUILD_HOST dpkg-buildpackage \
+            --unsigned-source \
+            --unsigned-changes \
+            --unsigned-buildinfo \
+            --diff-ignore=.* \
+            --build=binary \
+            --no-check-builddeps \
+            --host-arch=${{ inputs.architecture }}
+
+          # Move the .deb file to a predictable location
+          mkdir -p debs
+          mv ../clu_${VERSION}-1_${{ inputs.architecture }}.deb debs/
+
+      - name: Generate SLSA attestation for DEB
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: debs/*.deb
+
+      - name: Upload DEB artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: deb-package-${{ inputs.architecture }}
+          path: debs/*
