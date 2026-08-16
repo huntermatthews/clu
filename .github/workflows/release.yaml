@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         # If using git commands later, you might need fetch-depth: 0
         # with:
         #   fetch-depth: 0
