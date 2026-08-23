@@ -3,7 +3,7 @@ include common.mk
 # Variables
 PREFIX ?= /usr/local
 BINARY := clu
-PKG := $(shell go list -m)
+GO_SOURCES := $(shell find cmd internal -name '*.go') go.mod go.sum Makefile common.mk
 PLATFORMS := darwin-arm64 windows-amd64 linux-amd64 linux-arm64
 
 
@@ -13,8 +13,6 @@ PLATFORMS := darwin-arm64 windows-amd64 linux-amd64 linux-arm64
 
 .PHONY: build
 build: setup dist/$(BINARY) ## setup and build $(BINARY)
-
-GO_SOURCES := $(shell find cmd pkg -name '*.go') go.mod go.sum Makefile
 
 dist/$(BINARY): $(GO_SOURCES) ## Build $(BINARY) for the current platform
 	CGO_ENABLED=0 go build -o dist/$(BINARY) ./cmd/clu
@@ -47,8 +45,8 @@ install: build manpage ## Install $(BINARY) binary, manpage, and documentation
 ##@ Documentation
 ##
 
-.PHONY: manpage
-manpage: .go-md2man-installed setup ## Generate man page from markdown using go-md2man
+.PHONY: man
+man: .go-md2man-installed setup ## Generate man page from markdown using go-md2man
 	go-md2man -in $(BINARY).1.md -out $(BINARY).1
 	# embed is limited to same or sub-pkgs
 	cp $(BINARY).1 internal/subcmd/$(BINARY).1
@@ -56,7 +54,6 @@ manpage: .go-md2man-installed setup ## Generate man page from markdown using go-
 .go-md2man-installed:
 	go install github.com/cpuguy83/go-md2man/v2@latest
 	@touch .go-md2man-installed
-
 
 
 ##
