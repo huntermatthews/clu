@@ -21,7 +21,7 @@ type Clu struct{}
 var cluFacts = map[string]*types.Fact{
 	"clu.binary":         {Name: "clu.binary", Tier: types.TierTwo},
 	"clu.version":        {Name: "clu.version", Tier: types.TierOne},
-	"clu.golang.version": {Name: "clu.golang.version", Tier: types.TierThree},
+	"clu.goversion":      {Name: "clu.goversion", Tier: types.TierThree},
 	"clu.cmdline":        {Name: "clu.cmdline", Tier: types.TierTwo},
 	"clu.cwd":            {Name: "clu.cwd", Tier: types.TierThree},
 	"clu.user":           {Name: "clu.user", Tier: types.TierThree},
@@ -51,7 +51,7 @@ func (c *Clu) Parse(f *types.FactDB) {
 	cluFacts["clu.version"].Value = global.GetVersion()
 
 	// Go runtime version
-	cluFacts["clu.golang.version"].Value = runtime.Version()
+	cluFacts["clu.goversion"].Value = runtime.Version()
 
 	// Command line
 	cluFacts["clu.cmdline"].Value = strings.Join(os.Args, " ")
