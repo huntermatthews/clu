@@ -21,14 +21,12 @@ func TestRun_Hosts(t *testing.T) {
 	origMockDir := global.Config.MockDir
 	origRunner := input.CommandRunner
 	origReader := input.FileReader
-	origDebug := global.Config.Debug
 	origNet := global.Config.NetEnabled
 
 	defer func() {
 		global.Config.MockDir = origMockDir
 		input.CommandRunner = origRunner
 		input.FileReader = origReader
-		global.Config.Debug = origDebug
 		global.Config.NetEnabled = origNet
 	}()
 
@@ -84,14 +82,12 @@ func TestRun_Requires(t *testing.T) {
 	origMockDir := global.Config.MockDir
 	origRunner := input.CommandRunner
 	origReader := input.FileReader
-	origDebug := global.Config.Debug
 	origNet := global.Config.NetEnabled
 
 	defer func() {
 		global.Config.MockDir = origMockDir
 		input.CommandRunner = origRunner
 		input.FileReader = origReader
-		global.Config.Debug = origDebug
 		global.Config.NetEnabled = origNet
 	}()
 
@@ -137,14 +133,12 @@ func TestRun_Collector(t *testing.T) {
 	origMockDir := global.Config.MockDir
 	origRunner := input.CommandRunner
 	origReader := input.FileReader
-	origDebug := global.Config.Debug
 	origNet := global.Config.NetEnabled
 
 	defer func() {
 		global.Config.MockDir = origMockDir
 		input.CommandRunner = origRunner
 		input.FileReader = origReader
-		global.Config.Debug = origDebug
 		global.Config.NetEnabled = origNet
 	}()
 

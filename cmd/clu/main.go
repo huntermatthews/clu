@@ -58,9 +58,8 @@ func run(args []string, stdout, stderr input.Stdout) int {
 		return 1
 	}
 
-	// setup logging and global config based on debug bool flag
+	// setup logging based on debug bool flag
 	setupLogging(cli.Debug)
-	global.Config.Debug = cli.Debug
 
 	if cli.Net {
 		slog.Debug("network access enabled")
