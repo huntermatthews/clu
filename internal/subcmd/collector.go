@@ -87,7 +87,7 @@ func collectMetadata(workDir, hostname string) error {
 	}
 
 	path := filepath.Join(metaDir, "clu_version")
-	if err := os.WriteFile(path, []byte(global.Version+"\n"), 0o644); err != nil {
+	if err := os.WriteFile(path, []byte(global.GetVersion()+"\n"), 0o644); err != nil {
 		return fmt.Errorf("write %s: %w", path, err)
 	}
 
@@ -196,7 +196,7 @@ func copyFile(src, dst string) {
 }
 
 func createCollection(hostname, workDir, outDir string) (string, error) {
-	outPath := filepath.Join(outDir, fmt.Sprintf("%s_%s.tgz", global.GetAppInfo().Name, hostname))
+	outPath := filepath.Join(outDir, fmt.Sprintf("clu_%s.tgz", hostname))
 	f, err := os.Create(outPath)
 	if err != nil {
 		return "", err

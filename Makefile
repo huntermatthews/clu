@@ -116,11 +116,3 @@ vet: ## Run go vet
 setup: ## Setup Go modules
 	@mkdir -p dist
 	go mod download
-
-.PHONY: version
-version: ## Print the current version
-	@echo $(VERSION)
-
-.PHONY: pkg-version
-pkg-version: ## Print the current version
-	@echo $(VERSION) | tr '-' '+'

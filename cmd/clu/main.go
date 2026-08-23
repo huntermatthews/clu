@@ -42,7 +42,7 @@ func run(args []string, stdout, stderr input.Stdout) int {
 		kong.Name("clu"),
 		kong.Description("Kong example with facts/collector/requires subcommands."),
 		kong.UsageOnError(),
-		kong.Vars{"version": "clu " + global.Version},
+		kong.Vars{"version": "clu " + global.GetVersion()},
 		kong.Writers(stdout, stderr),
 		kong.BindTo(stdout, (*input.Stdout)(nil)),
 		kong.BindTo(stderr, (*input.Stderr)(nil)),

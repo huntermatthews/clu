@@ -9,7 +9,6 @@ import (
 	"fmt"
 
 	"github.com/huntermatthews/clu/internal/global"
-
 	"github.com/huntermatthews/clu/internal/input"
 )
 
@@ -26,18 +25,26 @@ func (f *VersionCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	fmt.Fprintln(stdout, " `Y8bood8P'  o888ooooood8    `YbodP'")
 	fmt.Fprintln(stdout, "")
 
-	fmt.Fprintf(stdout, "  version: %s\n", global.Version)
+	fmt.Fprintf(stdout, "  version: %s\n", global.GetVersion())
 
 	buildInfo := global.GetBuildInfo()
-	if buildInfo != nil {
+	if buildInfo.CompilerVersion != "" {
 		fmt.Fprintf(stdout, "  compiler version: %s\n", buildInfo.CompilerVersion)
 		fmt.Fprintf(stdout, "  main path: %s\n", buildInfo.MainPath)
-		fmt.Fprintf(stdout, "  build version: %s\n", buildInfo.MainVersion)
-		fmt.Fprintf(stdout, "  app version: %s\n", global.Version)
+
+		fmt.Fprintf(stdout, "  program version: %s\n", buildInfo.MainVersion)
 		fmt.Fprintln(stdout, "")
 		fmt.Fprintln(stdout, "  libraries:")
 		for _, dep := range buildInfo.Dependencies {
 			fmt.Fprintf(stdout, "    %s\n", dep)
+		}
+		if buildInfo.VCSRevision != "" {
+			fmt.Fprintln(stdout, "")
+			fmt.Fprintf(stdout, "  vcs revision: %s\n", buildInfo.VCSRevision)
+			fmt.Fprintf(stdout, "  vcs time:     %s\n", buildInfo.VCSTime)
+			if buildInfo.VCSModified == "true" {
+				fmt.Fprintf(stdout, "  vcs modified: yes\n")
+			}
 		}
 	}
 

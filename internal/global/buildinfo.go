@@ -5,7 +5,6 @@ package global
 
 import (
 	"fmt"
-	"io"
 	"runtime/debug"
 )
 
@@ -15,23 +14,20 @@ type BuildInfo struct {
 	MainPath        string
 	MainVersion     string
 	Dependencies    []string // Each in "path@version" format
-	CGOEnabled      string
-	GOOS            string
-	GOARCH          string
 	VCSRevision     string
 	VCSTime         string
 	VCSModified     string
 }
 
 // GetBuildInfo gathers all available build information from debug.ReadBuildInfo.
-// Returns nil if build info is not available.
+// Returns an empty *BuildInfo if build info is unavailable.
 func GetBuildInfo() *BuildInfo {
+	bi := &BuildInfo{}
+
 	info, ok := debug.ReadBuildInfo()
 	if !ok {
-		return nil
+		return bi
 	}
-
-	bi := &BuildInfo{}
 
 	// Set build information from debug.ReadBuildInfo
 	bi.CompilerVersion = info.GoVersion
@@ -46,10 +42,7 @@ func GetBuildInfo() *BuildInfo {
 		}
 	}
 
-	// Extract relevant settings
-	bi.CGOEnabled = getSetting(info.Settings, "CGO_ENABLED")
-	bi.GOOS = getSetting(info.Settings, "GOOS")
-	bi.GOARCH = getSetting(info.Settings, "GOARCH")
+	// Extract VCS settings
 	bi.VCSRevision = getSetting(info.Settings, "vcs.revision")
 	bi.VCSTime = getSetting(info.Settings, "vcs.time")
 	bi.VCSModified = getSetting(info.Settings, "vcs.modified")
@@ -67,33 +60,11 @@ func getSetting(settings []debug.BuildSetting, key string) string {
 	return ""
 }
 
-// Print writes build information to the provided writer
-func (b *BuildInfo) Print(w io.Writer) {
-	fmt.Fprintf(w, "\nBuild Information:\n")
-	fmt.Fprintf(w, "  Compiler Version: %s\n", b.CompilerVersion)
-	fmt.Fprintf(w, "  Main Path: %s\n", b.MainPath)
-	fmt.Fprintf(w, "  Main Version: %s\n", b.MainVersion)
-
-	fmt.Fprintf(w, "\nDependencies:\n")
-	if len(b.Dependencies) > 0 {
-		for count, dep := range b.Dependencies {
-			fmt.Fprintf(w, "  Dependency[%d]: %s\n", count, dep)
-		}
-	} else {
-		fmt.Fprintf(w, "  (none)\n")
+// GetVersion returns the main module version from build info, or "unset" if
+// build info is unavailable (e.g. when running via `go run`).
+func GetVersion() string {
+	if v := GetBuildInfo().MainVersion; v != "" {
+		return v
 	}
-
-	fmt.Fprintf(w, "\nBuild Settings:\n")
-	fmt.Fprintf(w, "  CGO_ENABLED: %s\n", b.CGOEnabled)
-	fmt.Fprintf(w, "  GOOS: %s\n", b.GOOS)
-	fmt.Fprintf(w, "  GOARCH: %s\n", b.GOARCH)
-
-	fmt.Fprintf(w, "\nVersion Control:\n")
-	if b.VCSRevision != "" {
-		fmt.Fprintf(w, "  vcs.revision: %s\n", b.VCSRevision)
-		fmt.Fprintf(w, "  vcs.time: %s\n", b.VCSTime)
-		fmt.Fprintf(w, "  vcs.modified: %s\n", b.VCSModified)
-	} else {
-		fmt.Fprintf(w, "  (no VCS information available)\n")
-	}
+	return "unset"
 }

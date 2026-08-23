@@ -47,8 +47,8 @@ func (c *Clu) Parse(f *types.FactDB) {
 	argv0, _ = filepath.Abs(argv0)
 	cluFacts["clu.binary"].Value = argv0
 
-	// Version from about.go
-	cluFacts["clu.version"].Value = global.Version
+	// Version from build info
+	cluFacts["clu.version"].Value = global.GetVersion()
 
 	// Go runtime version
 	cluFacts["clu.golang.version"].Value = runtime.Version()
