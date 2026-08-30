@@ -19,7 +19,7 @@ func NewLinux() *OpSys {
 			&sources.IpAddr{},
 			&sources.Ipmitool{},
 			&sources.Lscpu{},
-			&sources.Lsmem{},
+			&sources.Memory{},
 			&sources.Salt{},
 			&sources.OsRelease{},
 			&sources.ProcCpuinfo{},
@@ -28,7 +28,6 @@ func NewLinux() *OpSys {
 			&sources.SysDmi{},
 			&sources.Uname{},
 			&sources.VirtWhat{},
-			//		&sources.UdevadmRam{},
 		},
 		EarlyFacts: []string{
 			"phy.arch",
