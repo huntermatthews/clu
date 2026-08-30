@@ -17,7 +17,7 @@ func NewDarwin() *OpSys {
 	return &OpSys{
 		Sources: []types.Sources{
 			&sources.Uname{},
-			&sources.SystemVersionPlist{},
+			&sources.SystemVersion{},
 			&sources.MacOSName{},
 			&sources.Uptime{},
 			&sources.Clu{},

@@ -370,3 +370,8 @@ This would enable:
 ### Windows-only
 
 - `windows_systeminfo.go` → `windows/`
+
+
+## Possible Issue
+
+`registry.Clear()` is unsafe for `init()`-based registration.** Since `init()` runs exactly once per test binary, any test calling `Clear()` permanently empties the registry for every subsequent test in that binary — there's no way to "re-register." If this helper is actually used in tests, it needs snapshot/restore semantics, not a hard reset.

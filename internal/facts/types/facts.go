@@ -46,7 +46,9 @@ func NewFactDB() *FactDB {
 
 // AddFact adds a Fact to the FactDB using its Tier, Name, and Value.
 func (f *FactDB) AddFact(fact Fact) {
-	f.tier[fact.Tier] = append(f.tier[fact.Tier], fact.Name)
+	if _, exists := f.facts[fact.Name]; !exists {
+		f.tier[fact.Tier] = append(f.tier[fact.Tier], fact.Name)
+	}
 	f.facts[fact.Name] = fact.Value
 }
 
