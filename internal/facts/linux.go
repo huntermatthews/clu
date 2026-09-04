@@ -27,7 +27,7 @@ func NewLinux() *OpSys {
 			&sources.Selinux{},
 			&sources.SysDmi{},
 			&sources.Uname{},
-			&sources.VirtWhat{},
+			&sources.Platform{},
 		},
 		EarlyFacts: []string{
 			"phy.arch",
