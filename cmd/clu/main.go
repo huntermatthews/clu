@@ -11,9 +11,9 @@ import (
 
 	"github.com/alecthomas/kong"
 
-	"github.com/huntermatthews/clu/internal/global"
-	"github.com/huntermatthews/clu/internal/input"
-	"github.com/huntermatthews/clu/internal/subcmd"
+	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/huntermatthews/clu/pkg/input"
+	"github.com/huntermatthews/clu/pkg/subcmd"
 )
 
 // CLI defines the root command and global flags.

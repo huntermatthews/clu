@@ -3,7 +3,7 @@ include common.mk
 # Variables
 PREFIX ?= /usr/local
 BINARY := clu
-GO_SOURCES := $(shell find cmd internal -name '*.go') go.mod go.sum Makefile common.mk
+GO_SOURCES := $(shell find cmd pkg -name '*.go') go.mod go.sum Makefile common.mk
 PLATFORMS := darwin-arm64 windows-amd64 linux-amd64 linux-arm64
 
 
@@ -49,7 +49,7 @@ install: build manpage ## Install $(BINARY) binary, manpage, and documentation
 man: .go-md2man-installed setup ## Generate man page from markdown using go-md2man
 	go-md2man -in $(BINARY).1.md -out $(BINARY).1
 	# embed is limited to same or sub-pkgs
-	cp $(BINARY).1 internal/subcmd/$(BINARY).1
+	cp $(BINARY).1 pkg/subcmd/$(BINARY).1
 
 .go-md2man-installed:
 	go install github.com/cpuguy83/go-md2man/v2@latest
@@ -67,7 +67,7 @@ test: test-units ## Run all tests
 
 .PHONY: test-units
 test-units: ## Run unit tests with full output (optional: TEST_GROUP=TestFoo)
-	go test -v ./internal/... ./cmd/... $(if $(TEST_GROUP),-run $(TEST_GROUP))
+	go test -v ./pkg/... ./cmd/... $(if $(TEST_GROUP),-run $(TEST_GROUP))
 
 .PHONY: test-list
 test-list: ## List available test groups (use as TEST_GROUP= value with make test)
@@ -75,7 +75,7 @@ test-list: ## List available test groups (use as TEST_GROUP= value with make tes
 
 .PHONY: coverage
 coverage: ## Run tests with coverage and show summary
-	go test -coverpkg=./internal/...,./cmd/... -coverprofile=coverage.out ./internal/... ./cmd/...
+	go test -coverpkg=./pkg/...,./cmd/... -coverprofile=coverage.out ./pkg/... ./cmd/...
 	go tool cover -func=coverage.out
 
 .PHONY: coverage-html

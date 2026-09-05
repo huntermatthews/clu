@@ -12,8 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/huntermatthews/clu/internal/global"
-	"github.com/huntermatthews/clu/internal/input"
+	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func TestRun_Hosts(t *testing.T) {

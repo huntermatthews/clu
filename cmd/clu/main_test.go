@@ -10,8 +10,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/huntermatthews/clu/internal/global"
-	"github.com/huntermatthews/clu/internal/input"
+	"github.com/huntermatthews/clu/pkg/global"
+	"github.com/huntermatthews/clu/pkg/input"
 )
 
 func setupTest(t *testing.T) (string, func()) {
