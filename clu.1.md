@@ -9,7 +9,7 @@ clu 1 "January 2011" clu "Sysadmin Commands"
 
 ## NAME
 
-clu - Describes various interesting facts about the current system.
+clu - Program for reporting system facts, checking prerequisites, and collecting portable test data.
 
 ## SYNOPSIS
 

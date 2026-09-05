@@ -36,6 +36,9 @@
 - Surface detailed test failures, diagnostics, or logs only when they require a decision or action
 - This is an emoji-free project unless the user explicitly requests an emoji to be added or changed
 
+## Documentation
+- The one-line program summary in `README.md` is canonical; use it verbatim anywhere else a summary is needed
+
 ## Editing
 - Use editor tools for renames and simple edits — not `sed` or other terminal commands — so the user gets the Zed/VS Code diff/confirmation UX
 - Store conventions and preferences in this file (`copilot-instructions.md`), not in Copilot memory — ask before using memory instead

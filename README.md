@@ -3,7 +3,7 @@
 
 # Clu
 
-Clu gives us a clue as to what this os / hardware is. Please see the man page for more details.
+Clu is a program for reporting system facts, checking prerequisites, and collecting portable test data. Please see the man page for more details.
 
 ## Package Versioning Compatibility
 

@@ -32,7 +32,7 @@ func run(args []string, stdout, stderr input.Stdout) int {
 	cli := &CLI{}
 	options := []kong.Option{
 		kong.Name("clu"),
-		kong.Description("Kong example with facts/collector/requires subcommands."),
+		kong.Description("Program for reporting system facts, checking prerequisites, and collecting portable test data."),
 		kong.UsageOnError(),
 		kong.Vars{"version": "clu " + global.GetVersion()},
 		kong.Writers(stdout, stderr),
