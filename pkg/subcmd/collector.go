@@ -70,6 +70,14 @@ func (c *CollectorCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	return nil
 }
 
+func init() {
+	Register(Registration{
+		Name:    "collector",
+		Help:    "Run collector.",
+		Command: &CollectorCmd{},
+	})
+}
+
 func setupWorkdir(hostname string) (string, error) {
 	dir, err := os.MkdirTemp("", fmt.Sprintf("%s.", hostname))
 	if err != nil || dir == "" {

@@ -22,14 +22,6 @@ type CLI struct {
 	Net     bool             `name:"net" help:"Enable network access."`
 	MockDir string           `help:"Enable mock mode for testing." hidden:""`
 	Version kong.VersionFlag `help:"Print version information and quit."`
-
-	Facts      subcmd.FactsCmd     `cmd:"" help:"Show facts." default:"withargs"`
-	Collector  subcmd.CollectorCmd `cmd:"" help:"Run collector."`
-	Requires   subcmd.RequiresCmd  `cmd:"" help:"Requires actions: list or check."`
-	Tools      subcmd.ToolsCmd     `cmd:"" help:"Check SSA admins workstations tools."`
-	VersionCmd subcmd.VersionCmd   `cmd:"" name:"version" help:"Show version information."`
-	Check      subcmd.CheckCmd     `cmd:"" help:"Check fleet machines for CRITICAL state."`
-	Help       subcmd.HelpCmd      `cmd:"" help:"Show embedded man page."`
 }
 
 func main() {
@@ -38,7 +30,7 @@ func main() {
 
 func run(args []string, stdout, stderr input.Stdout) int {
 	cli := &CLI{}
-	k, err := kong.New(cli,
+	options := []kong.Option{
 		kong.Name("clu"),
 		kong.Description("Kong example with facts/collector/requires subcommands."),
 		kong.UsageOnError(),
@@ -46,7 +38,10 @@ func run(args []string, stdout, stderr input.Stdout) int {
 		kong.Writers(stdout, stderr),
 		kong.BindTo(stdout, (*input.Stdout)(nil)),
 		kong.BindTo(stderr, (*input.Stderr)(nil)),
-	)
+	}
+	options = append(options, subcmd.KongOptions()...)
+
+	k, err := kong.New(cli, options...)
 	if err != nil {
 		fmt.Fprintln(stderr, "failed to init CLI:", err)
 		return 2

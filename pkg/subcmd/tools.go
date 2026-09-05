@@ -84,6 +84,14 @@ func (f *ToolsCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	return nil
 }
 
+func init() {
+	Register(Registration{
+		Name:    "tools",
+		Help:    "Check SSA admins workstations tools.",
+		Command: &ToolsCmd{},
+	})
+}
+
 // processTool checks if a tool exists and reports its status
 func processTool(spec ToolSpec, w *tabwriter.Writer) {
 	path := input.CheckProgramExists(spec.Name)

@@ -45,3 +45,11 @@ func (f *VersionCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 
 	return nil
 }
+
+func init() {
+	Register(Registration{
+		Name:    "version",
+		Help:    "Show version information.",
+		Command: &VersionCmd{},
+	})
+}

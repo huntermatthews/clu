@@ -68,7 +68,14 @@ func (f *CheckCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 
 	fmt.Fprintln(stdout, "All checks passed")
 	return nil
+}
 
+func init() {
+	Register(Registration{
+		Name:    "check",
+		Help:    "Check fleet machines for CRITICAL state.",
+		Command: &CheckCmd{},
+	})
 }
 
 func checkSSHKnownHosts() error {

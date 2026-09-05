@@ -67,3 +67,11 @@ func (f *HelpCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 
 	return nil
 }
+
+func init() {
+	Register(Registration{
+		Name:    "help",
+		Help:    "Show embedded man page.",
+		Command: &HelpCmd{},
+	})
+}

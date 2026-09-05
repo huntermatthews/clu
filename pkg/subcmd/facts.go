@@ -52,6 +52,15 @@ func (f *FactsCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	return nil
 }
 
+func init() {
+	Register(Registration{
+		Name:    "facts",
+		Help:    "Show facts.",
+		Command: &FactsCmd{},
+		Tags:    []string{`default:"withargs"`},
+	})
+}
+
 // parseFactsBySpecs replicates parse_facts_by_specs: determine sources to run.
 func parseFactsBySpecs(provides types.Provides, facts *types.FactDB, specs []string) {
 	sourcesToParse := map[types.Sources]struct{}{}

@@ -33,6 +33,14 @@ func (r *RequiresCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 	return nil
 }
 
+func init() {
+	Register(Registration{
+		Name:    "requires",
+		Help:    "Requires actions: list or check.",
+		Command: &RequiresCmd{},
+	})
+}
+
 // listRequires lists all file and program requirements.
 func listRequires(stdout input.Stdout, _ input.Stderr) int {
 	reqs := facts.OpSysFactory().Requires()

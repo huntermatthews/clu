@@ -77,6 +77,31 @@ func TestRun_Hosts(t *testing.T) {
 	}
 }
 
+func TestRun_DefaultsToFacts(t *testing.T) {
+	origMockDir := global.Config.MockDir
+	origRunner := input.CommandRunner
+	origReader := input.FileReader
+	origNet := global.Config.NetEnabled
+
+	defer func() {
+		global.Config.MockDir = origMockDir
+		input.CommandRunner = origRunner
+		input.FileReader = origReader
+		global.Config.NetEnabled = origNet
+	}()
+
+	stdout := &bytes.Buffer{}
+	stderr := &bytes.Buffer{}
+	exitCode := run([]string{"--mock-dir", "host1"}, stdout, stderr)
+	if exitCode != 0 {
+		t.Fatalf("run() failed with exit code %d. Stderr: %s", exitCode, stderr.String())
+	}
+
+	if !strings.Contains(stdout.String(), "os.kernel.name:") {
+		t.Errorf("default facts output missing os.kernel.name. Got:\n%s", stdout.String())
+	}
+}
+
 func TestRun_Requires(t *testing.T) {
 	// Save global state to restore after test
 	origMockDir := global.Config.MockDir
