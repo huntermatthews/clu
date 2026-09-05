@@ -1,21 +1,41 @@
-# Agent Instructions
+# Coding Standards
 
-## Building
+## Go file structure (subcmd files)
+- `Run()` is always the **first** function in a subcmd/* file
 
-Use `gmake` instead of `make` — the Makefiles require GNU Make 3.82+ which on macOS is provided by `gmake`.
+## Formatting
+- Always add a **blank line after an `if err != nil` block** before the next statement
 
-```
-gmake build
-```
+<!--
+## Package layout
+- `main.go` at repo root, `package main`
+- All other Go files in `internal/`, `package internal`
+-->
 
-## Sandbox limitation
+## CLI (kong)
+- Default values belong in kong struct tags (`default:"..."`) not in `Run()`
 
-`go build` (and any `gmake` target that invokes it) will always fail in a sandboxed environment with:
+## Build and Test
+- On Darwin, the system `make` is 3.81; use `gmake` instead of `make` for all build and test commands
+- Use `make build` to do test builds (preferred over `go build ./...`)
+- Use `make test` (via `run_in_terminal`) to run tests — **do not** use the `runTests` tool; it opens VS Code's test UI panel which cannot be closed from chat
+- Use `make test-units` when full per-test output is needed for debugging unit tests
+- Use `make test-scripts` when full per-test output is needed for debugging testscript tests
+- Makefile syntax must remain compatible with **GNU make 3.82** — do not use features introduced after 3.82
 
-```
-go: writing stat cache: open /Users/.../.local/share/go/pkg/mod/cache/... operation not permitted
-```
+## Man pages (*.1.md)
+- Use two blank lines before each major `##` section heading
+- markdownlint cannot enforce a minimum blank line count — this is a convention only
 
-This is a Go bookkeeping write to the module stat cache, not a compilation error. There is no workaround available inside the sandbox. Use the editor's language server diagnostics to verify correctness instead of attempting to build.
+## Naming
+- Variable and function names must be **at least 3 characters** — single-letter and two-letter names are not allowed (except loop indices like `i`, `j` where no semantic meaning is lost)
+- Do not give a method and a package-level function the same name — it is valid Go but confuses human readers; ask for clarification if the right name is not obvious
 
-Do **not** create temporary directories inside the project worktree as a workaround — that pollutes the git diff.
+## Editing
+- Use editor tools for renames and simple edits — not `sed` or other terminal commands — so the user gets the Zed/VS Code diff/confirmation UX
+- Store conventions and preferences in this file (`copilot-instructions.md`), not in Copilot memory — ask before using memory instead
+
+## General
+- Always ask for clarification if the intent or requirements are unclear before proceeding
+- Code quality priority (in order): **correctness first** (it must be right), **idiomatic Go second** (use language conventions and stdlib patterns), **simplicity third** (prefer the obvious, readable solution over clever or over-engineered ones)
+
