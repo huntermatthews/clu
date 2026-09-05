@@ -3,13 +3,13 @@
 
 package facts
 
-// Go port of src/clu/opsys/opsys.py providing an operating system abstraction
-// that aggregates fact sources and exposes combined Provides and Requires data.
-// Concrete OS implementations (e.g. Darwin, Linux) can construct an OpSys with
-// an ordered slice of sources plus early fact key list.
+// Provide an operating system abstraction that aggregates fact sources and exposes combined
+// Provides and Requires data. Concrete OS implementations (e.g. Darwin, Linux) can construct an
+// OpSys with an ordered slice of sources plus early fact key list.
 
 import (
-	"github.com/huntermatthews/clu/pkg/facts/sources"
+	"strings"
+
 	"github.com/huntermatthews/clu/pkg/facts/types"
 	"github.com/huntermatthews/clu/pkg/input"
 )
@@ -54,23 +54,24 @@ func OpSysFactory() *OpSys {
 	// ver was my first choice, but its a builtin
 	if input.ProgramChecker("cmd.exe") != "" {
 		return NewWindows()
-	} else {
-		// If its not Windows, use Uname to determine OS.
-		uname := &sources.Uname{}
-		factdb := types.NewFactDB()
-		uname.Parse(factdb)
-		kernel, ok := factdb.Get("os.kernel.name")
-		if !ok {
-			panic("unable to determine OS kernel name")
-		}
+	}
 
-		switch kernel {
-		case "Darwin":
-			return NewDarwin()
-		case "Linux":
-			return NewLinux()
-		default:
-			panic("unsupported operating system; got " + kernel)
-		}
+	kernel, status, err := input.CommandRunner("uname")
+	if err != nil || status != 0 {
+		panic("unable to determine OS kernel name")
+	}
+
+	kernel = strings.TrimSpace(kernel)
+	if kernel == "" {
+		panic("unable to determine OS kernel name")
+	}
+
+	switch kernel {
+	case "Darwin":
+		return NewDarwin()
+	case "Linux":
+		return NewLinux()
+	default:
+		panic("unsupported operating system; got " + kernel)
 	}
 }
