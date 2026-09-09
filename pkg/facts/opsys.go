@@ -10,8 +10,14 @@ package facts
 import (
 	"strings"
 
+	"github.com/huntermatthews/clu/pkg/facts/registry"
 	"github.com/huntermatthews/clu/pkg/facts/types"
 	"github.com/huntermatthews/clu/pkg/input"
+
+	_ "github.com/huntermatthews/clu/pkg/facts/linux"
+	_ "github.com/huntermatthews/clu/pkg/facts/macos"
+	_ "github.com/huntermatthews/clu/pkg/facts/unix"
+	_ "github.com/huntermatthews/clu/pkg/facts/windows"
 )
 
 // OpSys aggregates a set of fact sources for an operating system.
@@ -49,6 +55,13 @@ func (o *OpSys) GetEarlyFacts() []string {
 }
 
 // OpSysFactory replicates Python opsys_factory minimal logic using runtime.GOOS.
+func newOpSys(system string, earlyFacts []string) *OpSys {
+	return &OpSys{
+		Sources:    registry.GetSources(system),
+		EarlyFacts: earlyFacts,
+	}
+}
+
 func OpSysFactory() *OpSys {
 	// we look for cmd.exe to determine if we are on Windows
 	// ver was my first choice, but its a builtin
@@ -74,4 +87,22 @@ func OpSysFactory() *OpSys {
 	default:
 		panic("unsupported operating system; got " + kernel)
 	}
+}
+
+// NewDarwin constructs the Darwin OpSys and its early fact list.
+func NewDarwin() *OpSys {
+	return newOpSys("darwin", []string{"os.version"})
+}
+
+// NewLinux constructs the Linux OpSys and its early fact list.
+func NewLinux() *OpSys {
+	return newOpSys("linux", []string{
+		"phy.arch",
+		"phy.platform",
+	})
+}
+
+// NewWindows constructs the Windows OpSys and its early fact list.
+func NewWindows() *OpSys {
+	return newOpSys("windows", []string{})
 }

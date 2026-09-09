@@ -52,3 +52,23 @@ func TestOpSysFactoryUsesMockedUname(t *testing.T) {
 		})
 	}
 }
+
+func TestBuiltInSourcesRegister(t *testing.T) {
+	testCases := []struct {
+		name   string
+		result *OpSys
+		count  int
+	}{
+		{name: "linux", result: NewLinux(), count: 14},
+		{name: "darwin", result: NewDarwin(), count: 5},
+		{name: "windows", result: NewWindows(), count: 2},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			if len(testCase.result.Sources) != testCase.count {
+				t.Errorf("source count = %d, want %d", len(testCase.result.Sources), testCase.count)
+			}
+		})
+	}
+}
