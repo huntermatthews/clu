@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Hunter Matthews
 // SPDX-License-Identifier: LGPL-2.1-only
 
-package macos
+package darwin
 
 // macOS update check via `softwareupdate --list`
 // If your system is current, the output will state: "No new software available".

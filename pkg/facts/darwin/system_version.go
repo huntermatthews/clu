@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Hunter Matthews
 // SPDX-License-Identifier: LGPL-2.1-only
 
-package macos
+package darwin
 
 // Darwin system-version fact collection. SystemVersion prefers the system
 // plist and falls back to sw_vers when the plist cannot provide a complete

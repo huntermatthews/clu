@@ -14,8 +14,8 @@ import (
 	"github.com/huntermatthews/clu/pkg/facts/types"
 	"github.com/huntermatthews/clu/pkg/input"
 
+	_ "github.com/huntermatthews/clu/pkg/facts/darwin"
 	_ "github.com/huntermatthews/clu/pkg/facts/linux"
-	_ "github.com/huntermatthews/clu/pkg/facts/macos"
 	_ "github.com/huntermatthews/clu/pkg/facts/unix"
 	_ "github.com/huntermatthews/clu/pkg/facts/windows"
 )
