@@ -167,7 +167,8 @@ func TestRun_Collector(t *testing.T) {
 		global.Config.NetEnabled = origNet
 	}()
 
-	args := []string{"collector", "--mock-dir", "host1"}
+	outputDir := t.TempDir()
+	args := []string{"collector", "--mock-dir", "host1", "--out-dir", outputDir}
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
 
@@ -177,7 +178,7 @@ func TestRun_Collector(t *testing.T) {
 	}
 
 	output := stdout.String()
-	// Expected output format: "Collection created at /tmp/clu_HOSTNAME.tgz"
+
 	if !strings.Contains(output, "Collection created at") {
 		t.Fatalf("output missing success message. Got:\n%s", output)
 	}
