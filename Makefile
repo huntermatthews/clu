@@ -3,7 +3,8 @@ include common.mk
 # Variables
 PREFIX ?= /usr/local
 BINARY := clu
-GO_SOURCES := $(shell find cmd pkg -name '*.go') go.mod go.sum Makefile common.mk
+MANPAGE := pkg/subcmd/$(BINARY).1
+GO_SOURCES := $(shell find cmd pkg -name '*.go') $(BINARY).1.md go.mod go.sum Makefile common.mk
 PLATFORMS := darwin-arm64 windows-amd64 linux-amd64 linux-arm64
 
 
@@ -14,7 +15,7 @@ PLATFORMS := darwin-arm64 windows-amd64 linux-amd64 linux-arm64
 .PHONY: build
 build: setup dist/$(BINARY) ## setup and build $(BINARY)
 
-dist/$(BINARY): $(GO_SOURCES) ## Build $(BINARY) for the current platform
+dist/$(BINARY): $(GO_SOURCES) $(MANPAGE) ## Build $(BINARY) for the current platform
 	CGO_ENABLED=0 go build -o dist/$(BINARY) ./cmd/clu
 
 .PHONY: clean
@@ -32,12 +33,12 @@ all: setup ## setup and build for all platforms
 	done
 
 .PHONY: install
-install: build manpage ## Install $(BINARY) binary, manpage, and documentation
+install: build man ## Install $(BINARY) binary, manpage, and documentation
 	install -d $(PREFIX)/bin
 	install -d $(PREFIX)/share/man/man1
 	install -d $(PREFIX)/share/doc/$(BINARY)
 	install -m 755 dist/$(BINARY) $(PREFIX)/bin/$(BINARY)
-	install -m 644 $(BINARY).1 $(PREFIX)/share/man/man1/$(BINARY).1
+	install -m 644 $(MANPAGE) $(PREFIX)/share/man/man1/$(BINARY).1
 	install -m 644 README.md $(PREFIX)/share/doc/$(BINARY)/README.md
 
 
@@ -46,10 +47,10 @@ install: build manpage ## Install $(BINARY) binary, manpage, and documentation
 ##
 
 .PHONY: man
-man: .go-md2man-installed setup ## Generate man page from markdown using go-md2man
-	go-md2man -in $(BINARY).1.md -out $(BINARY).1
-	# embed is limited to same or sub-pkgs
-	cp $(BINARY).1 pkg/subcmd/$(BINARY).1
+man: $(MANPAGE) ## Generate the embedded man page from markdown using go-md2man
+
+$(MANPAGE): $(BINARY).1.md .go-md2man-installed
+	go-md2man -in $< -out $@
 
 .go-md2man-installed:
 	go install github.com/cpuguy83/go-md2man/v2@latest
