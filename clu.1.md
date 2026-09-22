@@ -1,5 +1,6 @@
 <!-- SPDX-FileCopyrightText: 2025 Hunter Matthews -->
 <!-- SPDX-License-Identifier: LGPL-2.1-only -->
+
 <!-- markdownlint-disable -->
 <!-- The linter is disabled because thats for generic markdown files and this needs to be go-md2man specific.
 -->
@@ -15,11 +16,16 @@ clu - Program for reporting system facts, checking prerequisites, and collecting
 
 **clu** [**--help** | **--version** | **--debug** | **--net**]
 
-**clu** **collector**
-
 **clu** **facts** [**fact-names** ...] [**--tier**, **-t** {**1** | **2** | **3**}] [**--out** {**dots** | **shell** | **json**}]
 
+**clu** **collector**
+
 **clu** **requires** {**list** | **check**}
+
+**clu** **help**
+
+**clu** **version**
+
 
 ## DESCRIPTION
 
@@ -47,10 +53,6 @@ Allow access to the network. Some steps require more than just a DNS query (such
 
 ## COMMANDS
 
-#### collector
-
-Create a compressed **tar**(1) archive of all the required file and program outputs used by **clu**. This facilitates both testing and debugging without needing to be fully networked all the time or remote debugging. The archive will be named /tmp/clu_\<hostname\>.tgz.
-
 #### facts [fact-names ...] [--tier, -t {1 | 2 | 3}] [--out {dots | shell | json}]
 
 Report system facts. Without arguments, reports all facts for the specified tier.
@@ -61,9 +63,22 @@ Report system facts. Without arguments, reports all facts for the specified tier
 
 **--out** (*default: dots*): Output format.
 
+#### collector
+
+Create a compressed **tar**(1) archive of all the required file and program outputs used by **clu**. This facilitates both testing and debugging without needing to be fully networked all the time or remote debugging. The archive will be named /tmp/clu_\<hostname\>.tgz.
+
 #### requires {check | list}
 
 List or check the required files, programs and api's required for the program to run.
+
+#### help
+
+Display the embedded **clu** manual page.
+
+#### version
+
+Display detailed version, build, and library information.
+
 
 ## EXAMPLES
 
