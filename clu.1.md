@@ -130,37 +130,3 @@ Some facts require root privileges to access system files in `/proc`, `/sys`, or
 ## AUTHORS
 
 Hunter Matthews (hunter@huntermatthews@net) is to blame on this one.
-
-<!--
-ALTERNATIVE COMMANDS SECTION FROM V2 (more detailed for complex subcommands):
-
-## COMMANDS
-
-### collector
-
-Create a compressed **tar**(1) archive of all the required file and program outputs used by **clu**. This facilitates both testing and debugging without needing to be fully networked all the time or remote debugging. The archive will be named `/tmp/clu_<hostname>.tgz`.
-
-### facts [OPTIONS]
-
-Report various facts about the computer. This includes details of the OS, hardware (virtual or physical), networking, etc.
-
-**Command-specific options:**
-
-**--tier**, **-t**=*TIER*
-: Controls tier of facts (more and more details at higher / larger number tiers...) are printed.
-
-: Valid values: **1**, **2**, **3**
-
-: The default is **1**.
-
-**--out**=*FORMAT*
-: Output format for the facts.
-
-: Valid values: **dots**, **shell**, **json**
-
-: The default is **dots**.
-
-### requires {check | list}
-
-List or check the required files, programs and api's required for the program to run.
--->
