@@ -39,10 +39,10 @@ func (f *FactsCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
 
 	// Parse early facts first. Early facts are our primitive way of handling inter-source dependancies.
 	// They are always parsed, even if not actually needed later.
-	parseFactsBySpecs(provides, facts, osys.GetEarlyFacts())
+	ParseFactsBySpecs(provides, facts, osys.GetEarlyFacts())
 
 	// Parse requested facts (may include duplicates; source parsing is idempotent).
-	parseFactsBySpecs(provides, facts, f.FactNames)
+	ParseFactsBySpecs(provides, facts, f.FactNames)
 
 	// Filter down to requested + tier selection.
 	outputFacts := filterFacts(facts, f.FactNames, f.Tier)
@@ -61,8 +61,8 @@ func init() {
 	})
 }
 
-// parseFactsBySpecs replicates parse_facts_by_specs: determine sources to run.
-func parseFactsBySpecs(provides types.Provides, facts *types.FactDB, specs []string) {
+// ParseFactsBySpecs replicates parse_facts_by_specs: determine sources to run.
+func ParseFactsBySpecs(provides types.Provides, facts *types.FactDB, specs []string) {
 	sourcesToParse := map[types.Sources]struct{}{}
 	addSource := func(src interface{}) {
 		if s, ok := src.(types.Sources); ok && s != nil {
