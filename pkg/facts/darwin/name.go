@@ -43,6 +43,8 @@ func (m *MacOSName) Parse(f *types.FactDB) {
 
 func codeNameFromMajor(major string) string {
 	switch major {
+	case "27":
+		return "Golden Gate"
 	case "26":
 		return "Tahoe"
 	case "15":
