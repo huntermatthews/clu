@@ -20,7 +20,12 @@ import (
 //go:embed clu.1
 var manPage string
 
-// Help implements the "tools" subcommand.
+// SetManPage overrides the embedded man page text. Downstream/addon code can call this in init()
+// to provide a different man page for the help command.
+func SetManPage(text string) {
+	manPage = text
+}
+
 type HelpCmd struct{}
 
 func (f *HelpCmd) Run(stdout input.Stdout, stderr input.Stderr) error {
