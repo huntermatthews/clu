@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Hunter Matthews
 // SPDX-License-Identifier: LGPL-2.1-only
 
-package main
+package app
 
 import (
 	"bytes"
@@ -51,7 +51,7 @@ func TestRun_Hosts(t *testing.T) {
 				stderr := &bytes.Buffer{}
 
 				// Execute run
-				exitCode := run(args, stdout, stderr)
+				exitCode := Run(args, stdout, stderr)
 
 				if exitCode != 0 {
 					t.Errorf("run() failed with exit code %d. Stderr: %s", exitCode, stderr.String())
@@ -92,7 +92,7 @@ func TestRun_DefaultsToFacts(t *testing.T) {
 
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
-	exitCode := run([]string{"--mock-dir", "host1"}, stdout, stderr)
+	exitCode := Run([]string{"--mock-dir", "host1"}, stdout, stderr)
 	if exitCode != 0 {
 		t.Fatalf("run() failed with exit code %d. Stderr: %s", exitCode, stderr.String())
 	}
@@ -121,7 +121,7 @@ func TestRun_Requires(t *testing.T) {
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
 
-	exitCode := run(args, stdout, stderr)
+	exitCode := Run(args, stdout, stderr)
 	if exitCode != 0 {
 		t.Errorf("run() failed with exit code %d. Stderr: %s", exitCode, stderr.String())
 	}
@@ -172,7 +172,7 @@ func TestRun_Collector(t *testing.T) {
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
 
-	exitCode := run(args, stdout, stderr)
+	exitCode := Run(args, stdout, stderr)
 	if exitCode != 0 {
 		t.Errorf("run() failed with exit code %d. Stderr: %s", exitCode, stderr.String())
 	}
