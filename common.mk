@@ -26,22 +26,45 @@ SHELL := bash
 ##
 ##@ Help
 ##
-# Leave the backslashes - even with .ONESHELL: they are needed for the awk script
+# Use a heredoc so the awk script can stay readable.
 .PHONY: help
 help: ## Display this help
-	@awk -v prog=$(BINARY) 'BEGIN { \
-		FS = ":.*##"; \
-		printf "\nUsage:\n  make <target> \033[36m\033[0m\n" \
-	} \
-	# make: double-dollar escapes to one dollar; backslash makes awk treat it as literal in char class \
-	/^[a-zA-Z0-9_()\$$%-]+:.*?##/ { \
-		# expand $(BINARY) to its value in both the target name and description \
-		gsub(/\$$\(BINARY\)/, prog, $$1); gsub(/\$$\(BINARY\)/, prog, $$2); \
-		printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 \
-	} \
-	/^##@/ { \
-		printf "\n\033[1m%s\033[0m\n", substr($$0, 5) \
-	}' $(MAKEFILE_LIST)
+	@awk -v prog='$(BINARY)' -f - $(MAKEFILE_LIST) <<'AWK'
+	BEGIN {
+		FS = ":.*##"
+		printf "\nUsage:\n  make <target> \033[36m\033[0m\n"
+	}
+	/^##@/ {
+		section = substr($$0, 5)
+		if (!(section in seen)) {
+			seen[section] = 1
+			order[++count] = section
+		}
+		next
+	}
+	/^[a-zA-Z0-9_()$$%-]+:.*?##/ {
+		target = $$1
+		desc = $$2
+		gsub(/\$$\(BINARY\)/, prog, target)
+		gsub(/\$$\(BINARY\)/, prog, desc)
+		if (section == "") {
+			section = "Other"
+			if (!(section in seen)) {
+				seen[section] = 1
+				order[++count] = section
+			}
+		}
+		items[section] = items[section] sprintf("  \033[36m%-15s\033[0m %s\n", target, desc)
+	}
+	END {
+		for (i = 1; i <= count; i++) {
+			section = order[i]
+			if (items[section] != "") {
+				printf "\n\033[1m%s\033[0m\n%s", section, items[section]
+			}
+		}
+	}
+	AWK
 
 
 .PHONY: mk-debug
