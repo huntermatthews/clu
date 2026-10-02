@@ -1,0 +1,103 @@
+# Define a standard help variable block using modern multiline strings
+define HELP_TEXT
+Usage:
+  make <target>
+
+Targets:
+endef
+export HELP_TEXT
+
+# Standard inclusion example
+-include configuration.mk
+-include components/*.mk
+
+.PHONY: help
+help: ## Print this help menu
+	@echo "$$HELP_TEXT"
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} \
+		/^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } \
+		/^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) }' \
+		$(MAKEFILE_LIST)
+
+
+-------------------------------------------------------------------------------
+
+-include go-common.mk
+
+# Your catch-all pattern rule
+%: %-default
+	@true
+
+.PHONY: help
+help: ## Display available targets derived dynamically
+	@echo "Available Targets:"
+	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | \
+	awk -v RS= -F: '/^# Files/,/^# Finished Make data base/ { \
+		if ($$1 !~ "^[#.]" && $$1 !~ "^%") { \
+			print $$1 \
+		} \
+	}' | \
+	sort | \
+	awk '{ \
+		if ($$1 ~ /-default$$/) { \
+			base = substr($$1, 1, length($$1)-8); \
+			print "  \033[36m" base "\033[0m (via go-common default rule)"; \
+		} else if ($$1 != "help") { \
+			print "  \033[32m" $$1 "\033[0m (locally defined)"; \
+		} \
+	}'
+
+-------------------------------------------------------------------------------
+
+
+-include go-common.mk
+
+# Example local targets to demonstrate behavior
+foo: dep1 dep2 ## This comment should be the help text for foo
+	@echo "building foo"
+
+# Your catch-all pattern rule
+%: %-default
+	@true
+
+.PHONY: help
+help: ## Display this dynamic help menu
+	@echo "Available Targets:"
+	@\
+	{ \
+		$(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | \
+		awk -v RS= -F: '/^# Files/,/^# Finished Make data base/ { \
+			if ($$1 !~ "^[#.]" && $$1 !~ "^%") print $$1 \
+		}'; \
+		awk '/^[a-zA-Z_0-9-]+:.*?##/ { \
+			split($$0, a, ":.*## "); \
+			print a[1] "\t" a[2] \
+		}' $(MAKEFILE_LIST); \
+	} | awk -F'\t' ' \
+	NF == 1 { \
+		targets[$$1] = 1; \
+		next; \
+	} \
+	NF == 2 { \
+		comments[$$1] = $$2; \
+		next; \
+	} \
+	END { \
+		for (t in targets) { \
+			if (t ~ /-default$$/) { \
+				base = substr(t, 1, length(t)-8); \
+				msg = (base in comments) ? comments[base] : comments[t]; \
+				if (!msg) msg = "Runs default behavior"; \
+				printf "  \033[36m%-15s\033[0m %s\n", base, msg; \
+				seen[base] = 1; \
+			} else if (t != "help") { \
+				raw_targets[t] = 1; \
+			} \
+		} \
+		for (t in raw_targets) { \
+			if (!seen[t]) { \
+				msg = (t in comments) ? comments[t] : "No description provided"; \
+				printf "  \033[32m%-15s\033[0m %s\n", t, msg; \
+			} \
+		} \
+	}' | sort

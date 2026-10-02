@@ -8,22 +8,7 @@
 #   SRCS             source deps for the binary
 #   TEST_UNITS_PKGS  packages passed to test-units
 #   CLEAN_EXTRA      extra paths for `clean` to rm
-#
-# For structural changes (adding prerequisites, extra targets, etc.), redefine
-# the target after the include; expect an "overriding recipe" warning.
 
-# version check HAS to be at the top , BEFORE older versions of Make will choke on later syntax
-# EL7 ships with 3.82, so this is the current minimum.
-# macOS ships with an ancient version of Make (3.81), so you will need to install a newer version via Homebrew.
-# 3.81 is missing the .ONESHELL feature which is critical for simple target happiness.
-
-MINIMUM_GNU_MAKE := 3.82
-ifeq "${MAKE_VERSION}" ""
-  $(error This Makefile requires GNU Make $(MINIMUM_GNU_MAKE) or greater)
-endif
-ifneq "$(MINIMUM_GNU_MAKE)" "$(firstword $(sort $(MINIMUM_GNU_MAKE) ${MAKE_VERSION}))"
-  $(error This Makefile requires GNU Make $(MINIMUM_GNU_MAKE) or greater)
-endif
 
 
 # 'make install PREFIX=/usr/local' for a system-wide install
@@ -36,7 +21,6 @@ GO_BUILD_PACKAGE  ?= ./cmd/$(BINARY)
 SRCS              ?= $(wildcard *.go) go.mod $(wildcard go.sum)
 TEST_UNITS_PKGS   ?= ./...
 TEST_GROUP        ?=
-CLEAN_EXTRA       ?=
 
 
 # Non Tunables -- Do not override these in the sub-Makefile
@@ -46,8 +30,8 @@ PLATFORM_TARGETS := $(patsubst %,dist/$(BINARY)-%,$(PLATFORMS))
 ##@ Build
 ##
 
-.PHONY: build
-build: setup dist/$(BINARY) ## Setup and build $(BINARY) for the current platform
+.PHONY: build-default
+build-default: setup dist/$(BINARY) ## Setup and build $(BINARY) for the current platform
 
 dist/$(BINARY): $(SRCS)
 	CGO_ENABLED=$(CGO_ENABLED) go build -o dist/$(BINARY) $(GO_BUILD_PACKAGE)
@@ -62,8 +46,8 @@ dist/$(BINARY)-%: setup $(SRCS)
 	ARCH=$${STEM#*-}
 	GOOS=$$OS GOARCH=$$ARCH CGO_ENABLED=$(CGO_ENABLED) go build -o $@ $(GO_BUILD_PACKAGE)
 
-.PHONY: install
-install: build ## Install $(BINARY) binary to PREFIX
+.PHONY: install-default
+install-default: build ## Install $(BINARY) binary to $PREFIX
 	install -d $(PREFIX)/bin
 	install -m 755 dist/$(BINARY) $(PREFIX)/bin/$(BINARY)
 
@@ -85,8 +69,7 @@ test-list: ## List available test groups (use as TEST_GROUP= value with make tes
 
 .PHONY: coverage
 coverage: ## Run tests with coverage and show summary
-	go test -coverprofile=coverage.out ./...
-	go tool cover -func=coverage.out
+go test -coverprofile=coverage.out ./...  ${all_packages}
 
 .PHONY: coverage-html
 coverage-html: coverage ## Open HTML coverage report
@@ -97,16 +80,21 @@ coverage-html: coverage ## Open HTML coverage report
 ##@ Linting and Formatting
 ##
 
-.PHONY: tidy
-tidy: ## Run go mod tidy
+.PHONY: tidy-default
+tidy-default: ## Run go mod tidy
 	go mod tidy
 
 .PHONY: fmt-check
 fmt-check: ## Check formatting without modifying files
 	@gofmt -d $(shell find . -name '*.go' -not -path "./vendor/*")
 
-.PHONY: lint
-lint: require-golangci-lint ## Run linter
+
+.PHONY: fmt
+fmt: ## Format code
+	go fmt $(shell find . -name '*.go' -not -path "./vendor/*") 
+	
+.PHONY: lint-default
+lint-default: require-golangci-lint ## Run linter
 	golangci-lint run
 
 .PHONY: vet
@@ -118,11 +106,18 @@ vet: ## Run go vet
 ##@ Setup / Cleanup
 ##
 
-.PHONY: setup
-setup: ## Create dist/ directory
+.PHONY: setup-default
+setup-default: ## Create dist/ directory
 	@mkdir -p dist
 	go mod download
 
-.PHONY: clean
-clean: ## Clean up build artifacts
-	@rm -rf dist/* coverage.out $(CLEAN_EXTRA)
+.PHONY: clean-default
+clean-default: ## Clean up build artifacts
+	@rm -rf dist/* coverage.out
+
+#
+# wildcard target for making sure default rules are used if no extension or overide is
+# provided,
+#
+%: %-default
+	@true
