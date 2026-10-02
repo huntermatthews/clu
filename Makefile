@@ -1,11 +1,12 @@
-include common.mk
+# Clu project Makefile
 
 # Variables
-PREFIX ?= /usr/local
 BINARY := clu
 MANPAGE := pkg/subcmd/$(BINARY).1
-GO_SOURCES := $(shell find cmd pkg -name '*.go') $(BINARY).1.md go.mod go.sum Makefile common.mk
-PLATFORMS := darwin-arm64 windows-amd64 linux-amd64 linux-arm64
+SRCS := $(shell find cmd pkg -name '*.go') $(BINARY).1.md $(MANPAGE) go.mod go.sum Makefile common.mk go-common.mk
+
+include common.mk
+include go-common.mk
 
 
 ##
@@ -40,5 +41,3 @@ $(MANPAGE): $(BINARY).1.md .go-md2man-installed
 .go-md2man-installed:
 	go install github.com/cpuguy83/go-md2man/v2@latest
 	@touch .go-md2man-installed
-
-

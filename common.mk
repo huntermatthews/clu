@@ -26,45 +26,55 @@ SHELL := bash
 ##
 ##@ Help
 ##
-# Use a heredoc so the awk script can stay readable.
+# The awk program is a single-quoted string continued with backslashes rather than a
+# heredoc: Homebrew bash 5.3 on macOS hangs on heredocs larger than ~512 bytes.
+# awk treats backslash-newline as a line join, so every statement needs an explicit ';'.
 .PHONY: help
 help: ## Display this help
-	@awk -v prog='$(BINARY)' -f - $(MAKEFILE_LIST) <<'AWK'
-	BEGIN {
-		FS = ":.*##"
-		printf "\nUsage:\n  make <target> \033[36m\033[0m\n"
-	}
-	/^##@/ {
-		section = substr($$0, 5)
-		if (!(section in seen)) {
-			seen[section] = 1
-			order[++count] = section
-		}
-		next
-	}
-	/^[a-zA-Z0-9_()$$%-]+:.*?##/ {
-		target = $$1
-		desc = $$2
-		gsub(/\$$\(BINARY\)/, prog, target)
-		gsub(/\$$\(BINARY\)/, prog, desc)
-		if (section == "") {
-			section = "Other"
-			if (!(section in seen)) {
-				seen[section] = 1
-				order[++count] = section
-			}
-		}
-		items[section] = items[section] sprintf("  \033[36m%-15s\033[0m %s\n", target, desc)
-	}
-	END {
-		for (i = 1; i <= count; i++) {
-			section = order[i]
-			if (items[section] != "") {
-				printf "\n\033[1m%s\033[0m\n%s", section, items[section]
-			}
-		}
-	}
-	AWK
+	@awk -v prog='$(BINARY)' ' \
+	BEGIN { \
+		FS = ":.*##"; \
+		printf "\nUsage:\n  make <target> \033[36m\033[0m\n"; \
+	} \
+	/^##@/ { \
+		section = substr($$0, 5); \
+		if (!(section in seen)) { \
+			seen[section] = 1; \
+			order[++count] = section; \
+		} \
+		next; \
+	} \
+	/^[a-zA-Z0-9_()$$%-]+:.*?##/ { \
+		target = $$1; \
+		desc = $$2; \
+		gsub(/\$$\(BINARY\)/, prog, target); \
+		gsub(/\$$\(BINARY\)/, prog, desc); \
+		if (section == "") { \
+			section = "Other"; \
+			if (!(section in seen)) { \
+				seen[section] = 1; \
+				order[++count] = section; \
+			} \
+		} \
+		items[section] = items[section] sprintf("  \033[36m%-15s\033[0m %s\n", target, desc); \
+	} \
+	END { \
+		for (i = 1; i <= count; i++) { \
+			section = order[i]; \
+			if (items[section] != "") { \
+				printf "\n\033[1m%s\033[0m\n%s", section, items[section]; \
+			} \
+		} \
+	} \
+	' $(MAKEFILE_LIST)
+
+
+# Verify that a required external tool is installed.
+# Usage: add require-<toolname> as a prerequisite to any target that needs it.
+# If a tool is missing, it is likely available via Homebrew (macOS) or EPEL (Linux).
+.PHONY: require-%
+require-%:
+	@which $* > /dev/null 2>&1 || { echo "Error: '$*' is not installed (try: brew install $* or epel-release)"; exit 1; }
 
 
 .PHONY: mk-debug

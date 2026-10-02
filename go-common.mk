@@ -7,7 +7,6 @@
 #   PLATFORMS        cross-build target list
 #   SRCS             source deps for the binary
 #   TEST_UNITS_PKGS  packages passed to test-units
-#   CLEAN_EXTRA      extra paths for `clean` to rm
 
 
 
@@ -69,7 +68,7 @@ test-list: ## List available test groups (use as TEST_GROUP= value with make tes
 
 .PHONY: coverage
 coverage: ## Run tests with coverage and show summary
-go test -coverprofile=coverage.out ./...  ${all_packages}
+	go test -coverprofile=coverage.out ./...  ${all_packages}
 
 .PHONY: coverage-html
 coverage-html: coverage ## Open HTML coverage report
@@ -84,15 +83,10 @@ coverage-html: coverage ## Open HTML coverage report
 tidy-default: ## Run go mod tidy
 	go mod tidy
 
-.PHONY: fmt-check
-fmt-check: ## Check formatting without modifying files
-	@gofmt -d $(shell find . -name '*.go' -not -path "./vendor/*")
-
-
 .PHONY: fmt
-fmt: ## Format code
-	go fmt $(shell find . -name '*.go' -not -path "./vendor/*") 
-	
+fmt: ## Re-format all go code
+	go fmt ./...
+
 .PHONY: lint-default
 lint-default: require-golangci-lint ## Run linter
 	golangci-lint run
@@ -109,7 +103,6 @@ vet: ## Run go vet
 .PHONY: setup-default
 setup-default: ## Create dist/ directory
 	@mkdir -p dist
-	go mod download
 
 .PHONY: clean-default
 clean-default: ## Clean up build artifacts

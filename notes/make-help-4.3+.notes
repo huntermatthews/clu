@@ -1,27 +1,3 @@
-# Define a standard help variable block using modern multiline strings
-define HELP_TEXT
-Usage:
-  make <target>
-
-Targets:
-endef
-export HELP_TEXT
-
-# Standard inclusion example
--include configuration.mk
--include components/*.mk
-
-.PHONY: help
-help: ## Print this help menu
-	@echo "$$HELP_TEXT"
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} \
-		/^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } \
-		/^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) }' \
-		$(MAKEFILE_LIST)
-
-
--------------------------------------------------------------------------------
-
 -include go-common.mk
 
 # Your catch-all pattern rule
