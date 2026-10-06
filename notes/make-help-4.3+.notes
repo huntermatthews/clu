@@ -77,3 +77,13 @@ help: ## Display this dynamic help menu
 			} \
 		} \
 	}' | sort
+
+
+--------------------------------------------------------------------------------
+
+If you want to retain it as a runnable .go example, define the tested packages explicitly:
+
+TEST_UNITS_PKGS := ./cmd/... ./pkg/...
+
+Then update coverage to use $(TEST_UNITS_PKGS) instead of hard-coded ./....
+For consistency, vet and fmt would also ideally use the same project-package variable rather than ./....

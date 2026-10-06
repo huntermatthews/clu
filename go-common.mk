@@ -2,11 +2,14 @@
 # Shared targets for building a single Go program.
 #
 # Tunables (set in the sub-Makefile BEFORE the include to customize):
-#   PREFIX           install prefix
-#   CGO_ENABLED      cgo flag
-#   PLATFORMS        cross-build target list
-#   SRCS             source deps for the binary
-#   TEST_UNITS_PKGS  packages passed to test-units
+#   BINARY            binary name
+#   PREFIX            install prefix
+#   CGO_ENABLED       cgo flag
+#   PLATFORMS         cross-build target list
+#   GO_BUILD_PACKAGE  package passed to go build
+#   SRCS              source deps for the binary
+#   TEST_UNITS_PKGS   packages passed to test-units
+#   TEST_GROUP        optional test-name pattern passed to go test -run
 
 
 
@@ -68,7 +71,7 @@ test-list: ## List available test groups (use as TEST_GROUP= value with make tes
 
 .PHONY: coverage
 coverage: ## Run tests with coverage and show summary
-	go test -coverprofile=coverage.out ./...  ${all_packages}
+	go test -coverprofile=coverage.out ./...
 
 .PHONY: coverage-html
 coverage-html: coverage ## Open HTML coverage report
