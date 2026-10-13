@@ -1,3 +1,4 @@
+```go
 package main
 
 import (
@@ -49,3 +50,5 @@ func main() {
 
 	fmt.Printf("Limited output (first 100 bytes):\n%s\n", buf.String())
 }
+
+```
