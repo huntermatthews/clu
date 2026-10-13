@@ -26,9 +26,6 @@ SHELL := bash
 ##
 ##@ Help
 ##
-# The awk program is a single-quoted string continued with backslashes rather than a
-# heredoc: Homebrew bash 5.3 on macOS hangs on heredocs larger than ~512 bytes.
-# awk treats backslash-newline as a line join, so every statement needs an explicit ';'.
 .PHONY: help
 help: ## Display this help
 	@awk -v prog='$(BINARY)' ' \
@@ -49,6 +46,10 @@ help: ## Display this help
 		desc = $$2; \
 		gsub(/\$$\(BINARY\)/, prog, target); \
 		gsub(/\$$\(BINARY\)/, prog, desc); \
+		is_default = target ~ /-default$$/; \
+		if (is_default) { \
+			target = substr(target, 1, length(target) - 8); \
+		} \
 		if (section == "") { \
 			section = "Other"; \
 			if (!(section in seen)) { \
@@ -56,9 +57,27 @@ help: ## Display this help
 				order[++count] = section; \
 			} \
 		} \
-		items[section] = items[section] sprintf("  \033[36m%-15s\033[0m %s\n", target, desc); \
+		entry_section[++entry_count] = section; \
+		entry_target[entry_count] = target; \
+		entry_desc[entry_count] = desc; \
+		entry_default[entry_count] = is_default; \
+		if (!is_default) { \
+			explicit[target] = 1; \
+		} \
 	} \
 	END { \
+		for (entry = 1; entry <= entry_count; entry++) { \
+			target = entry_target[entry]; \
+			if (entry_default[entry] && explicit[target]) { \
+				continue; \
+			} \
+			if (displayed[target]) { \
+				continue; \
+			} \
+			displayed[target] = 1; \
+			section = entry_section[entry]; \
+			items[section] = items[section] sprintf("  \033[36m%-15s\033[0m %s\n", target, entry_desc[entry]); \
+		} \
 		for (i = 1; i <= count; i++) { \
 			section = order[i]; \
 			if (items[section] != "") { \
