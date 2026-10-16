@@ -3,9 +3,9 @@
 # Variables
 BINARY := clu
 MANPAGE := pkg/subcmd/$(BINARY).1
-SRCS := $(shell find cmd pkg -name '*.go') $(BINARY).1.md $(MANPAGE) go.mod go.sum Makefile common.mk go-common.mk
+SRCS := $(shell find cmd pkg -name '*.go') $(BINARY).1.md $(MANPAGE) go.mod go.sum Makefile go-common.mk
+GO_PKGS := ./cmd/... ./pkg/...
 
-include common.mk
 include go-common.mk
 
 
