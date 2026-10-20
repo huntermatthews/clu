@@ -1,7 +1,7 @@
 # go-common.mk
 # Shared targets for building a single Go program.
 #
-# Tunables (set in the sub-Makefile BEFORE the include to customize):
+# Tunables (set in the primary Makefile BEFORE the include of this file to customize):
 #   BINARY            binary name
 #   PREFIX            install prefix
 #   CGO_ENABLED       cgo flag
@@ -25,7 +25,7 @@ GO_PKGS           ?= ./...
 TEST_GROUP        ?=
 
 
-# Non Tunables -- Do not override these in the sub-Makefile
+# Non Tunables -- Do not override these in the primary Makefile
 PLATFORM_TARGETS := $(patsubst %,dist/$(BINARY)-%,$(PLATFORMS))
 
 ##
@@ -145,6 +145,7 @@ SHELL := bash
 ##
 ##@ Help
 ##
+# I hate how complex (and long) this awk script is but I love what it does - so here it lives.
 .PHONY: help
 help: ## Display this help
 	@awk -v prog='$(BINARY)' ' \
