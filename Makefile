@@ -15,10 +15,6 @@ include go-common.mk
 
 dist/$(BINARY): $(MANPAGE)
 
-.PHONY: clean
-clean: clean-default
-	@rm -f  .go-md2man-installed
-
 
 .PHONY: install
 install: install-default man ## Install $(BINARY) binary, manpage, and documentation
@@ -35,9 +31,9 @@ install: install-default man ## Install $(BINARY) binary, manpage, and documenta
 .PHONY: man
 man: $(MANPAGE) ## Generate the embedded man page from markdown using go-md2man
 
-$(MANPAGE): $(BINARY).1.md .go-md2man-installed
-	go-md2man -in $< -out $@
+$(MANPAGE): $(BINARY).1.md dist/go-md2man
+	dist/go-md2man -in $< -out $@
 
-.go-md2man-installed:
-	go install github.com/cpuguy83/go-md2man/v2@latest
-	@touch .go-md2man-installed
+dist/go-md2man:
+	@mkdir -p $(@D)
+	go install -o $@ github.com/cpuguy83/go-md2man/v2@v2.0.7

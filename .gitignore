@@ -26,4 +26,3 @@ go.work.sum
 # Anything we build goes here
 dist/
 build/
-.go-md2man-installed
