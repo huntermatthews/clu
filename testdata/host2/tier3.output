@@ -8,6 +8,7 @@ net.devs: lo eth0
 net.ipv4: 127.0.0.1 10.136.128.68 
 net.ipv6: ::1 fe80::250:56ff:fe90:da67 
 net.macs: 00:00:00:00:00:00 00:50:56:90:da:67 
+os.distro.family: suse opensuse
 os.distro.name: opensuse-leap
 os.distro.version: 15.6
 os.hostname: <hostname2>
@@ -26,4 +27,3 @@ phy.platform: vmware
 phy.ram: 4.0 GB
 run.update_required: Unknown - Network Queries Disabled
 run.uptime: 28 days, 6 hours, 37 minutes, 24 seconds
-salt.no_salt.exists: False

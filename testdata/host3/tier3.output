@@ -15,6 +15,7 @@ net.devs: lo eno8303 eno12399np0 eno8403 eno12409np1 eno12419np2 eno12429np3
 net.ipv4: 127.0.0.1 165.112.174.7 
 net.ipv6: ::1 2607:f220:404:2101::14 fe80::d604:e6ff:feef:9d70 
 net.macs: 00:00:00:00:00:00 d0:46:0c:70:51:be d4:04:e6:ef:9d:70 d0:46:0c:70:51:bf d4:04:e6:ef:9d:71 d4:04:e6:ef:9d:72 d4:04:e6:ef:9d:73 
+os.distro.family: fedora
 os.distro.name: rhel
 os.distro.version: 9.5
 os.hostname: <host3>
@@ -33,7 +34,6 @@ phy.platform: physical
 phy.ram: 64.0 GB
 run.update_required: Unknown - Network Queries Disabled
 run.uptime: 4 days, 1 hour, 25 minutes, 35 seconds
-salt.no_salt.exists: False
 sys.asset_no: 0123456789
 sys.model.family: PowerEdge
 sys.model.name: PowerEdge R660xs

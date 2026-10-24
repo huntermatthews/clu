@@ -97,8 +97,8 @@ func TestRun_DefaultsToFacts(t *testing.T) {
 		t.Fatalf("run() failed with exit code %d. Stderr: %s", exitCode, stderr.String())
 	}
 
-	if !strings.Contains(stdout.String(), "os.kernel.name:") {
-		t.Errorf("default facts output missing os.kernel.name. Got:\n%s", stdout.String())
+	if !strings.Contains(stdout.String(), "os.hostname:") {
+		t.Errorf("default facts output missing os.hostname. Got:\n%s", stdout.String())
 	}
 }
 
