@@ -25,10 +25,10 @@ func init() {
 type IpAddr struct{}
 
 var ipAddrFacts = map[string]*types.Fact{
-	"net.macs": {Name: "net.macs", Tier: types.TierTwo},
-	"net.ipv4": {Name: "net.ipv4", Tier: types.TierOne},
-	"net.ipv6": {Name: "net.ipv6", Tier: types.TierOne},
-	"net.devs": {Name: "net.devs", Tier: types.TierOne},
+	"net.macs": {Name: "net.macs", Tier: types.TierThree},
+	"net.ipv4": {Name: "net.ipv4", Tier: types.TierTwo},
+	"net.ipv6": {Name: "net.ipv6", Tier: types.TierTwo},
+	"net.devs": {Name: "net.devs", Tier: types.TierThree},
 }
 
 // Provides registers fact keys produced by this source.

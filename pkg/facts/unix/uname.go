@@ -23,10 +23,10 @@ type Uname struct{}
 
 // Origin holds the 0-based field position in `uname -snrm` output.
 var unameFacts = map[string]*types.Fact{
-	"os.kernel.name":    {Name: "os.kernel.name", Tier: types.TierOne, Origin: "0"},
+	"os.kernel.name":    {Name: "os.kernel.name", Tier: types.TierTwo, Origin: "0"},
 	"os.hostname":       {Name: "os.hostname", Tier: types.TierOne, Origin: "1"},
-	"os.kernel.version": {Name: "os.kernel.version", Tier: types.TierTwo, Origin: "2"},
-	"phy.arch":          {Name: "phy.arch", Tier: types.TierOne, Origin: "3"},
+	"os.kernel.version": {Name: "os.kernel.version", Tier: types.TierThree, Origin: "2"},
+	"phy.arch":          {Name: "phy.arch", Tier: types.TierTwo, Origin: "3"},
 }
 
 // Provides registers which keys this source provides.

@@ -23,7 +23,7 @@ const (
 var (
 	platformFact = types.Fact{
 		Name: platformFactName,
-		Tier: types.TierOne,
+		Tier: types.TierTwo,
 	}
 	platformSources = []platformCollector{
 		&virtWhat{},

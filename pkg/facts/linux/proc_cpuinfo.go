@@ -27,7 +27,7 @@ type ProcCpuinfo struct{}
 
 var archVersionFact = types.Fact{
 	Name: "phy.cpu.arch_version",
-	Tier: types.TierOne,
+	Tier: types.TierThree,
 }
 
 // Provides registers the architecture version fact.

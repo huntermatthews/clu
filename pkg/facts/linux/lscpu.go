@@ -27,10 +27,10 @@ func init() {
 type Lscpu struct{}
 
 var lscpuFacts = map[string]*types.Fact{
-	"phy.cpu.model":   {Name: "phy.cpu.model", Tier: types.TierOne},
-	"phy.cpu.vendor":  {Name: "phy.cpu.vendor", Tier: types.TierTwo},
+	"phy.cpu.model":   {Name: "phy.cpu.model", Tier: types.TierTwo},
+	"phy.cpu.vendor":  {Name: "phy.cpu.vendor", Tier: types.TierThree},
 	"phy.cpu.cores":   {Name: "phy.cpu.cores", Tier: types.TierOne},
-	"phy.cpu.threads": {Name: "phy.cpu.threads", Tier: types.TierTwo},
+	"phy.cpu.threads": {Name: "phy.cpu.threads", Tier: types.TierThree},
 	"phy.cpu.sockets": {Name: "phy.cpu.sockets", Tier: types.TierThree},
 }
 

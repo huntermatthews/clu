@@ -26,7 +26,7 @@ type OsRelease struct{}
 var osReleaseFacts = map[string]*types.Fact{
 	"os.distro.name":    {Name: "os.distro.name", Tier: types.TierOne, Origin: "ID"},
 	"os.distro.version": {Name: "os.distro.version", Tier: types.TierOne, Origin: "VERSION_ID"},
-	"os.distro.family":  {Name: "os.distro.family", Tier: types.TierTwo, Origin: "ID_LIKE"},
+	"os.distro.family":  {Name: "os.distro.family", Tier: types.TierThree, Origin: "ID_LIKE"},
 }
 
 // Provides registers distro fact keys.

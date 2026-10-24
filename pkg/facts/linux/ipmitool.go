@@ -27,14 +27,14 @@ type Ipmitool struct{}
 
 var ipmitoolLanFacts = map[string]*types.Fact{
 	"bmc.ipv4_source":  {Name: "bmc.ipv4_source", Origin: `(?m)^IP Address Source *: (.+)`, Tier: types.TierTwo},
-	"bmc.ipv4_address": {Name: "bmc.ipv4_address", Origin: `(?m)^IP Address *: (.+)`, Tier: types.TierOne},
-	"bmc.ipv4_mask":    {Name: "bmc.ipv4_mask", Origin: `(?m)^Subnet Mask *: (.+)`, Tier: types.TierTwo},
-	"bmc.mac_address":  {Name: "bmc.mac_address", Origin: `(?m)^MAC Address *: (.+)`, Tier: types.TierOne},
+	"bmc.ipv4_address": {Name: "bmc.ipv4_address", Origin: `(?m)^IP Address *: (.+)`, Tier: types.TierTwo},
+	"bmc.ipv4_mask":    {Name: "bmc.ipv4_mask", Origin: `(?m)^Subnet Mask *: (.+)`, Tier: types.TierThree},
+	"bmc.mac_address":  {Name: "bmc.mac_address", Origin: `(?m)^MAC Address *: (.+)`, Tier: types.TierThree},
 }
 var ipmitoolMcInfoFacts = map[string]*types.Fact{
-	"bmc.firmware_version":  {Name: "bmc.firmware_version", Origin: `(?m)^Firmware Revision *: (.+)`, Tier: types.TierOne},
-	"bmc.manufacturer_id":   {Name: "bmc.manufacturer_id", Origin: `(?m)^Manufacturer ID *: (.+)`, Tier: types.TierTwo},
-	"bmc.manufacturer_name": {Name: "bmc.manufacturer_name", Origin: `(?m)^Manufacturer Name *: (.+)`, Tier: types.TierTwo},
+	"bmc.firmware_version":  {Name: "bmc.firmware_version", Origin: `(?m)^Firmware Revision *: (.+)`, Tier: types.TierThree},
+	"bmc.manufacturer_id":   {Name: "bmc.manufacturer_id", Origin: `(?m)^Manufacturer ID *: (.+)`, Tier: types.TierThree},
+	"bmc.manufacturer_name": {Name: "bmc.manufacturer_name", Origin: `(?m)^Manufacturer Name *: (.+)`, Tier: types.TierThree},
 }
 
 // Provides registers all fact keys produced by this source.

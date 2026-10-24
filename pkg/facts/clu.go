@@ -26,10 +26,10 @@ func init() {
 type Clu struct{}
 
 var cluFacts = map[string]*types.Fact{
-	"clu.binary":    {Name: "clu.binary", Tier: types.TierTwo},
-	"clu.version":   {Name: "clu.version", Tier: types.TierOne},
+	"clu.binary":    {Name: "clu.binary", Tier: types.TierThree},
+	"clu.version":   {Name: "clu.version", Tier: types.TierTwo},
 	"clu.goversion": {Name: "clu.goversion", Tier: types.TierThree},
-	"clu.cmdline":   {Name: "clu.cmdline", Tier: types.TierTwo},
+	"clu.cmdline":   {Name: "clu.cmdline", Tier: types.TierThree},
 	"clu.cwd":       {Name: "clu.cwd", Tier: types.TierThree},
 	"clu.user":      {Name: "clu.user", Tier: types.TierThree},
 	"clu.date":      {Name: "clu.date", Tier: types.TierTwo},

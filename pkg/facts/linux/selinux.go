@@ -24,7 +24,7 @@ type Selinux struct{}
 
 var selinuxFacts = map[string]*types.Fact{
 	"os.selinux.enable": {Name: "os.selinux.enable", Tier: types.TierOne},
-	"os.selinux.mode":   {Name: "os.selinux.mode", Tier: types.TierOne},
+	"os.selinux.mode":   {Name: "os.selinux.mode", Tier: types.TierThree},
 }
 
 // Provides registers SELinux fact keys.

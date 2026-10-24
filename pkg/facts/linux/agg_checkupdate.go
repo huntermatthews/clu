@@ -27,7 +27,7 @@ var updateFact = types.Fact{
 // parseFunc is a function type for distro-specific update parsers.
 type parseFunc func(*LinuxCheckUpdate, *types.FactDB)
 
-// distroParserMap maps distribution families to their update check functions.
+// distroParserMap maps distribution _families_ (not just distros) to their update check functions.
 var distroParserMap = map[string]parseFunc{
 	"fedora":   (*LinuxCheckUpdate).dnfParse,
 	"debian":   (*LinuxCheckUpdate).aptParse,

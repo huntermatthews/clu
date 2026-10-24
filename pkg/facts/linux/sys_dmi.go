@@ -26,11 +26,11 @@ type SysDmi struct{}
 
 var sysDmiFacts = map[string]*types.Fact{
 	"sys.vendor":       {Name: "sys.vendor", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/sys_vendor"},
-	"sys.model.family": {Name: "sys.model.family", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/product_family"},
+	"sys.model.family": {Name: "sys.model.family", Tier: types.TierThree, Origin: "/sys/devices/virtual/dmi/id/product_family"},
 	"sys.model.name":   {Name: "sys.model.name", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/product_name"},
 	"sys.serial_no":    {Name: "sys.serial_no", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/product_serial"},
-	"sys.uuid":         {Name: "sys.uuid", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/product_uuid"},
-	"sys.oem":          {Name: "sys.oem", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/chassis_vendor"},
+	"sys.uuid":         {Name: "sys.uuid", Tier: types.TierThree, Origin: "/sys/devices/virtual/dmi/id/product_uuid"},
+	"sys.oem":          {Name: "sys.oem", Tier: types.TierThree, Origin: "/sys/devices/virtual/dmi/id/chassis_vendor"},
 	"sys.asset_no":     {Name: "sys.asset_no", Tier: types.TierOne, Origin: "/sys/devices/virtual/dmi/id/chassis_asset_tag"},
 }
 
