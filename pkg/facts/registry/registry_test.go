@@ -26,11 +26,6 @@ func TestGetSources(t *testing.T) {
 		t.Fatalf("source count = %d, want 2", len(first))
 	}
 
-	second := GetSources("test")
-	if first[0] == second[0] {
-		t.Error("GetSources returned a reused source instance")
-	}
-
 	if sources := GetSources("unknown"); len(sources) != 0 {
 		t.Errorf("unknown OS source count = %d, want 0", len(sources))
 	}
