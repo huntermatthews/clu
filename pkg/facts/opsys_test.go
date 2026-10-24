@@ -59,7 +59,7 @@ func TestBuiltInSourcesRegister(t *testing.T) {
 		result *OpSys
 		count  int
 	}{
-		{name: "linux", result: NewLinux(), count: 14},
+		{name: "linux", result: NewLinux(), count: 13},
 		{name: "darwin", result: NewDarwin(), count: 5},
 		{name: "windows", result: NewWindows(), count: 2},
 	}

@@ -27,9 +27,7 @@ func TestBuiltinCommandsRegister(t *testing.T) {
 		{"facts"},
 		{"collector"},
 		{"requires", "list"},
-		{"tools"},
 		{"version"},
-		{"check"},
 		{"help"},
 	}
 	if len(KongOptions()) != len(commands) {

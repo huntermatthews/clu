@@ -33,6 +33,7 @@
 
 ## Communication
 - Keep user-facing updates concise: use brief phase preambles, read only the targeted context needed for the immediate change, and summarize results rather than reproducing mechanical edits, raw diffs, or voluminous tool output
+- For analysis or investigation, capture or suppress noisy build, test, and Git command output; report a concise purpose-built summary instead. Preserve detailed logs only when they require a decision or action.
 - Surface detailed test failures, diagnostics, or logs only when they require a decision or action
 - This is an emoji-free project unless the user explicitly requests an emoji to be added or changed
 
@@ -46,4 +47,3 @@
 ## General
 - Always ask for clarification if the intent or requirements are unclear before proceeding
 - Code quality priority (in order): **correctness first** (it must be right), **idiomatic Go second** (use language conventions and stdlib patterns), **simplicity third** (prefer the obvious, readable solution over clever or over-engineered ones)
-
